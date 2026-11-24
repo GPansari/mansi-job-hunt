@@ -200,6 +200,8 @@ When triggered on schedule, the agent performs the following sequential runbook:
 .
 ├── GEMINI.md                           # This operating manual & agent constitution
 ├── README.md                           # Operator guide, runbook, & setup instructions
+├── docs/
+│   └── index.html                      # Live single-page review portal (GitHub Pages)
 ├── profile/
 │   ├── candidate.json                  # Mansi's structured skills, criteria, & targets
 │   └── Mansi_Agrawal_Resume.pdf        # Candidate resume
@@ -209,6 +211,8 @@ When triggered on schedule, the agent performs the following sequential runbook:
 │   └── Openings_Tracker.md             # Synchronized human-readable Markdown tracker
 ├── scripts/
 │   ├── __init__.py
+│   ├── generate_site.py                # Static web portal builder for GitHub Pages
+│   ├── verify_links.py                 # Live HTTP link health & ATS expiration auditor
 │   ├── search_engine.py                # Multi-tier discovery runner (Dorking + ATS)
 │   ├── scorer.py                       # Relevance & fit scoring engine (1-5)
 │   ├── notifier.py                     # HTML digest generator & Gmail dispatch
@@ -217,6 +221,7 @@ When triggered on schedule, the agent performs the following sequential runbook:
 │   └── sent_history.json               # Deduplication ledger of already-notified role IDs
 ├── tests/                              # Pytest test suite
 │   ├── test_data_integrity.py
+│   ├── test_generate_site.py
 │   ├── test_sync_tracker.py
 │   ├── test_scorer.py
 │   ├── test_notifier.py
