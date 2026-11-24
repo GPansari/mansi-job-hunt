@@ -115,10 +115,10 @@ def build_site(
     header {{
       background: var(--bg-surface);
       border-bottom: 1px solid var(--border-subtle);
-      padding: 16px 24px;
+      padding: 12px 24px;
       position: sticky;
       top: 0;
-      z-index: 40;
+      z-index: 50;
       box-shadow: var(--shadow-sm);
     }}
     .header-inner {{
@@ -232,19 +232,22 @@ def build_site(
       font-weight: 300;
     }}
 
-    /* Compact Toolbar & Filter Bar */
+    /* Compact Toolbar & Filter Bar - Sticky on Scroll */
     .toolbar-container {{
       background: var(--bg-surface);
       border: 1px solid var(--border-subtle);
       border-radius: 10px;
-      padding: 12px 16px;
+      padding: 10px 16px;
       margin-bottom: 16px;
-      box-shadow: var(--shadow-sm);
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
       display: flex;
       flex-wrap: wrap;
       align-items: center;
       justify-content: space-between;
       gap: 12px;
+      position: sticky;
+      top: 69px;
+      z-index: 40;
     }}
     .toolbar-left {{
       display: flex;
@@ -633,9 +636,6 @@ def build_site(
         <button class="btn btn-default" onclick="toggleDrawer()">
           <span>👤</span> Candidate Profile
         </button>
-        <a href="https://github.com/GPansari/mansi-job-hunt" target="_blank" class="btn btn-default">
-          <span>🐙</span> GitHub Repo
-        </a>
       </div>
     </div>
   </header>
