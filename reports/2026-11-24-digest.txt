@@ -1,0 +1,362 @@
+================================================================================
+WEEKLY EXECUTIVE JOB HUNT DIGEST - MANSI AGRAWAL
+Date: 2026-11-24 | New High-Fit Matches: 32
+================================================================================
+
+Summary: 10 direct fits (5/5), 13 strong fits (4/5), 9 moderate fits (3/5).
+
+--------------------------------------------------------------------------------
+[1] Senior Systems Engineer – Avionics @ Sarla Aviation
+--------------------------------------------------------------------------------
+• Fit Score:      5/5
+• Location:       Bangalore
+• Req ID:         SARLA-AVIONICS-01 | Seniority: Lead / Staff Engineer
+• Matched Skills: ARP4754A, ARP4761, Digital Thread
+• Fit Rationale:  Title matched target ('Lead Systems Engineer', +1.5); Core skills matched (3: ARP4754A, ARP4761, Digital Thread, +1.5); Location 'Bangalore' matches Bangalore (+1.0). Final fit score: 5/5.
+• Next Action:    Prepare eVTOL avionics & ARP4754A cover note; connect with founders
+• Apply URL:      https://www.sarla-aviation.com/careers
+
+--------------------------------------------------------------------------------
+[2] MBSE Lead Engineer (Aerospace) @ Quest Global India
+--------------------------------------------------------------------------------
+• Fit Score:      5/5
+• Location:       Bengaluru
+• Req ID:         Unknown - found via foundit/BeBee | Seniority: Lead (4-8 yrs)
+• Matched Skills: SysML v1/v2, DOORS, PLM, Digital Thread, Magic/EA/Rhapsody
+• Fit Rationale:  Direct fit based on SysML v1/v2, DOORS, PLM, Digital Thread, Magic/EA/Rhapsody for Quest Global India in Bengaluru.
+• Next Action:    Verify on Quest Global's own careers portal - excellent direct match (leading MBSE adoption across aerospace projects)
+• Apply URL:      https://careers.quest-global.com/
+
+--------------------------------------------------------------------------------
+[3] Lead Engineer @ Collins Aerospace (RTX)
+--------------------------------------------------------------------------------
+• Fit Score:      5/5
+• Location:       Bangalore (Yelahanka)
+• Req ID:         01868963 | Seniority: Lead
+• Matched Skills: Cameo, MATLAB, Simulink, SysML, Digital Thread
+• Fit Rationale:  Direct fit based on Cameo, MATLAB, Simulink, SysML, Digital Thread for Collins Aerospace (RTX) in Bangalore (Yelahanka).
+• Next Action:    Draft tailored resume + cover note - top priority
+• Apply URL:      https://globalhr.wd5.myworkdayjobs.com/rec_rtx_ext_gateway/job/in-ka-bengaluru-northgate--sy-no-22-venkatala-village--sy-no-22-venkatala-village-yelahanka-hobli/lead-engineer_01868963
+
+--------------------------------------------------------------------------------
+[4] MBSE Capability Verification & Validation Leader @ Airbus India
+--------------------------------------------------------------------------------
+• Fit Score:      5/5
+• Location:       Bangalore
+• Req ID:         JR10400715 | Seniority: Manager/Lead
+• Matched Skills: MBSE, SE capability planning, V&V
+• Fit Rationale:  Direct fit based on MBSE, SE capability planning, V&V for Airbus India in Bangalore.
+• Next Action:    Draft tailored resume + cover note
+• Apply URL:      https://ag.wd3.myworkdayjobs.com/en-US/Airbus/job/Bangalore-Area/MBSE-Capability-Verification---Validation-Leader_JR10400715-1
+
+--------------------------------------------------------------------------------
+[5] MBSE Manager @ Airbus India
+--------------------------------------------------------------------------------
+• Fit Score:      5/5
+• Location:       Bangalore
+• Req ID:         JR10370625 | Seniority: Manager
+• Matched Skills: M&S architecture, multi-disciplinary modeling
+• Fit Rationale:  Direct fit based on M&S architecture, multi-disciplinary modeling for Airbus India in Bangalore.
+• Next Action:    Draft tailored resume + cover note
+• Apply URL:      https://ag.wd3.myworkdayjobs.com/Airbus/job/Bangalore-Area/MBSE-Manager_JR10370625-1
+
+--------------------------------------------------------------------------------
+[6] System Engineer - Built-In Test Equipment (BITE) & Avionics Architecture @ Airbus India
+--------------------------------------------------------------------------------
+• Fit Score:      5/5
+• Location:       Bangalore
+• Req ID:         6a962f9eae18affb4d51775e | Seniority: Lead / Senior Engineer (6-10 yrs)
+• Matched Skills: BITE Systems, Avionics Architecture, ARINC 429, AFDX, INCOSE SE, Configuration Management
+• Fit Rationale:  Provide technical support for BITE implementation across avionics systems. Coordinate test specification documents, validate modifications, and manage ARINC 429/AFDX communication protocols.
+• Next Action:    Apply online; leverage avionics protocol expertise and systems engineering lifecycle experience
+• Apply URL:      https://flexa.careers/jobs/airbus-system-engineer-6a962f9eae18affb4d51775e
+
+--------------------------------------------------------------------------------
+[7] SE/MBSE Capability Leader @ Airbus India
+--------------------------------------------------------------------------------
+• Fit Score:      5/5
+• Location:       Bangalore Area
+• Req ID:         JR10407218 | Seniority: Professional (8-10 yrs)
+• Matched Skills: SysML/UML, Cameo Systems Modeler, IBM Rational Rhapsody, Sparx EA, Capella, DOORS, UAF/DoDAF, Agile
+• Fit Rationale:  Design, maintain, and deploy the Airbus MBSE Framework across Product/Industrial/Services domains. Develop and govern system architecture models, enforce modeling standards, integrate tools, run SE/MBSE training, and integrate MBSE into Agile.
+• Next Action:    Apply immediately - excellent match for MBSE/Cameo/SysML background; tailor resume to highlight modeling standards & governance experience
+• Apply URL:      https://ag.wd3.myworkdayjobs.com/en-US/Airbus/job/SE-MBSE-Capability-Leader_JR10407218-1
+
+--------------------------------------------------------------------------------
+[8] System Engineer-3 (System Engineer - Maintenance Systems) @ Airbus India
+--------------------------------------------------------------------------------
+• Fit Score:      5/5
+• Location:       Bangalore Area
+• Req ID:         JR10441133 | Seniority: 4-5 years experience
+• Matched Skills: CAMEO Systems Modeler, SysML, MBSE, INCOSE (preferred), MATLAB/Simulink, AGILE SAFe/SCRUM
+• Fit Rationale:  MBSE deployment for Maintenance Systems team; CAMEO/SysML modeling, requirements traceability, INCOSE-aligned systems engineering across aircraft maintenance domain.
+• Next Action:    Apply online; strong CAMEO/SysML/MBSE match, applications open until Dec 1, 2027
+• Apply URL:      https://ag.wd3.myworkdayjobs.com/en-US/Airbus/job/Bangalore-Area/System-Engineer-3_JR10441133
+
+--------------------------------------------------------------------------------
+[9] Modelling and Simulation Systems Engineering @ Airbus India
+--------------------------------------------------------------------------------
+• Fit Score:      5/5
+• Location:       Bangalore Area
+• Req ID:         JR10437140 | Seniority: 2-5 years experience
+• Matched Skills: CAMEO Systems Modeler, SysML/UML, IBDs/BDDs/Activity/State-machine diagrams, ARP4754, FHA/SSA/PRA, TeamWork Cloud, VTL scripting
+• Fit Rationale:  Development of digital models for Aircraft-level Safety Analysis (Particular Risk Analysis); model development/validation with system design offices; CAMEO/SysML modeling.
+• Next Action:    Apply online; excellent CAMEO/MBSE/ARP4754 match to resume
+• Apply URL:      https://ag.wd3.myworkdayjobs.com/en-US/Airbus/job/Bangalore-Area/Modelling-and-Simulation-Systems-Engineering_JR10437140-1
+
+--------------------------------------------------------------------------------
+[10] Powerplant Functional Integration MBSE Engineer @ Airbus India
+--------------------------------------------------------------------------------
+• Fit Score:      5/5
+• Location:       Bangalore
+• Req ID:         AIRBUS-PP-MBSE-2026 | Seniority: Lead / Senior Engineer
+• Matched Skills: MBSE, SysML, Cameo, V&V
+• Fit Rationale:  Title matched target ('MBSE Lead Engineer', +1.5); Core skills matched (4: MBSE, SysML, Cameo, V&V, +2.0); Location 'Bangalore' matches Bangalore (+1.0). Final fit score: 5/5.
+• Next Action:    Draft tailored resume highlighting 777-8F MBSE & digital thread
+• Apply URL:      https://www.airbus.com/en/careers
+
+--------------------------------------------------------------------------------
+[11] Senior Engineer (Avionics) - YETI UAV Programme @ ideaForge
+--------------------------------------------------------------------------------
+• Fit Score:      4/5
+• Location:       KIADB Aerospace Park, Bengaluru
+• Req ID:         Ref 55a79f52-09c6-4dda-97e6-8491c28371fa | Seniority: 10+ yrs
+• Matched Skills: UAV Avionics, Autopilot Tuning, GNC Algorithms, SIL/HIL, VTOL Control Laws, CEMILAC/DGCA/FAA/EASA
+• Fit Rationale:  Own end-to-end design, integration and validation of autopilot and flight control systems for the YETI UAV. Lead avionics/GNC team; autopilot configuration, GNC algorithms, SIL/HIL testing, flight test execution.
+• Next Action:    Apply; strong overlap with UAV/avionics integration track, emphasize certification exposure
+• Apply URL:      https://www.ziprecruiter.in/jobs/596749071-senior-engineer-avionics-at-ideaforge
+
+--------------------------------------------------------------------------------
+[12] Technical Lead / Sr. Technical Lead - System IVVQ Engineer @ Thales
+--------------------------------------------------------------------------------
+• Fit Score:      4/5
+• Location:       Bangalore, 560027
+• Req ID:         R0297449 | Seniority: Technical Lead / Sr Technical Lead
+• Matched Skills: System IVVQ, Verification & Validation, Qualification Testing, Technical Leadership
+• Fit Rationale:  System-level Integration, Verification, Validation & Qualification (IVVQ) technical leadership for Thales programs out of Bangalore.
+• Next Action:    Apply; NEW target company not in original list - Thales Bengaluru has multiple other live systems/avionics openings worth monitoring (Hardware System IVV Lead Engineer, Digital Electronics Design Engineer - Avionics, System Solution Engineer)
+• Apply URL:      https://careers.thalesgroup.com/global/en/job/R0297449/Technical-Lead-Sr-Technical-Lead-System-IVVQ-Engineer
+
+--------------------------------------------------------------------------------
+[13] Senior Loads & Aeroelastics Engineer (eVTOL Aircraft) @ Sarla Aviation
+--------------------------------------------------------------------------------
+• Fit Score:      4/5
+• Location:       Bengaluru
+• Req ID:         65290900 | Seniority: Senior (8+ yrs)
+• Matched Skills: Loads Analysis, Aeroelasticity, Flutter, NASTRAN, MATLAB/Simulink, CS-23/27
+• Fit Rationale:  Own prediction, analysis, and validation of structural loads and aeroelastic behaviour across the flight envelope for Sarla's eVTOL program.
+• Next Action:    Apply via Accel job board; emphasize systems-level loads/structures integration experience
+• Apply URL:      https://jobs.accel.com/companies/sarla-aviation/jobs/65290900-senior-loads-aeroelastics-engineer
+
+--------------------------------------------------------------------------------
+[14] Senior Avionics Engineer @ Sarla Aviation
+--------------------------------------------------------------------------------
+• Fit Score:      4/5
+• Location:       Bengaluru East, Karnataka
+• Req ID:         LinkedIn Job ID 4406539395 | Seniority: 7-9 yrs
+• Matched Skills: Avionics Architecture, ARINC 429/664 (AFDX), MIL-STD-1553, CAN/CAN-FD, DO-178B/C, DO-254, ARP4754, MATLAB/Simulink
+• Fit Rationale:  Design, develop, and integrate avionics systems (FCS, navigation, autopilot, comms, sensor fusion, mission computers) for eVTOL aircraft. Lead subsystem integration; ARINC 429/664, MIL-STD-1553, CAN/CAN-FD; MATLAB/Simulink modeling.
+• Next Action:    Apply - strong match on ARINC/ARP4754/DO-178C/Simulink skillset from resume
+• Apply URL:      https://in.linkedin.com/jobs/view/senior-avionics-engineer-at-sarla-aviation-4406539395
+
+--------------------------------------------------------------------------------
+[15] CI-Responsible (Configuration & Integration Responsible) @ Safran Engineering Services
+--------------------------------------------------------------------------------
+• Fit Score:      4/5
+• Location:       Bengaluru, Karnataka
+• Req ID:         2025-157864 | Seniority: 5+ yrs
+• Matched Skills: DMU, Configuration Management, SAP T100, Airbus/Safran Processes, Project Management Support
+• Fit Rationale:  Manage primary/secondary flow for allocated CIs, DMU & F3D definition, Airbus DRP coordination, release processes, and SAP T100 DQN/RDR resolution.
+• Next Action:    Apply directly; also review 3 other live Safran Bengaluru openings on same page (Harness Integration & DMU Validation Engineer, System Engineer - Electronics - Actuation Systems, System Architect - Mechanical)
+• Apply URL:      https://www.safran-group.com/jobs/india/bangalore/ci-responsible-157864
+
+--------------------------------------------------------------------------------
+[16] Avionics System Engineer @ ReOrbit
+--------------------------------------------------------------------------------
+• Fit Score:      4/5
+• Location:       Bengaluru, India / Helsinki, Finland (Hybrid)
+• Req ID:         Lever ID 5685519 | Seniority: 10+ yrs
+• Matched Skills: Avionics Systems Architecture, Satellite/Spacecraft Design, Electrical Interfaces, System-level Design, Qualification Testing
+• Fit Rationale:  Define overall avionics architecture for satellite platforms, maintain models/diagrams, design electrical circuit diagrams & interfaces, participate in subsystem interface definitions and supply chain for batteries/PDUs, functional testing & qualification of avionics components.
+• Next Action:    Apply - space/satellite systems architecture role, strong systems-engineering fit; confirm relocation/hybrid terms for Bengaluru vs Helsinki
+• Apply URL:      https://careers.reorbit.space/jobs/5685519-avionics-system-engineer
+
+--------------------------------------------------------------------------------
+[17] Avionics & Integration @ NewSpace Research & Technologies
+--------------------------------------------------------------------------------
+• Fit Score:      4/5
+• Location:       Bengaluru
+• Req ID:         Not listed (ATS: Freshteam) | Seniority: 6-10 years experience
+• Matched Skills: Avionics Systems Engineering, DO-178C, DO-254, MIL-STD-1553, ARINC-429, RS-232/485/CAN, HIL Testing, Linux/RTOS
+• Fit Rationale:  System-level solution design/leadership for UAV avionics; systems integration plan, V&V, requirements tracking, HIL bench testing, DO-178C/DO-254, MIL-STD-1553/ARINC-429.
+• Next Action:    Apply via newspace-talent.freshteam.com/jobs (search 'Avionics & Integration'); strong protocol/standards overlap though wants 6-10 yrs
+• Apply URL:      https://newspace-talent.freshteam.com/jobs
+
+--------------------------------------------------------------------------------
+[18] Avionics Systems Engineer @ Digantara
+--------------------------------------------------------------------------------
+• Fit Score:      4/5
+• Location:       Bengaluru (Hebbal), Karnataka
+• Req ID:         Not listed (ATS: Kula) | Seniority: 4+ years experience
+• Matched Skills: Systems Engineering, Avionics Architecture, Requirements Traceability, SysML (preferred), ECSS standards, INCOSE cert (preferred)
+• Fit Rationale:  Systems engineering of flight-critical avionics subsystems for ground/space-based SSA sensors; requirements definition, allocation, trade studies, V&V, ICDs.
+• Next Action:    Apply via careers.kula.ai/digantara (search 'Avionics Systems Engineer'); strong space-systems/avionics fit
+• Apply URL:      https://careers.kula.ai/digantara
+
+--------------------------------------------------------------------------------
+[19] Senior Lead Engineer (Cyber Physical System) @ Collins Aerospace (RTX)
+--------------------------------------------------------------------------------
+• Fit Score:      4/5
+• Location:       Bangalore (Yelahanka)
+• Req ID:         Unknown (2024 mirror) | Seniority: Senior Lead
+• Matched Skills: Cameo, MATLAB, Simulink, SysML
+• Fit Rationale:  Direct fit based on Cameo, MATLAB, Simulink, SysML for Collins Aerospace (RTX) in Bangalore (Yelahanka).
+• Next Action:    Search Collins Workday board for current live req of same title
+• Apply URL:      https://enableamerica.dejobs.org/bangalore-ind/senior-lead-engineer/049C8029F2D6468989661CDEAFD5818E/job
+
+--------------------------------------------------------------------------------
+[20] Lead Software Developer (DESYRE Co-Simulation / SysMLv2) @ Collins Aerospace (RTX)
+--------------------------------------------------------------------------------
+• Fit Score:      4/5
+• Location:       Bangalore (Yelahanka/Northgate)
+• Req ID:         01828086 | Seniority: Senior; 3+ years in C++, Simulink & MATLAB
+• Matched Skills: SysMLv2, MBSE, C++, Simulink, MATLAB, SystemC, FMI/TLM/HLA/ED247/DPC co-simulation standards, Models of Computation
+• Fit Rationale:  Design/develop/maintain DESYRE aerospace co-simulation framework; update DESYRE Model Builder for SysMLv2 integration; MBSE, digital engineering, model-based design environments.
+• Next Action:    Apply online; excellent SysMLv2/MBSE/digital-engineering fit; only 8 days left to apply as of 23-Sep-2026, END DATE Oct 2 2026
+• Apply URL:      https://globalhr.wd5.myworkdayjobs.com/REC_RTX_Ext_Gateway/job/IN-KA-BENGALURU-NORTHGATE--Sy-No-22-Venkatala-Village--SY-NO-22-VENKATALA-VILLAGE-Yelahanka-Hobli/Lead-Software-Developer_01828086
+
+--------------------------------------------------------------------------------
+[21] Manager – MBE & MBSE (Hybrid) @ Collins Aerospace (RTX)
+--------------------------------------------------------------------------------
+• Fit Score:      4/5
+• Location:       Bangalore (EPIP/Northgate)
+• Req ID:         RTX-MBE-MGR-2026 | Seniority: Manager
+• Matched Skills: MBSE, SysML, Cameo, IBM DOORS, V&V
+• Fit Rationale:  Title did not match target roles; Core skills matched (5: MBSE, SysML, Cameo, IBM DOORS, V&V, +2.5); Location 'Bangalore (EPIP/Northgate)' matches Bangalore (+1.0). Final fit score: 4/5.
+• Next Action:    Draft executive cover note highlighting Boeing India DTx leadership
+• Apply URL:      https://jobs.rtx.com/en/jobs/manager-mbe-mbse-bengaluru-india
+
+--------------------------------------------------------------------------------
+[22] Modelling & Simulation Engineer @ Airbus India
+--------------------------------------------------------------------------------
+• Fit Score:      4/5
+• Location:       Bangalore Area
+• Req ID:         JR10436295 | Seniority: 2-5 years experience
+• Matched Skills: CAMEO Systems Modeler, SysML/UML, ARP4754, FHA/SSA/PRA, TeamWork Cloud
+• Fit Rationale:  Near-duplicate of JR10437140 (same team, same Particular Risk Analysis digital-model scope) - likely a second parallel req for the same hiring need.
+• Next Action:    Apply online (note: near-duplicate of JR10437140 - likely same hiring manager/team, consider applying to one and mentioning the other req ID)
+• Apply URL:      https://ag.wd3.myworkdayjobs.com/en-US/Airbus/job/Bangalore-Area/Modelling-and-Simulation-Systems-Engineering_JR10437140-1
+
+--------------------------------------------------------------------------------
+[23] Modeling and Simulation Engineer @ Airbus India
+--------------------------------------------------------------------------------
+• Fit Score:      4/5
+• Location:       Bangalore Area
+• Req ID:         JR10433216 | Seniority: 3-8 years experience
+• Matched Skills: DO-178C/DO-331/DO-160, Simulink, MATLAB, Model Advisor, Code Inspector, Polyspace, MIL/SIL/HIL testing, AFDX/CAN/ARINC
+• Fit Rationale:  MBSE-adjacent role for avionics embedded software V&V; DO-178C/DO-331/DO-160, Simulink/MATLAB, MIL/SIL/HIL testing for A350/A380 propulsion control systems.
+• Next Action:    Apply online; more software-V&V/DO-178C leaning than pure MBSE, still a solid overlap with resume
+• Apply URL:      https://ag.wd3.myworkdayjobs.com/en-US/Airbus/job/Bangalore-Area/Modelling-and-Simulation-Systems-Engineering_JR10437140-1
+
+--------------------------------------------------------------------------------
+[24] Model-based System Engineer (MBSE) / Systems Engineer-Systems Lead @ Tata Elxsi
+--------------------------------------------------------------------------------
+• Fit Score:      3/5
+• Location:       Bangalore
+• Req ID:         Unknown | Seniority: Mid/Senior
+• Matched Skills: SysML, MBSE, Cameo/CSM, System Modeling Workbench
+• Fit Rationale:  Direct fit based on SysML, MBSE, Cameo/CSM, System Modeling Workbench for Tata Elxsi in Bangalore.
+• Next Action:    Automotive/embedded focus rather than aerospace, but direct MBSE tool-skill match - worth a look despite industry difference
+• Apply URL:      https://tataelxsi.com/careers
+
+--------------------------------------------------------------------------------
+[25] System Engineer - Mechanical (Lead) @ Safran Electronics & Defense
+--------------------------------------------------------------------------------
+• Fit Score:      3/5
+• Location:       Bangalore (Kundalahalli)
+• Req ID:         171184 | Seniority: Lead
+• Matched Skills: V-cycle systems development, mechanical
+• Fit Rationale:  Direct fit based on V-cycle systems development, mechanical for Safran Electronics & Defense in Bangalore (Kundalahalli).
+• Next Action:    Review fit vs EE/avionics background
+• Apply URL:      https://www.safran-group.com/es/ofertas/india/bangalore/system-engineer-mechanical-mf-171184
+
+--------------------------------------------------------------------------------
+[26] System Modeling Engineer @ GalaxEye Space
+--------------------------------------------------------------------------------
+• Fit Score:      3/5
+• Location:       Bengaluru
+• Req ID:         Not listed (Naukri aggregated listing) | Seniority: 13-18 years experience (posted requirement)
+• Matched Skills: Python, MATLAB/Simulink, Modelica, systems engineering (requirements/interfaces/margins/V&V), SysML/MBSE (nice-to-have)
+• Fit Rationale:  Design/build/maintain digital models of spacecraft subsystem behavior (power, thermal, ADCS, comms, propulsion) for trade studies, simulation, and requirements verification support.
+• Next Action:    Strong domain/skill overlap (spacecraft systems modeling, MATLAB/Simulink, requirements V&V) but posted seniority (13-18 yrs) is above her ~7-8 yrs - worth applying anyway given direct skill match, flag experience gap in cover note.
+• Apply URL:      https://www.naukri.com/job-listings-system-modeling-engineer-galaxeye-space-bengaluru-13-to-18-years-120526503384
+
+--------------------------------------------------------------------------------
+[27] Associate Manager - Systems Engineering @ Collins Aerospace (RTX)
+--------------------------------------------------------------------------------
+• Fit Score:      3/5
+• Location:       Bangalore
+• Req ID:         Unknown | Seniority: Manager
+• Matched Skills: DOORS, Polarion, JIRA, MBSE (plus)
+• Fit Rationale:  Direct fit based on DOORS, Polarion, JIRA, MBSE (plus) for Collins Aerospace (RTX) in Bangalore.
+• Next Action:    Verify on Collins Workday board
+• Apply URL:      https://builtin.com/job/associate-manager-system-engineering/6970569
+
+--------------------------------------------------------------------------------
+[28] Customer Support Service Engineering Manager @ Boeing India
+--------------------------------------------------------------------------------
+• Fit Score:      3/5
+• Location:       Bengaluru, Karnataka
+• Req ID:         JR2026503261 | Seniority: 15+ yrs, 1+ yr leadership
+• Matched Skills: Avionics/Mechanical/Propulsion Troubleshooting, FAA/EASA Regulations, Leadership, Cross-functional Coordination
+• Fit Rationale:  Lead teams working on Avionics/Mechanical/Propulsion Systems troubleshooting and Aero-Structural Repairs. Manage engineers resolving systemic fleet issues, oversee technical approaches, and develop customer/stakeholder relationships.
+• Next Action:    Note: closes 24-Sep-2026, apply urgently if interested; management-track, verify fit vs IC/technical preference
+• Apply URL:      https://jobs.boeing.com/job/bengaluru/customer-support-service-engineering-manager/185/93463696496
+
+--------------------------------------------------------------------------------
+[29] Experienced ATE Electrical Design Engineer @ Boeing India
+--------------------------------------------------------------------------------
+• Fit Score:      3/5
+• Location:       Bengaluru, Karnataka
+• Req ID:         JR2026516824 | Seniority: 8+ yrs
+• Matched Skills: ATE/STE Design, Zuken, Mentor Graphics Capital, Harness Design, DO-160, MIL-STD-810/461, RS422/ARINC
+• Fit Rationale:  Design Special/Automatic Test Equipment (STE/ATE) for circuit card, LRU, and system-level testing. Electrical wiring/harness design, Zuken/Mentor Graphics, ARINC/RS422/TCP-IP interfaces, DO-160/MIL-STD-810/461 qualification testing.
+• Next Action:    Search req ID JR2026516824 on jobs.boeing.com public applicant portal directly (link here is subsidiary-employee Workday instance); closes 26-Sep-2026
+• Apply URL:      https://boeing.wd1.myworkdayjobs.com/external_subsidiary/job/IND---Bangalore-India/Experienced-ATE-Electrical-Design-Engineer_JR2026516824
+
+--------------------------------------------------------------------------------
+[30] Avionics Lead Engineer @ Airbus India
+--------------------------------------------------------------------------------
+• Fit Score:      3/5
+• Location:       Bangalore
+• Req ID:         JR10295146 | Seniority: Lead
+• Matched Skills: System architecture compliance, detailed design verification
+• Fit Rationale:  Direct fit based on System architecture compliance, detailed design verification for Airbus India in Bangalore.
+• Next Action:    Read full JD before deciding - title says Lead but Job Family says Software Engineering
+• Apply URL:      https://ag.wd3.myworkdayjobs.com/en-US/Airbus/job/Bangalore-Area/Avionics-Lead-Engineer_JR10295146
+
+--------------------------------------------------------------------------------
+[31] Software Engineer - CAMEO Plugin & MBSE Tool Developer @ Airbus India
+--------------------------------------------------------------------------------
+• Fit Score:      3/5
+• Location:       Bangalore Area
+• Req ID:         JR10401605 | Seniority: 3-6 years IT experience (5+ yrs hands-on programming, 2-3 yrs Cameo/Java plugin dev)
+• Matched Skills: Cameo Systems Modeler internals, Java, SysML/UML, DevOps (Docker/Git/Jenkins), Agile/SAFe/Kanban
+• Fit Rationale:  Java plugin development for Cameo Systems Modeler; MBSE tool deployment, DevOps, configuration/change management for the MBSE toolchain.
+• Next Action:    MODERATE FIT ONLY - this is a software/Java developer role for the MBSE toolchain itself, not a systems engineering role. Mansi's background is systems engineering, not software dev; likely not a strong match despite Cameo keyword overlap.
+• Apply URL:      https://ag.wd3.myworkdayjobs.com/en-US/Airbus/job/Software-Engineer---CAMEO-Plugin---MBSE-Tool-Developer_JR10401605-1
+
+--------------------------------------------------------------------------------
+[32] Systems V&V Engineer - Surveillance @ Acron Aviation
+--------------------------------------------------------------------------------
+• Fit Score:      3/5
+• Location:       Bengaluru
+• Req ID:         Lever ID f0c5f86c-bad6-4a4f-af1c-8f9df33f5d93 | Seniority: 3-5 yrs
+• Matched Skills: Systems V&V, TCAS, ADS-B, Transponders, ARP4754A, DO-178, Requirements Traceability
+• Fit Rationale:  Hands-on systems verification & validation for safety-critical avionics surveillance systems (TCAS, Mode S Transponders, ADS-B). Test planning, procedure development, execution, requirements traceability, ARP4754A documentation.
+• Next Action:    Note: posted seniority (3-5 yrs) is below Mansi's level - worth inquiring if a senior/lead V&V opening exists at Acron's Bengaluru site (they have multiple Bengaluru roles: Senior Systems Design Engineer, Lead Electrical Engineer, Avionics Reliability Engineer - check jobs.lever.co/acronaviation directly)
+• Apply URL:      https://jobs.lever.co/acronaviation/f0c5f86c-bad6-4a4f-af1c-8f9df33f5d93
+
+================================================================================
+Delivered via Mansi Job Hunt Engine | Recipient: agrawal.mansi20@gmail.com
+================================================================================
