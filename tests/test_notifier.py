@@ -4,6 +4,7 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 from scripts.notifier import (
+    _safe_float,
     archive_digest,
     dispatch_email,
     filter_unnotified_roles,
@@ -50,6 +51,26 @@ def test_filter_unnotified_roles_edge_cases():
     assert len(filter_unnotified_roles([{"id": "A", "fit_score": 4}], ["A"])) == 0
 
 
+def test_filter_unnotified_roles_company_none_and_malformed_scores():
+    openings = [
+        {"id": "ROLE-NONE-COMP", "fit_score": 4, "company": None},
+        {"id": "ROLE-VALID", "fit_score": 5, "company": "Airbus"},
+    ]
+    # Sorting should not raise TypeError when company is None
+    filtered = filter_unnotified_roles(openings, set(), min_fit_score=3)
+    assert len(filtered) == 2
+    assert filtered[0]["id"] == "ROLE-VALID"
+    assert filtered[1]["id"] == "ROLE-NONE-COMP"
+
+
+def test_safe_float_helper():
+    assert _safe_float(5) == 5.0
+    assert _safe_float("4.5") == 4.5
+    assert _safe_float(None, 1.0) == 1.0
+    assert _safe_float("bad", 0.0) == 0.0
+    assert _safe_float([], 2.0) == 2.0
+
+
 def test_generate_digest_content():
     roles = [{
         "id": "RTX-01868963",
@@ -72,6 +93,41 @@ def test_generate_digest_content():
     assert "Cameo" in html
     assert "Draft tailored resume" in text
     assert "https://example.com/rtx" in html
+
+
+def test_generate_digest_html_escaping():
+    roles = [{
+        "id": "XSS-1",
+        "company": "Boeing <Test> & Co",
+        "title": 'Lead Engineer "Special" <script>alert(1)</script>',
+        "location": "Bangalore <HQ>",
+        "fit_score": 5,
+        "skills_matched": ['SysML & "Cameo"', "<script>"],
+        "apply_url": "https://example.com/apply?a=1&b=2",
+        "next_action": "Draft <resume> & review",
+        "fit_rationale": "High score for <skills> & 'background'",
+    }]
+    text, html_out = generate_digest(roles, candidate_name="Mansi <Engineer>")
+    
+    # Must NOT contain raw unescaped script tags or HTML brackets
+    assert "<script>alert(1)</script>" not in html_out
+    assert "&lt;script&gt;alert(1)&lt;/script&gt;" in html_out
+    assert "Boeing &lt;Test&gt; &amp; Co" in html_out
+    assert "Mansi &lt;Engineer&gt;" in html_out
+    assert "&amp;quot;Cameo&amp;quot;" in html_out or "&quot;Cameo&quot;" in html_out
+    assert "https://example.com/apply?a=1&amp;b=2" in html_out
+
+
+def test_generate_digest_range_buckets():
+    roles = [
+        {"id": "R5", "fit_score": 5.0},
+        {"id": "R4", "fit_score": 4.5},
+        {"id": "R3", "fit_score": 3.5},
+    ]
+    text, html_out = generate_digest(roles, candidate_name="Mansi")
+    assert "1 direct fits (5/5)" in text
+    assert "1 strong fits (4/5)" in text
+    assert "1 moderate fits (3/5)" in text
 
 
 def test_generate_digest_empty():
@@ -151,8 +207,9 @@ def test_dispatch_email_send_success(tmp_path):
         assert "--to" in call_args
         assert "agrawal.mansi20@gmail.com" in call_args
         assert "--subject" in call_args
-        assert "--html-file" in call_args
         assert "--body-file" in call_args
+        assert "--html" in call_args
+        assert "--html-file" not in call_args
 
         # Verify environment has AGY_ACCOUNT
         env = mock_run.call_args[1].get("env", {})
@@ -250,4 +307,3 @@ def test_cli_dry_run_pipeline():
     ], capture_output=True, text=True)
     assert result.returncode == 0
     assert "Digest Preview" in result.stdout or "No new roles" in result.stdout
-

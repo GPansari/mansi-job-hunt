@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import argparse
 from datetime import datetime
+import html
 import json
 import logging
 import os
@@ -28,6 +29,16 @@ DEFAULT_HISTORY_PATH = Path("reports/sent_history.json")
 DEFAULT_REPORTS_DIR = Path("reports")
 DEFAULT_CANDIDATE_NAME = "Mansi"
 DEFAULT_MIN_FIT_SCORE = 3.0
+
+
+def _safe_float(val: Any, default: float = 0.0) -> float:
+    """Safely convert value to float, returning default on failure."""
+    if val is None:
+        return default
+    try:
+        return float(val)
+    except (ValueError, TypeError):
+        return default
 
 
 def load_sent_history(history_file: str | Path = DEFAULT_HISTORY_PATH) -> set[str]:
@@ -93,8 +104,11 @@ def filter_unnotified_roles(
         if score >= min_fit_score:
             unnotified.append(role)
 
-    # Sort descending by fit score, then by company name
-    unnotified.sort(key=lambda r: (float(r.get("fit_score", 0)), r.get("company", "")), reverse=True)
+    # Sort descending by fit score, then by company name (safely guarding None)
+    unnotified.sort(
+        key=lambda r: (_safe_float(r.get("fit_score"), 0.0), str(r.get("company") or "")),
+        reverse=True,
+    )
     return unnotified
 
 
@@ -113,9 +127,9 @@ def generate_digest(
         date_str = datetime.now().strftime("%Y-%m-%d")
 
     total_count = len(openings)
-    fit_5_count = sum(1 for r in openings if float(r.get("fit_score", 0)) >= 5)
-    fit_4_count = sum(1 for r in openings if float(r.get("fit_score", 0)) == 4)
-    fit_3_count = sum(1 for r in openings if float(r.get("fit_score", 0)) == 3)
+    fit_5_count = sum(1 for r in openings if _safe_float(r.get("fit_score")) >= 5.0)
+    fit_4_count = sum(1 for r in openings if 4.0 <= _safe_float(r.get("fit_score")) < 5.0)
+    fit_3_count = sum(1 for r in openings if 3.0 <= _safe_float(r.get("fit_score")) < 4.0)
 
     # 1. Plain Text Digest
     text_lines = [
@@ -130,7 +144,9 @@ def generate_digest(
         text_lines.append("No new matching roles found for this cycle.")
         text_lines.append("All discovered roles are either already notified or below the fit threshold.")
     else:
-        text_lines.append(f"Summary: {fit_5_count} direct fits (5/5), {fit_4_count} strong fits (4/5), {fit_3_count} moderate fits (3/5).")
+        text_lines.append(
+            f"Summary: {fit_5_count} direct fits (5/5), {fit_4_count} strong fits (4/5), {fit_3_count} moderate fits (3/5)."
+        )
         text_lines.append("")
 
         for idx, role in enumerate(openings, 1):
@@ -180,16 +196,17 @@ def generate_digest(
         """)
     else:
         for idx, role in enumerate(openings, 1):
-            title = role.get("title", "Unknown Title")
-            company = role.get("company", "Unknown Company")
-            location = role.get("location", "Bangalore")
-            fit_val = float(role.get("fit_score", 0))
-            req_id = role.get("req_id", "N/A")
-            seniority = role.get("seniority", "")
-            skills = role.get("skills_matched", [])
-            apply_url = role.get("apply_url", "#")
-            next_action = role.get("next_action", "Draft tailored resume")
-            rationale = role.get("fit_rationale", "")
+            raw_title = role.get("title") or "Unknown Title"
+            raw_company = role.get("company") or "Unknown Company"
+            raw_location = role.get("location") or "Bangalore"
+            raw_req_id = role.get("req_id") or "N/A"
+            raw_seniority = role.get("seniority") or ""
+            raw_skills = role.get("skills_matched") or []
+            raw_apply_url = role.get("apply_url") or "#"
+            raw_next_action = role.get("next_action") or "Draft tailored resume"
+            raw_rationale = role.get("fit_rationale") or ""
+
+            fit_val = _safe_float(role.get("fit_score"), 0.0)
 
             # Badge styling based on fit score
             if fit_val >= 5:
@@ -208,10 +225,21 @@ def generate_digest(
                 badge_border = "#fde68a"
                 badge_text = f"Fit {fit_val:g}/5 ★ Moderate Fit"
 
+            # HTML-escape all dynamic strings to prevent injection
+            title = html.escape(str(raw_title), quote=True)
+            company = html.escape(str(raw_company), quote=True)
+            location = html.escape(str(raw_location), quote=True)
+            req_id = html.escape(str(raw_req_id), quote=True)
+            seniority = html.escape(str(raw_seniority), quote=True)
+            apply_url = html.escape(str(raw_apply_url), quote=True)
+            next_action = html.escape(str(raw_next_action), quote=True)
+            rationale = html.escape(str(raw_rationale), quote=True)
+            badge_text_esc = html.escape(badge_text, quote=True)
+
             # Skill pill tags
             skill_pills = "".join(
-                f'<span style="display:inline-block; background-color:#f1f5f9; color:#334155; border:1px solid #e2e8f0; border-radius:12px; padding:2px 8px; margin:2px 4px 2px 0; font-size:12px; font-weight:500;">{s}</span>'
-                for s in skills
+                f'<span style="display:inline-block; background-color:#f1f5f9; color:#334155; border:1px solid #e2e8f0; border-radius:12px; padding:2px 8px; margin:2px 4px 2px 0; font-size:12px; font-weight:500;">{html.escape(str(s), quote=True)}</span>'
+                for s in raw_skills
             ) or '<span style="color:#94a3b8; font-size:12px;">None specified</span>'
 
             card = f"""
@@ -223,7 +251,7 @@ def generate_digest(
                 </div>
                 <div style="margin-bottom: 12px;">
                     <span style="display: inline-block; background-color: {badge_bg}; color: {badge_color}; border: 1px solid {badge_border}; font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 12px;">
-                        {badge_text}
+                        {badge_text_esc}
                     </span>
                     <span style="color: #64748b; font-size: 13px; margin-left: 8px;">
                         Req ID: <strong>{req_id}</strong>
@@ -251,12 +279,15 @@ def generate_digest(
 
     cards_joined = "\n".join(cards_html)
 
+    candidate_esc = html.escape(str(candidate_name), quote=True)
+    date_esc = html.escape(str(date_str), quote=True)
+
     html_body = f"""<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Weekly Job Hunt Digest | {candidate_name} Agrawal</title>
+    <title>Weekly Job Hunt Digest | {candidate_esc} Agrawal</title>
     <style>
         body {{
             margin: 0;
@@ -284,7 +315,7 @@ def generate_digest(
                 Executive Job Hunt Digest
             </h1>
             <p style="margin: 0; font-size: 15px; color: #cbd5e1;">
-                Curated for <strong>{candidate_name} Agrawal</strong> &bull; {date_str}
+                Curated for <strong>{candidate_esc} Agrawal</strong> &bull; {date_esc}
             </p>
         </div>
 
@@ -370,12 +401,9 @@ def dispatch_email(
     # 1. Archive digest copy
     archive_digest(html_body, digest_dir=digest_dir, date_str=date_str)
 
-    # 2. Write temp files for CLI consumption
-    txt_fd, txt_path = tempfile.mkstemp(suffix=".txt", prefix="digest_body_")
+    # 2. Write temp HTML body file for CLI consumption
     html_fd, html_path = tempfile.mkstemp(suffix=".html", prefix="digest_body_")
     try:
-        with open(txt_fd, "w", encoding="utf-8") as f:
-            f.write(text_body)
         with open(html_fd, "w", encoding="utf-8") as f:
             f.write(html_body)
 
@@ -387,10 +415,9 @@ def dispatch_email(
             recipient,
             "--subject",
             subject,
-            "--html-file",
-            html_path,
             "--body-file",
-            txt_path,
+            html_path,
+            "--html",
         ]
 
         env = os.environ.copy()
@@ -418,11 +445,10 @@ def dispatch_email(
         logger.error("Unexpected error during email dispatch: %s", e)
         return False
     finally:
-        for p in (txt_path, html_path):
-            try:
-                os.remove(p)
-            except OSError:
-                pass
+        try:
+            os.remove(html_path)
+        except OSError:
+            pass
 
 
 def main() -> int:
