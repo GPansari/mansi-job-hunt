@@ -396,3 +396,68 @@ def test_cli_help():
     assert "--queries" in res.stdout
     assert "--scan-ats" in res.stdout
     assert "--ingest-new" in res.stdout
+
+
+def test_ingest_openings_aborts_on_corrupted_file(tmp_path):
+    json_path = tmp_path / "corrupt_openings.json"
+    md_path = tmp_path / "Openings_Tracker.md"
+    corrupt_content = "{ invalid json content: true "
+    json_path.write_text(corrupt_content)
+
+    new_discovered = [
+        {
+            "id": "NEW-ROLE-1",
+            "company": "Target Aerospace",
+            "title": "MBSE Lead Engineer",
+            "fit_score": 5,
+            "passed_gate": True,
+            "apply_url": "https://example.com/1",
+        }
+    ]
+
+    with pytest.raises(RuntimeError) as exc_info:
+        ingest_openings(new_discovered, json_path=json_path, md_path=md_path)
+
+    assert "Corrupted or unreadable" in str(exc_info.value)
+    # Crucial: verify corrupt file was NOT overwritten or destroyed
+    assert json_path.read_text() == corrupt_content
+
+
+def test_punctuation_only_req_id_uses_hash_prefix(requests_mock):
+    company = {
+        "name": "Airbus India",
+        "ats_type": "workday",
+        "careers_url": "https://ag.wd3.myworkdayjobs.com/Airbus",
+    }
+    mock_response = {
+        "total": 1,
+        "jobPostings": [
+            {
+                "title": "MBSE Specialist",
+                "externalPath": "/job/test",
+                "bulletFields": ["---", "Bangalore, India"],
+            }
+        ],
+    }
+    requests_mock.post(
+        "https://ag.wd3.myworkdayjobs.com/wday/cxs/Airbus/Airbus/jobs",
+        json=mock_response,
+    )
+    openings = query_public_ats_feed(company, timeout=5)
+    assert len(openings) == 1
+    # ID should not be empty suffix like AIRBUS-
+    assert openings[0]["id"] != "AIRBUS-"
+    assert openings[0]["id"] != "AIRBUS---"
+    assert len(openings[0]["id"]) > len("AIRBUS-")
+
+
+def test_generate_dorking_queries_custom_domains():
+    candidate = {
+        "core_skills": ["MBSE"],
+        "target_locations": ["Bangalore"],
+        "target_domains": ["Hypersonics", "Autonomous Flight"],
+    }
+    queries = generate_tier1_dorking_queries(candidate)
+    assert any("hypersonics" in q.lower() for q in queries)
+    assert any("autonomous flight" in q.lower() for q in queries)
+

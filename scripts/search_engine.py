@@ -184,9 +184,11 @@ def generate_tier1_dorking_queries(candidate: Optional[dict] = None) -> list[str
     queries.append(f'site:jobs.ashbyhq.com ("MBSE" OR "SysML" OR "Systems Engineer") {loc_group}')
 
     # 9. Aggregator / Aerospace Domain Boards
+    candidate_domains = [d.lower() for d in domains]
+    combined_domains = list(dict.fromkeys(["aerospace", "avionics"] + candidate_domains))
     domain_terms = " OR ".join(
         f'"{d}"' if " " in d else d
-        for d in ["aerospace", "avionics", "commercial aircraft", "UAV", "eVTOL", "spacetech"]
+        for d in combined_domains
     )
     queries.append(
         f'({domain_terms}) ("MBSE" OR "SysML") {loc_group} (intitle:careers OR intitle:jobs)'
@@ -262,7 +264,6 @@ def _query_workday(company: dict, timeout: int = 10) -> list[dict]:
 
     postings = data.get("jobPostings", [])
     jobs: list[dict] = []
-    parsed_base = urlparse(careers_url)
 
     for p in postings:
         title = p.get("title", "").strip()
@@ -552,8 +553,8 @@ def query_public_ats_feed(
         req_id = raw.get("req_id", "")
 
         # Compute consistent ID
-        if req_id:
-            clean_req = re.sub(r"[^A-Za-z0-9_-]+", "", req_id)
+        clean_req = re.sub(r"[^A-Za-z0-9_-]+", "", req_id) if req_id else ""
+        if clean_req:
             job_id = f"{company_prefix}-{clean_req}"
         else:
             hashed = hashlib.md5(f"{company_name}_{title}".encode("utf-8")).hexdigest()[:8]
@@ -657,17 +658,20 @@ def ingest_openings(
     Returns:
         List of newly added opening dicts.
     """
-    json_file = Path(json_path)
-    md_file = Path(md_path)
+    json_file = _resolve_path(json_path)
+    md_file = _resolve_path(md_path) if md_path else None
 
     existing_openings: list[dict] = []
     if json_file.exists():
         try:
             with open(json_file, "r", encoding="utf-8") as f:
-                existing_openings = json.load(f)
+                loaded = json.load(f)
+                if not isinstance(loaded, list):
+                    raise ValueError(f"Expected list of openings in {json_file}, got {type(loaded).__name__}")
+                existing_openings = loaded
         except Exception as exc:
             logger.error("Failed to load existing openings from %s: %s", json_file, exc)
-            existing_openings = []
+            raise RuntimeError(f"Corrupted or unreadable openings file at {json_file}: {exc}") from exc
 
     existing_ids: Set[str] = {
         str(op.get("id")) for op in existing_openings if op.get("id")
