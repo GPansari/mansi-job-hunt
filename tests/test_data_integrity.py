@@ -38,7 +38,7 @@ def test_openings_schema():
     data = json.loads(openings_file.read_text())
     assert len(data) >= 20, f"Expected at least 20 active openings, found {len(data)}"
     
-    valid_statuses = {"Not Applied", "Applied", "Screening", "Interview", "Offer", "Rejected", "Watching", "Needs Review"}
+    valid_statuses = {"Not Applied", "Applied", "Screening", "Interview", "Offer", "Rejected", "Watching", "Needs Review", "Inactive Posting"}
     seen_ids = set()
     for op in data:
         assert "id" in op and op["id"], "Opening ID must not be empty"
