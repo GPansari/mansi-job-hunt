@@ -318,8 +318,18 @@
       background: var(--bg-surface);
       border: 1px solid var(--border-subtle);
       border-radius: 10px;
-      overflow: hidden;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
       box-shadow: var(--shadow-sm);
+    }
+    .table-scroll-hint {
+      display: none;
+      font-size: 11px;
+      color: var(--text-muted);
+      padding: 6px 12px;
+      background: #f1f5f9;
+      border-bottom: 1px solid var(--border-subtle);
+      text-align: right;
     }
     table.jobs-table {
       width: 100%;
@@ -549,10 +559,77 @@
 
     /* Responsive adjustments */
     @media (max-width: 900px) {
-      .toolbar-container { flex-direction: column; align-items: stretch; }
-      .toolbar-left { flex-direction: column; align-items: stretch; }
-      .search-box { max-width: 100%; }
-      table.jobs-table th:nth-child(4), table.jobs-table td:nth-child(4) { display: none; }
+      header {
+        padding: 12px 16px;
+      }
+      main {
+        padding: 0 14px;
+        margin-top: 14px;
+      }
+      .brand-title h1 {
+        font-size: 16px;
+      }
+      .brand-title p {
+        font-size: 12px;
+      }
+      .kpi-row {
+        gap: 10px;
+        padding: 10px 14px;
+      }
+      .kpi-sep {
+        display: none;
+      }
+      .kpi-item {
+        flex: 1 1 40%;
+      }
+      /* On mobile screens, keep header natural scroll and let the toolbar stick to the top: 0 */
+      header {
+        position: relative;
+        top: auto;
+      }
+      .toolbar-container {
+        position: sticky;
+        top: 0;
+        z-index: 60;
+        padding: 10px 12px;
+        gap: 8px;
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .toolbar-left {
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 6px;
+        min-width: 0;
+      }
+      .search-box {
+        flex: 1 1 100%;
+        max-width: 100%;
+      }
+      .select-filter {
+        flex: 1 1 calc(50% - 4px);
+        min-width: 130px;
+        font-size: 12px;
+        padding: 6px 8px;
+      }
+      .active-toggle {
+        flex: 1 1 100%;
+        justify-content: center;
+        padding: 7px;
+        font-size: 12px;
+      }
+      .view-switcher {
+        align-self: flex-end;
+      }
+      .table-scroll-hint {
+        display: block;
+      }
+      table.jobs-table th, table.jobs-table td {
+        padding: 10px 12px;
+      }
+      table.jobs-table th:nth-child(4), table.jobs-table td:nth-child(4) {
+        display: none;
+      }
     }
   </style>
 </head>
@@ -685,6 +762,7 @@
 
     <!-- 1. Table View (Default) -->
     <div id="tableView" class="table-container">
+      <div class="table-scroll-hint">&larr; Swipe sideways to view all columns &rarr;</div>
       <table class="jobs-table">
         <thead>
           <tr>
