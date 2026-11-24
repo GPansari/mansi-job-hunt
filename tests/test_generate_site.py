@@ -48,6 +48,8 @@ def test_build_site_success(tmp_path: Path):
     assert "Mansi Agrawal" in content
     assert "TEST-01" in content
     assert "https://ag.wd3.myworkdayjobs.com/test" in content
-    assert "Direct Matches (5★)" in content
-    assert "Candidate Profile" in content
+    assert "5★ Direct Fits" in content
+    assert "Candidate Reference" in content
     assert "searchInput" in content
+    assert "categoryFilter" in content
+    assert "viewBtnTable" in content

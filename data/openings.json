@@ -20,9 +20,10 @@
     "date_discovered": "2026-09-22",
     "last_updated": "2026-11-24",
     "next_action": "Draft tailored resume + cover note",
-    "link_status": "warning",
+    "link_status": "rate_limited",
     "link_http_code": 429,
-    "link_last_checked": "2026-11-24"
+    "link_last_checked": "2026-11-24",
+    "company_category": "Enterprise / OEM"
   },
   {
     "id": "AIRBUS-JR10370625",
@@ -44,9 +45,10 @@
     "date_discovered": "2026-09-22",
     "last_updated": "2026-11-24",
     "next_action": "Draft tailored resume + cover note",
-    "link_status": "warning",
+    "link_status": "rate_limited",
     "link_http_code": 429,
-    "link_last_checked": "2026-11-24"
+    "link_last_checked": "2026-11-24",
+    "company_category": "Enterprise / OEM"
   },
   {
     "id": "AIRBUS-JR10295146",
@@ -68,9 +70,10 @@
     "date_discovered": "2026-09-22",
     "last_updated": "2026-11-24",
     "next_action": "Read full JD before deciding - title says Lead but Job Family says Software Engineering",
-    "link_status": "warning",
+    "link_status": "rate_limited",
     "link_http_code": 429,
-    "link_last_checked": "2026-11-24"
+    "link_last_checked": "2026-11-24",
+    "company_category": "Enterprise / OEM"
   },
   {
     "id": "RTX-01868963",
@@ -95,9 +98,10 @@
     "date_discovered": "2026-09-22",
     "last_updated": "2026-11-24",
     "next_action": "Draft tailored resume + cover note - top priority",
-    "link_status": "active",
-    "link_http_code": 200,
-    "link_last_checked": "2026-11-24"
+    "link_status": "rate_limited",
+    "link_http_code": 429,
+    "link_last_checked": "2026-11-24",
+    "company_category": "Enterprise / OEM"
   },
   {
     "id": "RTX-CYBER-PHYSICAL",
@@ -123,7 +127,8 @@
     "next_action": "Search Collins Workday board for current live req of same title",
     "link_status": "active",
     "link_http_code": 200,
-    "link_last_checked": "2026-11-24"
+    "link_last_checked": "2026-11-24",
+    "company_category": "Enterprise / OEM"
   },
   {
     "id": "RTX-ASSOC-MGR-SE",
@@ -149,7 +154,8 @@
     "next_action": "Verify on Collins Workday board",
     "link_status": "active",
     "link_http_code": 200,
-    "link_last_checked": "2026-11-24"
+    "link_last_checked": "2026-11-24",
+    "company_category": "Enterprise / OEM"
   },
   {
     "id": "SAFRAN-171184",
@@ -171,9 +177,10 @@
     "date_discovered": "2026-09-22",
     "last_updated": "2026-11-24",
     "next_action": "Review fit vs EE/avionics background",
-    "link_status": "restricted",
-    "link_http_code": 403,
-    "link_last_checked": "2026-11-24"
+    "link_status": "dead",
+    "link_http_code": 410,
+    "link_last_checked": "2026-11-24",
+    "company_category": "Enterprise / OEM"
   },
   {
     "id": "SAFRAN-MULTIPLE-OPEN",
@@ -194,7 +201,8 @@
     "next_action": "Filter board by Bangalore + Architecture and systems engineering",
     "link_status": "restricted",
     "link_http_code": 403,
-    "link_last_checked": "2026-11-24"
+    "link_last_checked": "2026-11-24",
+    "company_category": "Enterprise / OEM"
   },
   {
     "id": "GE-JFWTC-ALERT",
@@ -215,7 +223,8 @@
     "next_action": "Set job alert for Systems Engineer + MBSE at JFWTC",
     "link_status": "active",
     "link_http_code": 200,
-    "link_last_checked": "2026-11-24"
+    "link_last_checked": "2026-11-24",
+    "company_category": "Enterprise / OEM"
   },
   {
     "id": "GKN-SYSTEMS-ALERT",
@@ -236,7 +245,8 @@
     "next_action": "Set job alert - posted MBSE/Arcadia role May 2025 (now filled)",
     "link_status": "active",
     "link_http_code": 200,
-    "link_last_checked": "2026-11-24"
+    "link_last_checked": "2026-11-24",
+    "company_category": "Enterprise / OEM"
   },
   {
     "id": "QUEST-MBSE-LEAD",
@@ -263,7 +273,8 @@
     "next_action": "Verify on Quest Global's own careers portal - excellent direct match (leading MBSE adoption across aerospace projects)",
     "link_status": "active",
     "link_http_code": 200,
-    "link_last_checked": "2026-11-24"
+    "link_last_checked": "2026-11-24",
+    "company_category": "Enterprise / OEM"
   },
   {
     "id": "TATA-ELXSI-MBSE",
@@ -289,7 +300,8 @@
     "next_action": "Automotive/embedded focus rather than aerospace, but direct MBSE tool-skill match - worth a look despite industry difference",
     "link_status": "active",
     "link_http_code": 200,
-    "link_last_checked": "2026-11-24"
+    "link_last_checked": "2026-11-24",
+    "company_category": "Enterprise / OEM"
   },
   {
     "id": "AIRBUS-6a962f9eae18affb",
@@ -317,7 +329,8 @@
     "next_action": "Apply online; leverage avionics protocol expertise and systems engineering lifecycle experience",
     "link_status": "active",
     "link_http_code": 200,
-    "link_last_checked": "2026-11-24"
+    "link_last_checked": "2026-11-24",
+    "company_category": "Enterprise / OEM"
   },
   {
     "id": "SARLA-65290900",
@@ -343,9 +356,10 @@
     "date_discovered": "2026-09-23",
     "last_updated": "2026-11-24",
     "next_action": "Apply via Accel job board; emphasize systems-level loads/structures integration experience",
-    "link_status": "active",
-    "link_http_code": 200,
-    "link_last_checked": "2026-11-24"
+    "link_status": "error",
+    "link_http_code": null,
+    "link_last_checked": "2026-11-24",
+    "company_category": "Startup / Emerging"
   },
   {
     "id": "SAFRAN-2025-157864",
@@ -372,7 +386,8 @@
     "next_action": "Apply directly; also review 3 other live Safran Bengaluru openings on same page (Harness Integration & DMU Validation Engineer, System Engineer - Electronics - Actuation Systems, System Architect - Mechanical)",
     "link_status": "restricted",
     "link_http_code": 403,
-    "link_last_checked": "2026-11-24"
+    "link_last_checked": "2026-11-24",
+    "company_category": "Enterprise / OEM"
   },
   {
     "id": "AIRBUS-JR10407218",
@@ -400,9 +415,10 @@
     "date_discovered": "2026-09-23",
     "last_updated": "2026-11-24",
     "next_action": "Apply immediately - excellent match for MBSE/Cameo/SysML background; tailor resume to highlight modeling standards & governance experience",
-    "link_status": "warning",
+    "link_status": "rate_limited",
     "link_http_code": 429,
-    "link_last_checked": "2026-11-24"
+    "link_last_checked": "2026-11-24",
+    "company_category": "Enterprise / OEM"
   },
   {
     "id": "BOEING-JR2026503261",
@@ -428,7 +444,8 @@
     "next_action": "Note: closes 24-Sep-2026, apply urgently if interested; management-track, verify fit vs IC/technical preference",
     "link_status": "dead",
     "link_http_code": 404,
-    "link_last_checked": "2026-11-24"
+    "link_last_checked": "2026-11-24",
+    "company_category": "Enterprise / OEM"
   },
   {
     "id": "BOEING-JR2026516824",
@@ -455,9 +472,10 @@
     "date_discovered": "2026-09-23",
     "last_updated": "2026-11-24",
     "next_action": "Search req ID JR2026516824 on jobs.boeing.com public applicant portal directly (link here is subsidiary-employee Workday instance); closes 26-Sep-2026",
-    "link_status": "warning",
+    "link_status": "rate_limited",
     "link_http_code": 429,
-    "link_last_checked": "2026-11-24"
+    "link_last_checked": "2026-11-24",
+    "company_category": "Enterprise / OEM"
   },
   {
     "id": "IDEAFORGE-55a79f52",
@@ -485,7 +503,8 @@
     "next_action": "Apply; strong overlap with UAV/avionics integration track, emphasize certification exposure",
     "link_status": "dead",
     "link_http_code": 410,
-    "link_last_checked": "2026-11-24"
+    "link_last_checked": "2026-11-24",
+    "company_category": "Startup / Emerging"
   },
   {
     "id": "SARLA-4406539395",
@@ -515,7 +534,8 @@
     "next_action": "Apply - strong match on ARINC/ARP4754/DO-178C/Simulink skillset from resume",
     "link_status": "active",
     "link_http_code": 200,
-    "link_last_checked": "2026-11-24"
+    "link_last_checked": "2026-11-24",
+    "company_category": "Startup / Emerging"
   },
   {
     "id": "THALES-R0297449",
@@ -541,7 +561,8 @@
     "next_action": "Apply; NEW target company not in original list - Thales Bengaluru has multiple other live systems/avionics openings worth monitoring (Hardware System IVV Lead Engineer, Digital Electronics Design Engineer - Avionics, System Solution Engineer)",
     "link_status": "dead",
     "link_http_code": 410,
-    "link_last_checked": "2026-11-24"
+    "link_last_checked": "2026-11-24",
+    "company_category": "Enterprise / OEM"
   },
   {
     "id": "REORBIT-5685519",
@@ -568,7 +589,8 @@
     "next_action": "Apply - space/satellite systems architecture role, strong systems-engineering fit; confirm relocation/hybrid terms for Bengaluru vs Helsinki",
     "link_status": "dead",
     "link_http_code": 410,
-    "link_last_checked": "2026-11-24"
+    "link_last_checked": "2026-11-24",
+    "company_category": "Startup / Emerging"
   },
   {
     "id": "THALES-R0323804",
@@ -592,7 +614,8 @@
     "next_action": "Lower priority - hardware design role, not systems/MBSE; review only if broadening search to hardware track",
     "link_status": "active",
     "link_http_code": 200,
-    "link_last_checked": "2026-11-24"
+    "link_last_checked": "2026-11-24",
+    "company_category": "Enterprise / OEM"
   },
   {
     "id": "ACRON-f0c5f86c",
@@ -621,7 +644,8 @@
     "next_action": "Note: posted seniority (3-5 yrs) is below Mansi's level - worth inquiring if a senior/lead V&V opening exists at Acron's Bengaluru site (they have multiple Bengaluru roles: Senior Systems Design Engineer, Lead Electrical Engineer, Avionics Reliability Engineer - check jobs.lever.co/acronaviation directly)",
     "link_status": "active",
     "link_http_code": 200,
-    "link_last_checked": "2026-11-24"
+    "link_last_checked": "2026-11-24",
+    "company_category": "Startup / Emerging"
   },
   {
     "id": "AIRBUS-JR10441133",
@@ -647,9 +671,10 @@
     "date_discovered": "2026-09-23",
     "last_updated": "2026-11-24",
     "next_action": "Apply online; strong CAMEO/SysML/MBSE match, applications open until Dec 1, 2027",
-    "link_status": "warning",
+    "link_status": "rate_limited",
     "link_http_code": 429,
-    "link_last_checked": "2026-11-24"
+    "link_last_checked": "2026-11-24",
+    "company_category": "Enterprise / OEM"
   },
   {
     "id": "AIRBUS-JR10437140",
@@ -676,9 +701,10 @@
     "date_discovered": "2026-09-23",
     "last_updated": "2026-11-24",
     "next_action": "Apply online; excellent CAMEO/MBSE/ARP4754 match to resume",
-    "link_status": "warning",
+    "link_status": "rate_limited",
     "link_http_code": 429,
-    "link_last_checked": "2026-11-24"
+    "link_last_checked": "2026-11-24",
+    "company_category": "Enterprise / OEM"
   },
   {
     "id": "AIRBUS-JR10436295",
@@ -703,9 +729,10 @@
     "date_discovered": "2026-09-23",
     "last_updated": "2026-11-24",
     "next_action": "Apply online (note: near-duplicate of JR10437140 - likely same hiring manager/team, consider applying to one and mentioning the other req ID)",
-    "link_status": "warning",
+    "link_status": "rate_limited",
     "link_http_code": 429,
-    "link_last_checked": "2026-11-24"
+    "link_last_checked": "2026-11-24",
+    "company_category": "Enterprise / OEM"
   },
   {
     "id": "AIRBUS-JR10433216",
@@ -733,9 +760,10 @@
     "date_discovered": "2026-09-23",
     "last_updated": "2026-11-24",
     "next_action": "Apply online; more software-V&V/DO-178C leaning than pure MBSE, still a solid overlap with resume",
-    "link_status": "active",
-    "link_http_code": 200,
-    "link_last_checked": "2026-11-24"
+    "link_status": "rate_limited",
+    "link_http_code": 429,
+    "link_last_checked": "2026-11-24",
+    "company_category": "Enterprise / OEM"
   },
   {
     "id": "DIGANTARA-AVIONICS-SE",
@@ -763,7 +791,8 @@
     "next_action": "Apply via careers.kula.ai/digantara (search 'Avionics Systems Engineer'); strong space-systems/avionics fit",
     "link_status": "active",
     "link_http_code": 200,
-    "link_last_checked": "2026-11-24"
+    "link_last_checked": "2026-11-24",
+    "company_category": "Startup / Emerging"
   },
   {
     "id": "NEWSPACE-AVIONICS-INT",
@@ -793,7 +822,8 @@
     "next_action": "Apply via newspace-talent.freshteam.com/jobs (search 'Avionics & Integration'); strong protocol/standards overlap though wants 6-10 yrs",
     "link_status": "active",
     "link_http_code": 200,
-    "link_last_checked": "2026-11-24"
+    "link_last_checked": "2026-11-24",
+    "company_category": "Startup / Emerging"
   },
   {
     "id": "RTX-01828086",
@@ -821,9 +851,10 @@
     "date_discovered": "2026-09-23",
     "last_updated": "2026-11-24",
     "next_action": "Apply online; excellent SysMLv2/MBSE/digital-engineering fit; only 8 days left to apply as of 23-Sep-2026, END DATE Oct 2 2026",
-    "link_status": "warning",
+    "link_status": "rate_limited",
     "link_http_code": 429,
-    "link_last_checked": "2026-11-24"
+    "link_last_checked": "2026-11-24",
+    "company_category": "Enterprise / OEM"
   },
   {
     "id": "AIRBUS-JR10401605",
@@ -848,9 +879,10 @@
     "date_discovered": "2026-09-23",
     "last_updated": "2026-11-24",
     "next_action": "MODERATE FIT ONLY - this is a software/Java developer role for the MBSE toolchain itself, not a systems engineering role. Mansi's background is systems engineering, not software dev; likely not a strong match despite Cameo keyword overlap.",
-    "link_status": "active",
-    "link_http_code": 200,
-    "link_last_checked": "2026-11-24"
+    "link_status": "rate_limited",
+    "link_http_code": 429,
+    "link_last_checked": "2026-11-24",
+    "company_category": "Enterprise / OEM"
   },
   {
     "id": "GALAXEYE-SYS-MODELING",
@@ -877,7 +909,8 @@
     "next_action": "Strong domain/skill overlap (spacecraft systems modeling, MATLAB/Simulink, requirements V&V) but posted seniority (13-18 yrs) is above her ~7-8 yrs - worth applying anyway given direct skill match, flag experience gap in cover note.",
     "link_status": "active",
     "link_http_code": 200,
-    "link_last_checked": "2026-11-24"
+    "link_last_checked": "2026-11-24",
+    "company_category": "Startup / Emerging"
   },
   {
     "id": "AIRBUS-POWERPLANT-MBSE",
@@ -903,7 +936,8 @@
     "next_action": "Draft tailored resume highlighting 777-8F MBSE & digital thread",
     "link_status": "active",
     "link_http_code": 200,
-    "link_last_checked": "2026-11-24"
+    "link_last_checked": "2026-11-24",
+    "company_category": "Enterprise / OEM"
   },
   {
     "id": "SARLA-SE-AVIONICS",
@@ -928,7 +962,8 @@
     "next_action": "Prepare eVTOL avionics & ARP4754A cover note; connect with founders",
     "link_status": "active",
     "link_http_code": 200,
-    "link_last_checked": "2026-11-24"
+    "link_last_checked": "2026-11-24",
+    "company_category": "Startup / Emerging"
   },
   {
     "id": "COLLINS-MBE-MBSE-MGR",
@@ -955,6 +990,7 @@
     "next_action": "Draft executive cover note highlighting Boeing India DTx leadership",
     "link_status": "active",
     "link_http_code": 200,
-    "link_last_checked": "2026-11-24"
+    "link_last_checked": "2026-11-24",
+    "company_category": "Enterprise / OEM"
   }
 ]
