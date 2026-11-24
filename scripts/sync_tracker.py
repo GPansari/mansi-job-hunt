@@ -296,7 +296,7 @@ def sync_markdown_to_json(md_path: Path, json_path: Path) -> None:
                 record["last_updated"] = today_str
         else:
             # Generate new record
-            comp_slug = re.sub(r"[^A-Z0-9]+", "", company.upper())[:10]
+            comp_slug = re.sub(r"[^A-Z0-9]+", "", company.upper())[:10] or "COMPANY"
             req_slug = re.sub(r"[^A-Z0-9]+", "", req_id.upper())[:15]
             if not req_slug or req_slug in {"NA", "UNKNOWN", ""}:
                 req_slug = re.sub(r"[^A-Z0-9]+", "", title.upper())[:15]
