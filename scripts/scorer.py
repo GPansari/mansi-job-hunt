@@ -83,7 +83,7 @@ def match_title(job_title: str, target_titles: List[str]) -> Tuple[bool, str]:
     for target in target_titles:
         target_lower = target.lower().strip()
         # Direct substring match
-        if target_lower in job_lower or job_lower in target_lower:
+        if target_lower in job_lower or (len(job_lower.split()) >= 2 and job_lower in target_lower):
             return True, target
 
         target_tokens = set(_tokenize_title(target))
