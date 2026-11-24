@@ -27,7 +27,8 @@ def test_target_companies_schema():
         assert "name" in company and company["name"], "Company name must not be empty"
         assert "relevance" in company and 1 <= company["relevance"] <= 5, f"Invalid relevance in {company.get('name')}"
         assert "careers_url" in company, f"Missing careers_url in {company.get('name')}"
-        assert company["careers_url"].startswith("http"), f"careers_url must start with http in {company.get('name')}"
+        assert company["careers_url"].startswith("http")
+        assert " " not in company["careers_url"], f"careers_url must start with http in {company.get('name')}"
         assert company.get("ats_type") in valid_ats_types, f"Invalid ats_type in {company.get('name')}"
         assert "tier" in company, f"Missing tier in {company.get('name')}"
 
