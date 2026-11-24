@@ -779,5 +779,74 @@
     "date_discovered": "2026-09-23",
     "last_updated": "2026-11-24",
     "next_action": "Strong domain/skill overlap (spacecraft systems modeling, MATLAB/Simulink, requirements V&V) but posted seniority (13-18 yrs) is above her ~7-8 yrs - worth applying anyway given direct skill match, flag experience gap in cover note."
+  },
+  {
+    "id": "AIRBUS-POWERPLANT-MBSE",
+    "company": "Airbus India",
+    "team": "Digital / Propulsion Systems Engineering",
+    "title": "Powerplant Functional Integration MBSE Engineer",
+    "location": "Bangalore",
+    "req_id": "AIRBUS-PP-MBSE-2026",
+    "seniority": "Lead / Senior Engineer",
+    "fit_score": 5,
+    "fit_rationale": "Title matched target ('MBSE Lead Engineer', +1.5); Core skills matched (4: MBSE, SysML, Cameo, V&V, +2.0); Location 'Bangalore' matches Bangalore (+1.0). Final fit score: 5/5.",
+    "skills_matched": [
+      "MBSE",
+      "SysML",
+      "Cameo",
+      "V&V"
+    ],
+    "apply_url": "https://www.airbus.com/en/careers",
+    "source": "Official (Airbus Careers)",
+    "status": "Not Applied",
+    "date_discovered": "2026-11-24",
+    "last_updated": "2026-11-24",
+    "next_action": "Draft tailored resume highlighting 777-8F MBSE & digital thread"
+  },
+  {
+    "id": "SARLA-SE-AVIONICS",
+    "company": "Sarla Aviation",
+    "team": "Avionics & Systems Architecture",
+    "title": "Senior Systems Engineer – Avionics",
+    "location": "Bangalore",
+    "req_id": "SARLA-AVIONICS-01",
+    "seniority": "Lead / Staff Engineer",
+    "fit_score": 5,
+    "fit_rationale": "Title matched target ('Lead Systems Engineer', +1.5); Core skills matched (3: ARP4754A, ARP4761, Digital Thread, +1.5); Location 'Bangalore' matches Bangalore (+1.0). Final fit score: 5/5.",
+    "skills_matched": [
+      "ARP4754A",
+      "ARP4761",
+      "Digital Thread"
+    ],
+    "apply_url": "https://www.sarla-aviation.com/careers",
+    "source": "Official (Sarla Careers / Direct)",
+    "status": "Not Applied",
+    "date_discovered": "2026-11-24",
+    "last_updated": "2026-11-24",
+    "next_action": "Prepare eVTOL avionics & ARP4754A cover note; connect with founders"
+  },
+  {
+    "id": "COLLINS-MBE-MBSE-MGR",
+    "company": "Collins Aerospace (RTX)",
+    "team": "Digital Engineering & MBSE Practice",
+    "title": "Manager – MBE & MBSE (Hybrid)",
+    "location": "Bangalore (EPIP/Northgate)",
+    "req_id": "RTX-MBE-MGR-2026",
+    "seniority": "Manager",
+    "fit_score": 4,
+    "fit_rationale": "Title did not match target roles; Core skills matched (5: MBSE, SysML, Cameo, IBM DOORS, V&V, +2.5); Location 'Bangalore (EPIP/Northgate)' matches Bangalore (+1.0). Final fit score: 4/5.",
+    "skills_matched": [
+      "MBSE",
+      "SysML",
+      "Cameo",
+      "IBM DOORS",
+      "V&V"
+    ],
+    "apply_url": "https://jobs.rtx.com/en/jobs/manager-mbe-mbse-bengaluru-india",
+    "source": "Official (RTX Workday Gateway)",
+    "status": "Not Applied",
+    "date_discovered": "2026-11-24",
+    "last_updated": "2026-11-24",
+    "next_action": "Draft executive cover note highlighting Boeing India DTx leadership"
   }
 ]
