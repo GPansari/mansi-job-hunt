@@ -358,10 +358,11 @@ def generate_digest(
 
 def archive_digest(
     html_body: str,
+    text_body: str | None = None,
     digest_dir: str | Path = DEFAULT_REPORTS_DIR,
     date_str: str | None = None,
 ) -> Path:
-    """Archive copy of generated HTML digest to reports/YYYY-MM-DD-digest.html."""
+    """Archive copy of generated HTML and plain-text digest to reports/YYYY-MM-DD-digest.html and .txt."""
     if date_str is None:
         date_str = datetime.now().strftime("%Y-%m-%d")
 
@@ -369,6 +370,11 @@ def archive_digest(
     target_dir.mkdir(parents=True, exist_ok=True)
     digest_file = target_dir / f"{date_str}-digest.html"
     digest_file.write_text(html_body, encoding="utf-8")
+
+    if text_body is not None:
+        text_file = target_dir / f"{date_str}-digest.txt"
+        text_file.write_text(text_body, encoding="utf-8")
+
     return digest_file
 
 
@@ -399,7 +405,7 @@ def dispatch_email(
         return True
 
     # 1. Archive digest copy
-    archive_digest(html_body, digest_dir=digest_dir, date_str=date_str)
+    archive_digest(html_body, text_body=text_body, digest_dir=digest_dir, date_str=date_str)
 
     # 2. Write temp HTML body file for CLI consumption
     html_fd, html_path = tempfile.mkstemp(suffix=".html", prefix="digest_body_")

@@ -155,10 +155,19 @@ def test_load_and_save_sent_history(tmp_path):
 
 def test_archive_digest(tmp_path):
     digest_dir = tmp_path / "reports"
-    digest_path = archive_digest("<html><body>Test Digest</body></html>", digest_dir=digest_dir, date_str="2026-11-24")
+    digest_path = archive_digest(
+        "<html><body>Test Digest</body></html>",
+        text_body="Test Digest Plain Text",
+        digest_dir=digest_dir,
+        date_str="2026-11-24",
+    )
     assert digest_path.exists()
     assert digest_path.name == "2026-11-24-digest.html"
     assert "Test Digest" in digest_path.read_text()
+
+    txt_path = digest_dir / "2026-11-24-digest.txt"
+    assert txt_path.exists()
+    assert "Test Digest Plain Text" in txt_path.read_text()
 
 
 def test_dispatch_email_dry_run(tmp_path, capsys):
@@ -224,6 +233,10 @@ def test_dispatch_email_send_success(tmp_path):
         archived = digest_dir / "2026-11-24-digest.html"
         assert archived.exists()
         assert "Hello HTML" in archived.read_text()
+
+        archived_txt = digest_dir / "2026-11-24-digest.txt"
+        assert archived_txt.exists()
+        assert "Hello Plain Text" in archived_txt.read_text()
 
 
 def test_dispatch_email_send_failure(tmp_path):

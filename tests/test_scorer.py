@@ -1,3 +1,4 @@
+import json
 import subprocess
 import sys
 from scripts.scorer import score_job
@@ -125,3 +126,80 @@ def test_cli_execution():
     ], capture_output=True, text=True)
     assert res.returncode == 0
     assert "score" in res.stdout.lower()
+    assert "--score-all" in res.stdout
+    assert "--update" in res.stdout
+    assert "--save" in res.stdout
+
+
+def test_cli_score_all_update(tmp_path):
+    openings_file = tmp_path / "openings.json"
+    tracker_file = tmp_path / "Openings_Tracker.md"
+
+    initial_openings = [
+        {
+            "id": "TEST-1",
+            "company": "Airbus India",
+            "title": "Lead Systems Engineer",
+            "description": "Cameo and SysML modeling in Bangalore.",
+            "location": "Bangalore",
+            "req_id": "JR123",
+            "seniority": "Lead",
+            "fit_score": 1,
+            "status": "Not Applied",
+            "apply_url": "https://example.com/apply1",
+            "next_action": "Review",
+            "skills_matched": [],
+            "fit_rationale": "Initial uncalculated rationale",
+        },
+        {
+            "id": "TEST-2",
+            "company": "Collins Aerospace",
+            "title": "Frontend React Intern",
+            "description": "Internship in Bangalore.",
+            "location": "Bangalore",
+            "req_id": "JR456",
+            "seniority": "Intern",
+            "fit_score": 5,
+            "status": "Not Applied",
+            "apply_url": "https://example.com/apply2",
+            "next_action": "Review",
+            "skills_matched": ["MBSE"],
+            "fit_rationale": "Incorrect score",
+        },
+    ]
+    openings_file.write_text(json.dumps(initial_openings, indent=2), encoding="utf-8")
+
+    res = subprocess.run([
+        sys.executable,
+        "scripts/scorer.py",
+        "--score-all",
+        "--update",
+        "--openings",
+        str(openings_file),
+        "--tracker",
+        str(tracker_file),
+    ], capture_output=True, text=True)
+
+    assert res.returncode == 0
+    assert "Updated 2 openings" in res.stdout
+    assert "Synchronized Markdown tracker" in res.stdout
+
+    # Verify openings.json was updated with freshly calculated scores
+    updated_openings = json.loads(openings_file.read_text(encoding="utf-8"))
+    assert len(updated_openings) == 2
+
+    # TEST-1 (Lead Systems Engineer, Cameo/SysML, Bangalore) -> fit_score >= 4
+    assert updated_openings[0]["fit_score"] >= 4
+    assert "Cameo" in updated_openings[0]["skills_matched"]
+    assert "SysML" in updated_openings[0]["skills_matched"]
+    assert "Final fit score" in updated_openings[0]["fit_rationale"]
+
+    # TEST-2 (Intern) -> disqualified, fit_score == 1
+    assert updated_openings[1]["fit_score"] == 1
+    assert "Disqualified" in updated_openings[1]["fit_rationale"]
+
+    # Verify tracker Markdown was created/synchronized
+    assert tracker_file.exists()
+    tracker_content = tracker_file.read_text(encoding="utf-8")
+    assert "Airbus India" in tracker_content
+    assert "Collins Aerospace" in tracker_content

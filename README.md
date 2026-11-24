@@ -219,10 +219,10 @@ When Mansi applies for a role or receives an update:
    {
      "name": "Supernal",
      "category": "eVTOL / Urban Air Mobility",
-     "relevance": "High",
+     "relevance": 5,
      "careers_url": "https://jobs.lever.co/supernal",
      "ats_type": "lever",
-     "tier": 1
+     "tier": "Startup / NewSpace"
    }
    ```
 3. Run `python scripts/search_engine.py --scan-ats --company Supernal` to verify.

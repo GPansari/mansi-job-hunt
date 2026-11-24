@@ -245,11 +245,15 @@ def _query_workday(company: dict, timeout: int = 10) -> list[dict]:
         "Accept": "application/json",
         "User-Agent": DEFAULT_USER_AGENT,
     }
+    search_text = (company.get("search_text") or "").strip()
+    if not search_text:
+        search_text = "Systems Engineer"
+
     payload = {
         "appliedFacets": {},
         "limit": 20,
         "offset": 0,
-        "searchText": company.get("search_text", ""),
+        "searchText": search_text,
     }
 
     try:

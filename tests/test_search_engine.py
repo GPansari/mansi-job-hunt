@@ -116,6 +116,19 @@ def test_query_public_ats_feed_workday(requests_mock):
     assert job["fit_score"] >= 3
     assert job["passed_gate"] is True
 
+    # Verify default searchText fallback to "Systems Engineer"
+    assert requests_mock.last_request.json()["searchText"] == "Systems Engineer"
+
+    # Verify custom search_text is preserved when provided
+    company_custom = {
+        "name": "Airbus India",
+        "ats_type": "workday",
+        "careers_url": "https://ag.wd3.myworkdayjobs.com/Airbus",
+        "search_text": "MBSE Specialist",
+    }
+    query_public_ats_feed(company_custom, timeout=5)
+    assert requests_mock.last_request.json()["searchText"] == "MBSE Specialist"
+
 
 def test_query_public_ats_feed_greenhouse(requests_mock):
     company = {

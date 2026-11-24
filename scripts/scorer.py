@@ -11,9 +11,20 @@ Gate passes if fit_score >= 3 and no excluded keywords triggered.
 
 import argparse
 import json
-import re
 from pathlib import Path
+import re
+import sys
 from typing import Any, Dict, List, Optional, Set, Tuple
+
+# Ensure repo root is on sys.path for direct script execution
+REPO_ROOT = Path(__file__).resolve().parent.parent
+if str(REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT))
+
+try:
+    from scripts.sync_tracker import sync_json_to_markdown
+except ModuleNotFoundError:
+    from sync_tracker import sync_json_to_markdown  # type: ignore
 
 DEFAULT_CANDIDATE_PATH = Path("profile/candidate.json")
 
@@ -255,7 +266,28 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Job Fit Scoring Engine")
     parser.add_argument("--job-json", help="JSON string representing a single job dict to score")
     parser.add_argument("--profile", help="Path to custom candidate profile JSON")
-    parser.add_argument("--score-openings", action="store_true", help="Score all openings in data/openings.json and report summary")
+    parser.add_argument(
+        "--score-openings",
+        "--score-all",
+        dest="score_openings",
+        action="store_true",
+        help="Score all openings in data/openings.json and report summary",
+    )
+    parser.add_argument(
+        "--update",
+        "--save",
+        dest="update",
+        action="store_true",
+        help="Update fit_score, fit_rationale, and skills_matched in data/openings.json and sync to data/Openings_Tracker.md",
+    )
+    parser.add_argument(
+        "--openings",
+        help="Path to openings JSON file (default: data/openings.json)",
+    )
+    parser.add_argument(
+        "--tracker",
+        help="Path to tracker Markdown file (default: data/Openings_Tracker.md)",
+    )
     args = parser.parse_args()
 
     candidate = load_candidate_profile(args.profile)
@@ -266,8 +298,13 @@ def main() -> None:
         print(json.dumps(result, indent=2))
         return
 
-    if args.score_openings:
-        openings_path = Path("data/openings.json")
+    if args.score_openings or args.update:
+        openings_path = Path(args.openings) if args.openings else Path("data/openings.json")
+        if not openings_path.exists():
+            repo_root = Path(__file__).resolve().parent.parent
+            alt_path = repo_root / openings_path
+            if alt_path.exists():
+                openings_path = alt_path
         if not openings_path.exists():
             print(f"Error: {openings_path} not found.")
             return
@@ -281,7 +318,27 @@ def main() -> None:
             res = score_job(op, candidate)
             if res["passed_gate"]:
                 passed += 1
+            if args.update:
+                op["fit_score"] = res["fit_score"]
+                op["fit_rationale"] = res["fit_rationale"]
+                op["skills_matched"] = res["skills_matched"]
             print(f"[{res['fit_score']}/5] (Gate: {'PASS' if res['passed_gate'] else 'FAIL'}) {op.get('company')}: {op.get('title')} ({op.get('location')})")
+
+        if args.update:
+            with open(openings_path, "w", encoding="utf-8") as f:
+                json.dump(openings, f, indent=2, ensure_ascii=False)
+                f.write("\n")
+            print(f"Updated {total} openings in {openings_path}.")
+
+            tracker_path = Path(args.tracker) if args.tracker else Path("data/Openings_Tracker.md")
+            if not tracker_path.exists() and not tracker_path.is_absolute():
+                repo_root = Path(__file__).resolve().parent.parent
+                alt_tracker = repo_root / tracker_path
+                if alt_tracker.parent.exists():
+                    tracker_path = alt_tracker
+            if sync_json_to_markdown:
+                sync_json_to_markdown(openings_path, tracker_path)
+                print(f"Synchronized Markdown tracker to {tracker_path}.")
 
         print(f"\nSummary: {passed}/{total} openings passed gate (fit_score >= 3).")
         return
