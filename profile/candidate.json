@@ -1,0 +1,58 @@
+{
+  "name": "Mansi Agrawal",
+  "email": "agrawal.mansi20@gmail.com",
+  "phone": "+91-8779232450",
+  "linkedin": "https://www.linkedin.com/in/mansi-agrawal-ms-aero",
+  "location": "Bangalore, India",
+  "target_locations": [
+    "Bangalore",
+    "Bengaluru"
+  ],
+  "current_title": "Lead Systems Engineer",
+  "experience_years": 10,
+  "education": "MS Aerospace Engineering, Georgia Tech",
+  "summary": "Lead Systems Engineer with 10 years of aerospace experience across commercial aircraft and UAV programs, specializing in Model-Based Systems Engineering (MBSE) and systems integration. At Boeing India, leads a team of 5 engineers and mentors 4 more, driving MBSE adoption within the Digital Transformation (DTx) initiative for 777-8F electrical and electronic subsystems.",
+  "target_titles": [
+    "MBSE Lead Engineer",
+    "Lead Systems Engineer",
+    "Systems Architecture Manager",
+    "Avionics Lead Engineer",
+    "V&V Lead",
+    "Digital Engineering Lead"
+  ],
+  "core_skills": [
+    "MBSE",
+    "SysML",
+    "Cameo",
+    "MagicDraw",
+    "IBM DOORS",
+    "3DEXPERIENCE",
+    "ARP4754A",
+    "ARP4761",
+    "DO-178C",
+    "DO-254",
+    "ConOps",
+    "Digital Thread",
+    "MATLAB",
+    "Simulink",
+    "V&V"
+  ],
+  "target_domains": [
+    "Commercial Aircraft",
+    "UAV",
+    "eVTOL",
+    "Spacetech",
+    "Defense Aerospace"
+  ],
+  "excluded_keywords": [
+    "Frontend",
+    "Backend",
+    "Fullstack",
+    "Web Developer",
+    "Intern",
+    "Fresher",
+    "Apprentice",
+    "React",
+    "Node.js"
+  ]
+}
