@@ -65,6 +65,13 @@ Every autonomous agent working in this repository must strictly adhere to these 
    - The engine discovers, scores, verifies, tracks, and compiles digests.
    - The agent **must never** submit applications or contact recruiters on Mansi's behalf without explicit human instruction.
 
+7. **Requisition-Specific Links Only (No Generic Career Portals)**:
+   - Every `apply_url` in `data/openings.json` must resolve directly to the specific job requisition (e.g. Workday job detail page, direct Lever/Greenhouse/Freshteam/Kula post, or direct LinkedIn job view).
+   - Generic company careers homepages (e.g., `company.com/careers`) are strictly prohibited in the tracker.
+
+8. **Inactive Posting Lifecycle & Status Preservation**:
+   - Roles confirmed closed or expired must be tagged with `status: "Inactive Posting"` and annotated with explanation in `next_action`. They are never left as active or silently deleted.
+
 ---
 
 ## 3. LinkedIn Safety Envelope & Scraping Guardrails
@@ -244,3 +251,30 @@ When triggered on schedule, the agent performs the following sequential runbook:
   If `gmail` CLI reports authentication expired, instruct the operator to reconnect the Gmail account in the Antigravity Plugins Manager.
 - **Resending a Digest**:
   To re-include previously sent roles in a digest preview, use `python scripts/notifier.py --dry-run --all`.
+
+---
+
+## 8. Captured Operational Learnings & Platform Quirks
+
+During the build and execution cycles, several critical operational insights were codified:
+
+1. **Workday CXS API Mechanics & Anti-Scraping Defenses**:
+   - Workday portals (e.g. `ag.wd3.myworkdayjobs.com`, `globalhr.wd5.myworkdayjobs.com`, `boeing.wd1.myworkdayjobs.com`) protect their HTML endpoints against basic scripts.
+   - Hitting Workday via Python standard `urllib` without custom headers triggers `HTTP 429` rate limiting.
+   - Reliable programmatic access uses direct POST to the Workday CXS search endpoint (`https://<domain>/wday/cxs/<tenant>/<site>/jobs`) with custom `User-Agent` and `Accept: application/json` headers, returning full structured pagination and req IDs.
+   - Direct job URLs follow the pattern: `https://<domain>/en-US/<site>/job/<location-slug>/<title-slug>_<req_id>`.
+
+2. **LinkedIn Safety & Dorking Superiority**:
+   - Direct automated browsing on LinkedIn easily triggers anti-bot checkpoints (HTTP 999 or CAPTCHA).
+   - Google Dorking with specific search terms (`site:in.linkedin.com/jobs/view ...`) or querying public ATS indices surfaces live, indexed requisitions without hitting LinkedIn account rate limits.
+   - When inspecting LinkedIn URLs, agents must maintain human-mimicking pacing (250–600px non-linear scrolls, 2–6s pauses, max 30–50 views/day, 15m duty cycle).
+
+3. **Gmail Dispatch & CLI Options**:
+   - The Antigravity Gmail CLI expects `--body-file <path> --html` for sending rich HTML emails.
+   - In sandboxed runtime environments, the initial CLI binary installation requires a one-time elevated execution (`BypassSandbox: true`).
+   - Dynamic role fields must always be escaped with `html.escape(..., quote=True)` to prevent broken rendering on titles containing ampersands (`&`).
+
+4. **Dual-Tracker Consistency**:
+   - `data/openings.json` is the canonical programmatic store; `data/Openings_Tracker.md` is the human-facing view.
+   - Whenever any script modifies `data/openings.json`, immediately run `python scripts/sync_tracker.py --to-md` to prevent sync drift.
+   - Web review portal is rebuilt using `python scripts/generate_site.py`.
