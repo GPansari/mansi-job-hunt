@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mansi Agrawal | Aerospace Systems Engineering & MBSE Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0b0f19;
+      --card-bg: #111827;
+      --card-border: #1f2937;
+      --card-hover: #1e293b;
+      --text-main: #f9fafb;
+      --text-muted: #9ca3af;
+      --accent-blue: #38bdf8;
+      --accent-cyan: #06b6d4;
+      --accent-green: #10b981;
+      --accent-amber: #f59e0b;
+      --accent-red: #ef4444;
+      --pill-bg: #1f2937;
+      --pill-text: #e5e7eb;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg);
+      color: var(--text-main);
+      min-height: 100vh;
+      line-height: 1.5;
+      padding-bottom: 60px;
+    }
+    header {
+      background: linear-gradient(180deg, #131b2e 0%, #0b0f19 100%);
+      border-bottom: 1px solid var(--card-border);
+      padding: 32px 24px;
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      backdrop-filter: blur(8px);
+    }
+    .header-container {
+      max-width: 1300px;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+    .candidate-info h1 {
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      background: linear-gradient(90deg, #ffffff 0%, #38bdf8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .candidate-info p {
+      color: var(--text-muted);
+      font-size: 14px;
+      margin-top: 4px;
+    }
+    .header-actions {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    .btn {
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+      border: 1px solid transparent;
+    }
+    .btn-primary {
+      background-color: #0284c7;
+      color: #ffffff;
+    }
+    .btn-primary:hover {
+      background-color: #0369a1;
+    }
+    .btn-outline {
+      background: #1f2937;
+      color: #e5e7eb;
+      border-color: #374151;
+    }
+    .btn-outline:hover {
+      background: #374151;
+    }
+    .main-container {
+      max-width: 1300px;
+      margin: 24px auto 0 auto;
+      padding: 0 24px;
+    }
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+    .metric-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 16px 20px;
+      display: flex;
+      flex-direction: column;
+    }
+    .metric-val {
+      font-size: 28px;
+      font-weight: 800;
+      color: #ffffff;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .metric-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-top: 2px;
+    }
+    .controls-panel {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 18px 20px;
+      margin-bottom: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .search-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .search-input {
+      flex: 1;
+      min-width: 260px;
+      padding: 10px 14px;
+      border-radius: 8px;
+      background: #0b0f19;
+      border: 1px solid #374151;
+      color: #ffffff;
+      font-size: 14px;
+    }
+    .search-input:focus {
+      outline: none;
+      border-color: var(--accent-blue);
+    }
+    .filter-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+    .filter-btn {
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 500;
+      background: #1e293b;
+      color: #cbd5e1;
+      border: 1px solid #334155;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .filter-btn:hover, .filter-btn.active {
+      background: #0284c7;
+      color: #ffffff;
+      border-color: #38bdf8;
+    }
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+      gap: 20px;
+    }
+    .job-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.15s ease, border-color 0.15s ease;
+      position: relative;
+    }
+    .job-card:hover {
+      transform: translateY(-2px);
+      border-color: #38bdf8;
+    }
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+      gap: 8px;
+    }
+    .company-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--accent-blue);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .fit-badge {
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+    }
+    .fit-5 { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid #059669; }
+    .fit-4 { background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid #0284c7; }
+    .fit-3 { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid #d97706; }
+    .job-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: #ffffff;
+      line-height: 1.35;
+      margin-bottom: 6px;
+    }
+    .meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 14px;
+    }
+    .meta-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .rationale-box {
+      background: rgba(15, 23, 42, 0.6);
+      border-left: 3px solid #38bdf8;
+      padding: 8px 12px;
+      border-radius: 0 6px 6px 0;
+      font-size: 13px;
+      color: #cbd5e1;
+      margin-bottom: 14px;
+      font-style: italic;
+    }
+    .skills-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 16px;
+    }
+    .skill-chip {
+      background: var(--pill-bg);
+      color: var(--pill-text);
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 6px;
+      border: 1px solid #374151;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .link-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 6px;
+      margin-bottom: 12px;
+    }
+    .link-active { background: rgba(16, 185, 129, 0.1); color: #10b981; border: 1px solid #047857; }
+    .link-restricted { background: rgba(56, 189, 248, 0.1); color: #38bdf8; border: 1px solid #0284c7; }
+    .link-expired { background: rgba(239, 68, 68, 0.1); color: #f87171; border: 1px solid #b91c1c; }
+    .card-footer {
+      border-top: 1px solid var(--card-border);
+      padding-top: 14px;
+      margin-top: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+    .status-select {
+      background: #1e293b;
+      color: #cbd5e1;
+      border: 1px solid #334155;
+      font-size: 12px;
+      padding: 6px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .apply-btn {
+      background: linear-gradient(135deg, #0284c7 0%, #2563eb 100%);
+      color: #ffffff;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+      box-shadow: 0 2px 4px rgba(2, 132, 199, 0.2);
+    }
+    .apply-btn:hover {
+      box-shadow: 0 4px 10px rgba(2, 132, 199, 0.4);
+      transform: translateY(-1px);
+    }
+    /* Drawer */
+    .drawer-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(4px);
+      z-index: 99;
+    }
+    .drawer {
+      position: fixed;
+      top: 0; right: -420px; width: 400px; max-width: 90vw; height: 100vh;
+      background: #111827;
+      border-left: 1px solid var(--card-border);
+      box-shadow: -4px 0 20px rgba(0,0,0,0.5);
+      z-index: 100;
+      transition: right 0.3s ease;
+      padding: 28px 24px;
+      overflow-y: auto;
+    }
+    .drawer.open { right: 0; }
+    .drawer-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      border-bottom: 1px solid var(--card-border);
+      padding-bottom: 12px;
+    }
+    .drawer-title { font-size: 18px; font-weight: 700; color: #ffffff; }
+    .close-btn { background: none; border: none; color: var(--text-muted); font-size: 22px; cursor: pointer; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-container">
+      <div class="candidate-info">
+        <h1>Mansi Agrawal &bull; Opportunities Review Portal</h1>
+        <p>10+ Yrs Aerospace Systems Engineering &bull; MBSE &bull; Lead Systems Engineer @ Boeing India &bull; MS Georgia Tech</p>
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-outline" onclick="toggleDrawer()">
+          <span>👤</span> Candidate Profile
+        </button>
+        <a href="https://mail.google.com" target="_blank" class="btn btn-primary">
+          <span>✉️</span> Gmail Digest
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="main-container">
+    <!-- Top KPI Metrics -->
+    <div class="metrics-grid">
+      <div class="metric-card">
+        <span class="metric-val">36</span>
+        <span class="metric-label">Total Tracked Roles</span>
+      </div>
+      <div class="metric-card">
+        <span class="metric-val" style="color: #34d399;">10</span>
+        <span class="metric-label">Direct Matches (5★)</span>
+      </div>
+      <div class="metric-card">
+        <span class="metric-val" style="color: #38bdf8;">13</span>
+        <span class="metric-label">Strong Fits (4★)</span>
+      </div>
+      <div class="metric-card">
+        <span class="metric-val" style="color: #60a5fa;" id="actionable-count">0</span>
+        <span class="metric-label">Actionable (Not Applied)</span>
+      </div>
+      <div class="metric-card">
+        <span class="metric-val" style="color: #a78bfa;">November 24, 2026</span>
+        <span class="metric-label">Sync Cycle</span>
+      </div>
+    </div>
+
+    <!-- Controls Panel -->
+    <div class="controls-panel">
+      <div class="search-row">
+        <input type="text" id="searchInput" class="search-input" placeholder="Search by job title, company, req ID, or skill (e.g. MBSE, Cameo, Airbus)..." oninput="applyFilters()">
+      </div>
+      <div class="filter-pills">
+        <span style="font-size: 12px; font-weight: 600; color: var(--text-muted); margin-right: 4px;">FIT SCORE:</span>
+        <button class="filter-btn active" data-filter="all" onclick="setFitFilter('all', this)">All</button>
+        <button class="filter-btn" data-filter="5" onclick="setFitFilter('5', this)">5★ Direct Fits</button>
+        <button class="filter-btn" data-filter="4" onclick="setFitFilter('4', this)">4★ Strong Fits</button>
+        <button class="filter-btn" data-filter="3" onclick="setFitFilter('3', this)">3★ Matches</button>
+      </div>
+      <div class="filter-pills">
+        <span style="font-size: 12px; font-weight: 600; color: var(--text-muted); margin-right: 4px;">TARGET COMPANY:</span>
+        <button class="filter-btn active" onclick="setCompanyFilter('all', this)">All Companies</button>
+        <button class="filter-btn" onclick="setCompanyFilter('Airbus', this)">Airbus</button>
+        <button class="filter-btn" onclick="setCompanyFilter('Collins', this)">Collins Aerospace</button>
+        <button class="filter-btn" onclick="setCompanyFilter('Boeing', this)">Boeing India</button>
+        <button class="filter-btn" onclick="setCompanyFilter('Safran', this)">Safran</button>
+        <button class="filter-btn" onclick="setCompanyFilter('Thales', this)">Thales</button>
+        <button class="filter-btn" onclick="setCompanyFilter('Startups', this)">eVTOL / Space Startups</button>
+      </div>
+      <div class="filter-pills">
+        <span style="font-size: 12px; font-weight: 600; color: var(--text-muted); margin-right: 4px;">LINK STATUS:</span>
+        <button class="filter-btn active" onclick="setLinkFilter('all', this)">All Links</button>
+        <button class="filter-btn" onclick="setLinkFilter('active_only', this)">Active / Verified Only</button>
+      </div>
+    </div>
+
+    <!-- Cards Grid -->
+    <div id="cardsGrid" class="cards-grid">
+      <!-- Generated via JavaScript -->
+    </div>
+  </main>
+
+  <!-- Candidate Profile Drawer -->
+  <div id="drawerOverlay" class="drawer-overlay" onclick="toggleDrawer()"></div>
+  <aside id="candidateDrawer" class="drawer">
+    <div class="drawer-header">
+      <h3 class="drawer-title">Candidate Profile</h3>
+      <button class="close-btn" onclick="toggleDrawer()">&times;</button>
+    </div>
+    <div style="font-size: 13px; color: #cbd5e1; display: flex; flex-direction: column; gap: 16px;">
+      <div>
+        <strong style="color: #ffffff; display: block; margin-bottom: 4px;">Education & Target</strong>
+        <p>MS Aerospace Engineering, Georgia Tech</p>
+        <p>10+ Years Experience in Avionics, MBSE, and Systems Engineering</p>
+        <p>Current: Lead Systems Engineer @ Boeing India</p>
+      </div>
+      <div>
+        <strong style="color: #ffffff; display: block; margin-bottom: 6px;">Core Competencies</strong>
+        <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+          <span class="skill-chip">MBSE</span>
+          <span class="skill-chip">Cameo Systems Modeler</span>
+          <span class="skill-chip">MagicDraw</span>
+          <span class="skill-chip">SysML (v1 & v2)</span>
+          <span class="skill-chip">ARP4754A</span>
+          <span class="skill-chip">ARP4761</span>
+          <span class="skill-chip">DO-178C</span>
+          <span class="skill-chip">DO-254</span>
+          <span class="skill-chip">IBM DOORS</span>
+          <span class="skill-chip">3DEXPERIENCE</span>
+          <span class="skill-chip">ConOps</span>
+          <span class="skill-chip">Digital Thread</span>
+          <span class="skill-chip">V&V</span>
+          <span class="skill-chip">ARINC 429</span>
+        </div>
+      </div>
+      <div>
+        <strong style="color: #ffffff; display: block; margin-bottom: 4px;">Target Titles</strong>
+        <p>Lead Engineer &bull; Staff Systems Engineer &bull; Systems Architecture Manager &bull; MBSE Capability Lead &bull; V&V Lead</p>
+      </div>
+      <div>
+        <strong style="color: #ffffff; display: block; margin-bottom: 4px;">Location Preference</strong>
+        <p>Bangalore / Bengaluru (Hybrid / Onsite)</p>
+      </div>
+    </div>
+  </aside>
+
+  <script>
+    const OPENINGS = [{"id": "AIRBUS-JR10400715", "company": "Airbus India", "team": "Digital / Systems Engineering", "title": "MBSE Capability Verification & Validation Leader", "location": "Bangalore", "req_id": "JR10400715", "seniority": "Manager/Lead", "fit_score": 5, "fit_rationale": "Direct fit based on MBSE, SE capability planning, V&V for Airbus India in Bangalore.", "skills_matched": ["MBSE", "SE capability planning", "V&V"], "apply_url": "https://ag.wd3.myworkdayjobs.com/en-US/Airbus/job/Bangalore-Area/MBSE-Capability-Verification---Validation-Leader_JR10400715-1", "source": "Official (Workday)", "status": "Not Applied", "date_discovered": "2026-09-22", "last_updated": "2026-11-24", "next_action": "Draft tailored resume + cover note", "link_status": "warning", "link_http_code": 429, "link_last_checked": "2026-11-24"}, {"id": "AIRBUS-JR10370625", "company": "Airbus India", "team": "Digital / Systems Engineering", "title": "MBSE Manager", "location": "Bangalore", "req_id": "JR10370625", "seniority": "Manager", "fit_score": 5, "fit_rationale": "Direct fit based on M&S architecture, multi-disciplinary modeling for Airbus India in Bangalore.", "skills_matched": ["M&S architecture", "multi-disciplinary modeling"], "apply_url": "https://ag.wd3.myworkdayjobs.com/Airbus/job/Bangalore-Area/MBSE-Manager_JR10370625-1", "source": "Official (Workday)", "status": "Not Applied", "date_discovered": "2026-09-22", "last_updated": "2026-11-24", "next_action": "Draft tailored resume + cover note", "link_status": "warning", "link_http_code": 429, "link_last_checked": "2026-11-24"}, {"id": "AIRBUS-JR10295146", "company": "Airbus India", "team": "Systems Engineering (Software Family tag)", "title": "Avionics Lead Engineer", "location": "Bangalore", "req_id": "JR10295146", "seniority": "Lead", "fit_score": 3, "fit_rationale": "Direct fit based on System architecture compliance, detailed design verification for Airbus India in Bangalore.", "skills_matched": ["System architecture compliance", "detailed design verification"], "apply_url": "https://ag.wd3.myworkdayjobs.com/en-US/Airbus/job/Bangalore-Area/Avionics-Lead-Engineer_JR10295146", "source": "Needs review - tagged Software Engineering family despite systems content", "status": "Needs Review", "date_discovered": "2026-09-22", "last_updated": "2026-11-24", "next_action": "Read full JD before deciding - title says Lead but Job Family says Software Engineering", "link_status": "warning", "link_http_code": 429, "link_last_checked": "2026-11-24"}, {"id": "RTX-01868963", "company": "Collins Aerospace (RTX)", "team": "DEMPA (Digital Engineering Methods, Process & Adoption)", "title": "Lead Engineer", "location": "Bangalore (Yelahanka)", "req_id": "01868963", "seniority": "Lead", "fit_score": 5, "fit_rationale": "Direct fit based on Cameo, MATLAB, Simulink, SysML, Digital Thread for Collins Aerospace (RTX) in Bangalore (Yelahanka).", "skills_matched": ["Cameo", "MATLAB", "Simulink", "SysML", "Digital Thread"], "apply_url": "https://globalhr.wd5.myworkdayjobs.com/rec_rtx_ext_gateway/job/in-ka-bengaluru-northgate--sy-no-22-venkatala-village--sy-no-22-venkatala-village-yelahanka-hobli/lead-engineer_01868963", "source": "Official (Workday)", "status": "Not Applied", "date_discovered": "2026-09-22", "last_updated": "2026-11-24", "next_action": "Draft tailored resume + cover note - top priority", "link_status": "active", "link_http_code": 200, "link_last_checked": "2026-11-24"}, {"id": "RTX-CYBER-PHYSICAL", "company": "Collins Aerospace (RTX)", "team": "ART Advance Methods and Systems", "title": "Senior Lead Engineer (Cyber Physical System)", "location": "Bangalore (Yelahanka)", "req_id": "Unknown (2024 mirror)", "seniority": "Senior Lead", "fit_score": 4, "fit_rationale": "Direct fit based on Cameo, MATLAB, Simulink, SysML for Collins Aerospace (RTX) in Bangalore (Yelahanka).", "skills_matched": ["Cameo", "MATLAB", "Simulink", "SysML"], "apply_url": "https://enableamerica.dejobs.org/bangalore-ind/senior-lead-engineer/049C8029F2D6468989661CDEAFD5818E/job", "source": "Unverified - third-party mirror, dated", "status": "Not Applied", "date_discovered": "2026-09-22", "last_updated": "2026-11-24", "next_action": "Search Collins Workday board for current live req of same title", "link_status": "active", "link_http_code": 200, "link_last_checked": "2026-11-24"}, {"id": "RTX-ASSOC-MGR-SE", "company": "Collins Aerospace (RTX)", "team": "Power and Controls", "title": "Associate Manager - Systems Engineering", "location": "Bangalore", "req_id": "Unknown", "seniority": "Manager", "fit_score": 3, "fit_rationale": "Direct fit based on DOORS, Polarion, JIRA, MBSE (plus) for Collins Aerospace (RTX) in Bangalore.", "skills_matched": ["DOORS", "Polarion", "JIRA", "MBSE (plus)"], "apply_url": "https://builtin.com/job/associate-manager-system-engineering/6970569", "source": "Unverified - third-party", "status": "Not Applied", "date_discovered": "2026-09-22", "last_updated": "2026-11-24", "next_action": "Verify on Collins Workday board", "link_status": "active", "link_http_code": 200, "link_last_checked": "2026-11-24"}, {"id": "SAFRAN-171184", "company": "Safran Electronics & Defense", "team": "Architecture & Systems Engineering", "title": "System Engineer - Mechanical (Lead)", "location": "Bangalore (Kundalahalli)", "req_id": "171184", "seniority": "Lead", "fit_score": 3, "fit_rationale": "Direct fit based on V-cycle systems development, mechanical for Safran Electronics & Defense in Bangalore (Kundalahalli).", "skills_matched": ["V-cycle systems development", "mechanical"], "apply_url": "https://www.safran-group.com/es/ofertas/india/bangalore/system-engineer-mechanical-mf-171184", "source": "Official", "status": "Not Applied", "date_discovered": "2026-09-22", "last_updated": "2026-11-24", "next_action": "Review fit vs EE/avionics background", "link_status": "restricted", "link_http_code": 403, "link_last_checked": "2026-11-24"}, {"id": "SAFRAN-MULTIPLE-OPEN", "company": "Safran Engineering Services", "team": "Architecture and Systems Engineering (rolling)", "title": "Multiple open reqs - check board", "location": "Bangalore", "req_id": "Varies", "seniority": "Varies", "fit_score": 2, "fit_rationale": "Direct fit based on Varies for Safran Engineering Services in Bangalore.", "skills_matched": [], "apply_url": "https://www.safran-group.com/jobs", "source": "Official (listing page)", "status": "Watching", "date_discovered": "2026-09-22", "last_updated": "2026-11-24", "next_action": "Filter board by Bangalore + Architecture and systems engineering", "link_status": "restricted", "link_http_code": 403, "link_last_checked": "2026-11-24"}, {"id": "GE-JFWTC-ALERT", "company": "GE Aerospace", "team": "JFWTC", "title": "No current live senior MBSE role identified", "location": "Bangalore", "req_id": "N/A", "seniority": "N/A", "fit_score": 1, "fit_rationale": "Direct fit based on N/A for GE Aerospace in Bangalore.", "skills_matched": [], "apply_url": "https://www.gecareers.com/", "source": "N/A", "status": "Watching", "date_discovered": "2026-09-22", "last_updated": "2026-11-24", "next_action": "Set job alert for Systems Engineer + MBSE at JFWTC", "link_status": "active", "link_http_code": 200, "link_last_checked": "2026-11-24"}, {"id": "GKN-SYSTEMS-ALERT", "company": "GKN Aerospace", "team": "Systems Engineering", "title": "No current live MBSE role in Bangalore", "location": "Bangalore", "req_id": "N/A", "seniority": "N/A", "fit_score": 1, "fit_rationale": "Direct fit based on N/A for GKN Aerospace in Bangalore.", "skills_matched": [], "apply_url": "https://careers.gknaerospace.com/", "source": "N/A", "status": "Watching", "date_discovered": "2026-09-22", "last_updated": "2026-11-24", "next_action": "Set job alert - posted MBSE/Arcadia role May 2025 (now filled)", "link_status": "active", "link_http_code": 200, "link_last_checked": "2026-11-24"}, {"id": "QUEST-MBSE-LEAD", "company": "Quest Global India", "team": "Aerospace & Defense practice", "title": "MBSE Lead Engineer (Aerospace)", "location": "Bengaluru", "req_id": "Unknown - found via foundit/BeBee", "seniority": "Lead (4-8 yrs)", "fit_score": 5, "fit_rationale": "Direct fit based on SysML v1/v2, DOORS, PLM, Digital Thread, Magic/EA/Rhapsody for Quest Global India in Bengaluru.", "skills_matched": ["SysML v1/v2", "DOORS", "PLM", "Digital Thread", "Magic/EA/Rhapsody"], "apply_url": "https://careers.quest-global.com/", "source": "Unverified - third-party aggregator", "status": "Not Applied", "date_discovered": "2026-09-22", "last_updated": "2026-11-24", "next_action": "Verify on Quest Global's own careers portal - excellent direct match (leading MBSE adoption across aerospace projects)", "link_status": "active", "link_http_code": 200, "link_last_checked": "2026-11-24"}, {"id": "TATA-ELXSI-MBSE", "company": "Tata Elxsi", "team": "MEBU/HLSBU (automotive systems)", "title": "Model-based System Engineer (MBSE) / Systems Engineer-Systems Lead", "location": "Bangalore", "req_id": "Unknown", "seniority": "Mid/Senior", "fit_score": 3, "fit_rationale": "Direct fit based on SysML, MBSE, Cameo/CSM, System Modeling Workbench for Tata Elxsi in Bangalore.", "skills_matched": ["SysML", "MBSE", "Cameo/CSM", "System Modeling Workbench"], "apply_url": "https://tataelxsi.com/careers", "source": "Official", "status": "Not Applied", "date_discovered": "2026-09-22", "last_updated": "2026-11-24", "next_action": "Automotive/embedded focus rather than aerospace, but direct MBSE tool-skill match - worth a look despite industry difference", "link_status": "active", "link_http_code": 200, "link_last_checked": "2026-11-24"}, {"id": "AIRBUS-6a962f9eae18affb", "company": "Airbus India", "team": "Vehicle Mission & Control", "title": "System Engineer - Built-In Test Equipment (BITE) & Avionics Architecture", "location": "Bangalore", "req_id": "6a962f9eae18affb4d51775e", "seniority": "Lead / Senior Engineer (6-10 yrs)", "fit_score": 5, "fit_rationale": "Provide technical support for BITE implementation across avionics systems. Coordinate test specification documents, validate modifications, and manage ARINC 429/AFDX communication protocols.", "skills_matched": ["BITE Systems", "Avionics Architecture", "ARINC 429", "AFDX", "INCOSE SE", "Configuration Management"], "apply_url": "https://flexa.careers/jobs/airbus-system-engineer-6a962f9eae18affb4d51775e", "source": "Verified Job Board (Flexa / Airbus)", "status": "Not Applied", "date_discovered": "2026-09-23", "last_updated": "2026-11-24", "next_action": "Apply online; leverage avionics protocol expertise and systems engineering lifecycle experience", "link_status": "active", "link_http_code": 200, "link_last_checked": "2026-11-24"}, {"id": "SARLA-65290900", "company": "Sarla Aviation", "team": "Airframes", "title": "Senior Loads & Aeroelastics Engineer (eVTOL Aircraft)", "location": "Bengaluru", "req_id": "65290900", "seniority": "Senior (8+ yrs)", "fit_score": 4, "fit_rationale": "Own prediction, analysis, and validation of structural loads and aeroelastic behaviour across the flight envelope for Sarla's eVTOL program.", "skills_matched": ["Loads Analysis", "Aeroelasticity", "Flutter", "NASTRAN", "MATLAB/Simulink", "CS-23/27"], "apply_url": "https://jobs.accel.com/companies/sarla-aviation/jobs/65290900-senior-loads-aeroelastics-engineer", "source": "Verified Job Board (Accel / Sarla)", "status": "Not Applied", "date_discovered": "2026-09-23", "last_updated": "2026-11-24", "next_action": "Apply via Accel job board; emphasize systems-level loads/structures integration experience", "link_status": "active", "link_http_code": 200, "link_last_checked": "2026-11-24"}, {"id": "SAFRAN-2025-157864", "company": "Safran Engineering Services", "team": "Architecture and Systems Engineering", "title": "CI-Responsible (Configuration & Integration Responsible)", "location": "Bengaluru, Karnataka", "req_id": "2025-157864", "seniority": "5+ yrs", "fit_score": 4, "fit_rationale": "Manage primary/secondary flow for allocated CIs, DMU & F3D definition, Airbus DRP coordination, release processes, and SAP T100 DQN/RDR resolution.", "skills_matched": ["DMU", "Configuration Management", "SAP T100", "Airbus/Safran Processes", "Project Management Support"], "apply_url": "https://www.safran-group.com/jobs/india/bangalore/ci-responsible-157864", "source": "Official (Safran Group Careers)", "status": "Not Applied", "date_discovered": "2026-09-23", "last_updated": "2026-11-24", "next_action": "Apply directly; also review 3 other live Safran Bengaluru openings on same page (Harness Integration & DMU Validation Engineer, System Engineer - Electronics - Actuation Systems, System Architect - Mechanical)", "link_status": "restricted", "link_http_code": 403, "link_last_checked": "2026-11-24"}, {"id": "AIRBUS-JR10407218", "company": "Airbus India", "team": "Systems Engineering / MBSE", "title": "SE/MBSE Capability Leader", "location": "Bangalore Area", "req_id": "JR10407218", "seniority": "Professional (8-10 yrs)", "fit_score": 5, "fit_rationale": "Design, maintain, and deploy the Airbus MBSE Framework across Product/Industrial/Services domains. Develop and govern system architecture models, enforce modeling standards, integrate tools, run SE/MBSE training, and integrate MBSE into Agile.", "skills_matched": ["SysML/UML", "Cameo Systems Modeler", "IBM Rational Rhapsody", "Sparx EA", "Capella", "DOORS", "UAF/DoDAF", "Agile"], "apply_url": "https://ag.wd3.myworkdayjobs.com/en-US/Airbus/job/SE-MBSE-Capability-Leader_JR10407218-1", "source": "Official (Airbus Workday)", "status": "Not Applied", "date_discovered": "2026-09-23", "last_updated": "2026-11-24", "next_action": "Apply immediately - excellent match for MBSE/Cameo/SysML background; tailor resume to highlight modeling standards & governance experience", "link_status": "warning", "link_http_code": 429, "link_last_checked": "2026-11-24"}, {"id": "BOEING-JR2026503261", "company": "Boeing India", "team": "Customer Support / Fleet Engineering", "title": "Customer Support Service Engineering Manager", "location": "Bengaluru, Karnataka", "req_id": "JR2026503261", "seniority": "15+ yrs, 1+ yr leadership", "fit_score": 3, "fit_rationale": "Lead teams working on Avionics/Mechanical/Propulsion Systems troubleshooting and Aero-Structural Repairs. Manage engineers resolving systemic fleet issues, oversee technical approaches, and develop customer/stakeholder relationships.", "skills_matched": ["Avionics/Mechanical/Propulsion Troubleshooting", "FAA/EASA Regulations", "Leadership", "Cross-functional Coordination"], "apply_url": "https://jobs.boeing.com/job/bengaluru/customer-support-service-engineering-manager/185/93463696496", "source": "Official (Boeing Careers)", "status": "Not Applied", "date_discovered": "2026-09-23", "last_updated": "2026-11-24", "next_action": "Note: closes 24-Sep-2026, apply urgently if interested; management-track, verify fit vs IC/technical preference", "link_status": "dead", "link_http_code": 404, "link_last_checked": "2026-11-24"}, {"id": "BOEING-JR2026516824", "company": "Boeing India", "team": "Test & Evaluation", "title": "Experienced ATE Electrical Design Engineer", "location": "Bengaluru, Karnataka", "req_id": "JR2026516824", "seniority": "8+ yrs", "fit_score": 3, "fit_rationale": "Design Special/Automatic Test Equipment (STE/ATE) for circuit card, LRU, and system-level testing. Electrical wiring/harness design, Zuken/Mentor Graphics, ARINC/RS422/TCP-IP interfaces, DO-160/MIL-STD-810/461 qualification testing.", "skills_matched": ["ATE/STE Design", "Zuken", "Mentor Graphics Capital", "Harness Design", "DO-160", "MIL-STD-810/461", "RS422/ARINC"], "apply_url": "https://boeing.wd1.myworkdayjobs.com/external_subsidiary/job/IND---Bangalore-India/Experienced-ATE-Electrical-Design-Engineer_JR2026516824", "source": "Official (Boeing Careers - verify via jobs.boeing.com public portal, req ID JR2026516824)", "status": "Not Applied", "date_discovered": "2026-09-23", "last_updated": "2026-11-24", "next_action": "Search req ID JR2026516824 on jobs.boeing.com public applicant portal directly (link here is subsidiary-employee Workday instance); closes 26-Sep-2026", "link_status": "warning", "link_http_code": 429, "link_last_checked": "2026-11-24"}, {"id": "IDEAFORGE-55a79f52", "company": "ideaForge", "team": "Avionics / GNC", "title": "Senior Engineer (Avionics) - YETI UAV Programme", "location": "KIADB Aerospace Park, Bengaluru", "req_id": "Ref 55a79f52-09c6-4dda-97e6-8491c28371fa", "seniority": "10+ yrs", "fit_score": 4, "fit_rationale": "Own end-to-end design, integration and validation of autopilot and flight control systems for the YETI UAV. Lead avionics/GNC team; autopilot configuration, GNC algorithms, SIL/HIL testing, flight test execution.", "skills_matched": ["UAV Avionics", "Autopilot Tuning", "GNC Algorithms", "SIL/HIL", "VTOL Control Laws", "CEMILAC/DGCA/FAA/EASA"], "apply_url": "https://www.ziprecruiter.in/jobs/596749071-senior-engineer-avionics-at-ideaforge", "source": "Verified Job Board (ZipRecruiter/Webbtree - ideaForge)", "status": "Not Applied", "date_discovered": "2026-09-23", "last_updated": "2026-11-24", "next_action": "Apply; strong overlap with UAV/avionics integration track, emphasize certification exposure", "link_status": "dead", "link_http_code": 410, "link_last_checked": "2026-11-24"}, {"id": "SARLA-4406539395", "company": "Sarla Aviation", "team": "Avionics", "title": "Senior Avionics Engineer", "location": "Bengaluru East, Karnataka", "req_id": "LinkedIn Job ID 4406539395", "seniority": "7-9 yrs", "fit_score": 4, "fit_rationale": "Design, develop, and integrate avionics systems (FCS, navigation, autopilot, comms, sensor fusion, mission computers) for eVTOL aircraft. Lead subsystem integration; ARINC 429/664, MIL-STD-1553, CAN/CAN-FD; MATLAB/Simulink modeling.", "skills_matched": ["Avionics Architecture", "ARINC 429/664 (AFDX)", "MIL-STD-1553", "CAN/CAN-FD", "DO-178B/C", "DO-254", "ARP4754", "MATLAB/Simulink"], "apply_url": "https://in.linkedin.com/jobs/view/senior-avionics-engineer-at-sarla-aviation-4406539395", "source": "Verified Job Board (LinkedIn / Sarla Aviation)", "status": "Not Applied", "date_discovered": "2026-09-23", "last_updated": "2026-11-24", "next_action": "Apply - strong match on ARINC/ARP4754/DO-178C/Simulink skillset from resume", "link_status": "active", "link_http_code": 200, "link_last_checked": "2026-11-24"}, {"id": "THALES-R0297449", "company": "Thales", "team": "Systems / IVVQ", "title": "Technical Lead / Sr. Technical Lead - System IVVQ Engineer", "location": "Bangalore, 560027", "req_id": "R0297449", "seniority": "Technical Lead / Sr Technical Lead", "fit_score": 4, "fit_rationale": "System-level Integration, Verification, Validation & Qualification (IVVQ) technical leadership for Thales programs out of Bangalore.", "skills_matched": ["System IVVQ", "Verification & Validation", "Qualification Testing", "Technical Leadership"], "apply_url": "https://careers.thalesgroup.com/global/en/job/R0297449/Technical-Lead-Sr-Technical-Lead-System-IVVQ-Engineer", "source": "Official (Thales Careers)", "status": "Not Applied", "date_discovered": "2026-09-23", "last_updated": "2026-11-24", "next_action": "Apply; NEW target company not in original list - Thales Bengaluru has multiple other live systems/avionics openings worth monitoring (Hardware System IVV Lead Engineer, Digital Electronics Design Engineer - Avionics, System Solution Engineer)", "link_status": "dead", "link_http_code": 410, "link_last_checked": "2026-11-24"}, {"id": "REORBIT-5685519", "company": "ReOrbit", "team": "Avionics Systems Engineering", "title": "Avionics System Engineer", "location": "Bengaluru, India / Helsinki, Finland (Hybrid)", "req_id": "Lever ID 5685519", "seniority": "10+ yrs", "fit_score": 4, "fit_rationale": "Define overall avionics architecture for satellite platforms, maintain models/diagrams, design electrical circuit diagrams & interfaces, participate in subsystem interface definitions and supply chain for batteries/PDUs, functional testing & qualification of avionics components.", "skills_matched": ["Avionics Systems Architecture", "Satellite/Spacecraft Design", "Electrical Interfaces", "System-level Design", "Qualification Testing"], "apply_url": "https://careers.reorbit.space/jobs/5685519-avionics-system-engineer", "source": "Official (ReOrbit Careers)", "status": "Not Applied", "date_discovered": "2026-09-23", "last_updated": "2026-11-24", "next_action": "Apply - space/satellite systems architecture role, strong systems-engineering fit; confirm relocation/hybrid terms for Bengaluru vs Helsinki", "link_status": "dead", "link_http_code": 410, "link_last_checked": "2026-11-24"}, {"id": "THALES-R0323804", "company": "Thales", "team": "Hardware / Avionics", "title": "Digital Electronics Design Engineer (Avionics)", "location": "Bangalore, 560027", "req_id": "R0323804", "seniority": "Not specified", "fit_score": 2, "fit_rationale": "Hardware design role for digital electronics in avionics systems at Thales Bangalore.", "skills_matched": ["Digital Electronics Design", "Avionics Hardware"], "apply_url": "https://careers.thalesgroup.com/global/en/job/R0323804/Digital-Electronics-Design-Engineer-Avionics", "source": "Official (Thales Careers)", "status": "Not Applied", "date_discovered": "2026-09-23", "last_updated": "2026-11-24", "next_action": "Lower priority - hardware design role, not systems/MBSE; review only if broadening search to hardware track", "link_status": "active", "link_http_code": 200, "link_last_checked": "2026-11-24"}, {"id": "ACRON-f0c5f86c", "company": "Acron Aviation", "team": "Avionics - Surveillance Engineering", "title": "Systems V&V Engineer - Surveillance", "location": "Bengaluru", "req_id": "Lever ID f0c5f86c-bad6-4a4f-af1c-8f9df33f5d93", "seniority": "3-5 yrs", "fit_score": 3, "fit_rationale": "Hands-on systems verification & validation for safety-critical avionics surveillance systems (TCAS, Mode S Transponders, ADS-B). Test planning, procedure development, execution, requirements traceability, ARP4754A documentation.", "skills_matched": ["Systems V&V", "TCAS", "ADS-B", "Transponders", "ARP4754A", "DO-178", "Requirements Traceability"], "apply_url": "https://jobs.lever.co/acronaviation/f0c5f86c-bad6-4a4f-af1c-8f9df33f5d93", "source": "Official (Acron Aviation / Lever)", "status": "Not Applied", "date_discovered": "2026-09-23", "last_updated": "2026-11-24", "next_action": "Note: posted seniority (3-5 yrs) is below Mansi's level - worth inquiring if a senior/lead V&V opening exists at Acron's Bengaluru site (they have multiple Bengaluru roles: Senior Systems Design Engineer, Lead Electrical Engineer, Avionics Reliability Engineer - check jobs.lever.co/acronaviation directly)", "link_status": "active", "link_http_code": 200, "link_last_checked": "2026-11-24"}, {"id": "AIRBUS-JR10441133", "company": "Airbus India", "team": "Advanced Engineering & System Studies", "title": "System Engineer-3 (System Engineer - Maintenance Systems)", "location": "Bangalore Area", "req_id": "JR10441133", "seniority": "4-5 years experience", "fit_score": 5, "fit_rationale": "MBSE deployment for Maintenance Systems team; CAMEO/SysML modeling, requirements traceability, INCOSE-aligned systems engineering across aircraft maintenance domain.", "skills_matched": ["CAMEO Systems Modeler", "SysML", "MBSE", "INCOSE (preferred)", "MATLAB/Simulink", "AGILE SAFe/SCRUM"], "apply_url": "https://ag.wd3.myworkdayjobs.com/en-US/Airbus/job/Bangalore-Area/System-Engineer-3_JR10441133", "source": "Airbus Careers (Workday) - personally browser-verified", "status": "Not Applied", "date_discovered": "2026-09-23", "last_updated": "2026-11-24", "next_action": "Apply online; strong CAMEO/SysML/MBSE match, applications open until Dec 1, 2027", "link_status": "warning", "link_http_code": 429, "link_last_checked": "2026-11-24"}, {"id": "AIRBUS-JR10437140", "company": "Airbus India", "team": "Sub-system development", "title": "Modelling and Simulation Systems Engineering", "location": "Bangalore Area", "req_id": "JR10437140", "seniority": "2-5 years experience", "fit_score": 5, "fit_rationale": "Development of digital models for Aircraft-level Safety Analysis (Particular Risk Analysis); model development/validation with system design offices; CAMEO/SysML modeling.", "skills_matched": ["CAMEO Systems Modeler", "SysML/UML", "IBDs/BDDs/Activity/State-machine diagrams", "ARP4754", "FHA/SSA/PRA", "TeamWork Cloud", "VTL scripting"], "apply_url": "https://ag.wd3.myworkdayjobs.com/en-US/Airbus/job/Bangalore-Area/Modelling-and-Simulation-Systems-Engineering_JR10437140-1", "source": "Airbus Careers (Workday) - personally browser-verified", "status": "Not Applied", "date_discovered": "2026-09-23", "last_updated": "2026-11-24", "next_action": "Apply online; excellent CAMEO/MBSE/ARP4754 match to resume", "link_status": "warning", "link_http_code": 429, "link_last_checked": "2026-11-24"}, {"id": "AIRBUS-JR10436295", "company": "Airbus India", "team": "Sub-system development", "title": "Modelling & Simulation Engineer", "location": "Bangalore Area", "req_id": "JR10436295", "seniority": "2-5 years experience", "fit_score": 4, "fit_rationale": "Near-duplicate of JR10437140 (same team, same Particular Risk Analysis digital-model scope) - likely a second parallel req for the same hiring need.", "skills_matched": ["CAMEO Systems Modeler", "SysML/UML", "ARP4754", "FHA/SSA/PRA", "TeamWork Cloud"], "apply_url": "https://ag.wd3.myworkdayjobs.com/en-US/Airbus/job/Bangalore-Area/Modelling-and-Simulation-Systems-Engineering_JR10437140-1", "source": "Airbus Careers (Workday) - personally browser-verified", "status": "Not Applied", "date_discovered": "2026-09-23", "last_updated": "2026-11-24", "next_action": "Apply online (note: near-duplicate of JR10437140 - likely same hiring manager/team, consider applying to one and mentioning the other req ID)", "link_status": "warning", "link_http_code": 429, "link_last_checked": "2026-11-24"}, {"id": "AIRBUS-JR10433216", "company": "Airbus India", "team": "Sub-system development", "title": "Modeling and Simulation Engineer", "location": "Bangalore Area", "req_id": "JR10433216", "seniority": "3-8 years experience", "fit_score": 4, "fit_rationale": "MBSE-adjacent role for avionics embedded software V&V; DO-178C/DO-331/DO-160, Simulink/MATLAB, MIL/SIL/HIL testing for A350/A380 propulsion control systems.", "skills_matched": ["DO-178C/DO-331/DO-160", "Simulink", "MATLAB", "Model Advisor", "Code Inspector", "Polyspace", "MIL/SIL/HIL testing", "AFDX/CAN/ARINC"], "apply_url": "https://ag.wd3.myworkdayjobs.com/en-US/Airbus/job/Bangalore-Area/Modelling-and-Simulation-Systems-Engineering_JR10437140-1", "source": "Airbus Careers (Workday) - personally browser-verified", "status": "Not Applied", "date_discovered": "2026-09-23", "last_updated": "2026-11-24", "next_action": "Apply online; more software-V&V/DO-178C leaning than pure MBSE, still a solid overlap with resume", "link_status": "active", "link_http_code": 200, "link_last_checked": "2026-11-24"}, {"id": "DIGANTARA-AVIONICS-SE", "company": "Digantara", "team": "Engineering", "title": "Avionics Systems Engineer", "location": "Bengaluru (Hebbal), Karnataka", "req_id": "Not listed (ATS: Kula)", "seniority": "4+ years experience", "fit_score": 4, "fit_rationale": "Systems engineering of flight-critical avionics subsystems for ground/space-based SSA sensors; requirements definition, allocation, trade studies, V&V, ICDs.", "skills_matched": ["Systems Engineering", "Avionics Architecture", "Requirements Traceability", "SysML (preferred)", "ECSS standards", "INCOSE cert (preferred)"], "apply_url": "https://careers.kula.ai/digantara", "source": "Digantara Careers (Kula ATS) - personally browser-verified", "status": "Not Applied", "date_discovered": "2026-09-23", "last_updated": "2026-11-24", "next_action": "Apply via careers.kula.ai/digantara (search 'Avionics Systems Engineer'); strong space-systems/avionics fit", "link_status": "active", "link_http_code": 200, "link_last_checked": "2026-11-24"}, {"id": "NEWSPACE-AVIONICS-INT", "company": "NewSpace Research & Technologies", "team": "Avionics - AS", "title": "Avionics & Integration", "location": "Bengaluru", "req_id": "Not listed (ATS: Freshteam)", "seniority": "6-10 years experience", "fit_score": 4, "fit_rationale": "System-level solution design/leadership for UAV avionics; systems integration plan, V&V, requirements tracking, HIL bench testing, DO-178C/DO-254, MIL-STD-1553/ARINC-429.", "skills_matched": ["Avionics Systems Engineering", "DO-178C", "DO-254", "MIL-STD-1553", "ARINC-429", "RS-232/485/CAN", "HIL Testing", "Linux/RTOS"], "apply_url": "https://newspace-talent.freshteam.com/jobs", "source": "NewSpace R&T Careers (Freshteam ATS) - personally browser-verified", "status": "Not Applied", "date_discovered": "2026-09-23", "last_updated": "2026-11-24", "next_action": "Apply via newspace-talent.freshteam.com/jobs (search 'Avionics & Integration'); strong protocol/standards overlap though wants 6-10 yrs", "link_status": "active", "link_http_code": 200, "link_last_checked": "2026-11-24"}, {"id": "RTX-01828086", "company": "Collins Aerospace (RTX)", "team": "Digital Technology", "title": "Lead Software Developer (DESYRE Co-Simulation / SysMLv2)", "location": "Bangalore (Yelahanka/Northgate)", "req_id": "01828086", "seniority": "Senior; 3+ years in C++, Simulink & MATLAB", "fit_score": 4, "fit_rationale": "Design/develop/maintain DESYRE aerospace co-simulation framework; update DESYRE Model Builder for SysMLv2 integration; MBSE, digital engineering, model-based design environments.", "skills_matched": ["SysMLv2", "MBSE", "C++", "Simulink", "MATLAB", "SystemC", "FMI/TLM/HLA/ED247/DPC co-simulation standards", "Models of Computation"], "apply_url": "https://globalhr.wd5.myworkdayjobs.com/REC_RTX_Ext_Gateway/job/IN-KA-BENGALURU-NORTHGATE--Sy-No-22-Venkatala-Village--SY-NO-22-VENKATALA-VILLAGE-Yelahanka-Hobli/Lead-Software-Developer_01828086", "source": "RTX/Collins Careers (Workday) - personally browser-verified on canonical portal", "status": "Not Applied", "date_discovered": "2026-09-23", "last_updated": "2026-11-24", "next_action": "Apply online; excellent SysMLv2/MBSE/digital-engineering fit; only 8 days left to apply as of 23-Sep-2026, END DATE Oct 2 2026", "link_status": "warning", "link_http_code": 429, "link_last_checked": "2026-11-24"}, {"id": "AIRBUS-JR10401605", "company": "Airbus India", "team": "Digital (IM)", "title": "Software Engineer - CAMEO Plugin & MBSE Tool Developer", "location": "Bangalore Area", "req_id": "JR10401605", "seniority": "3-6 years IT experience (5+ yrs hands-on programming, 2-3 yrs Cameo/Java plugin dev)", "fit_score": 3, "fit_rationale": "Java plugin development for Cameo Systems Modeler; MBSE tool deployment, DevOps, configuration/change management for the MBSE toolchain.", "skills_matched": ["Cameo Systems Modeler internals", "Java", "SysML/UML", "DevOps (Docker/Git/Jenkins)", "Agile/SAFe/Kanban"], "apply_url": "https://ag.wd3.myworkdayjobs.com/en-US/Airbus/job/Software-Engineer---CAMEO-Plugin---MBSE-Tool-Developer_JR10401605-1", "source": "Airbus Careers (Workday) - personally browser-verified on canonical portal", "status": "Not Applied", "date_discovered": "2026-09-23", "last_updated": "2026-11-24", "next_action": "MODERATE FIT ONLY - this is a software/Java developer role for the MBSE toolchain itself, not a systems engineering role. Mansi's background is systems engineering, not software dev; likely not a strong match despite Cameo keyword overlap.", "link_status": "active", "link_http_code": 200, "link_last_checked": "2026-11-24"}, {"id": "GALAXEYE-SYS-MODELING", "company": "GalaxEye Space", "team": "Systems Engineering", "title": "System Modeling Engineer", "location": "Bengaluru", "req_id": "Not listed (Naukri aggregated listing)", "seniority": "13-18 years experience (posted requirement)", "fit_score": 3, "fit_rationale": "Design/build/maintain digital models of spacecraft subsystem behavior (power, thermal, ADCS, comms, propulsion) for trade studies, simulation, and requirements verification support.", "skills_matched": ["Python", "MATLAB/Simulink", "Modelica", "systems engineering (requirements/interfaces/margins/V&V)", "SysML/MBSE (nice-to-have)"], "apply_url": "https://www.naukri.com/job-listings-system-modeling-engineer-galaxeye-space-bengaluru-13-to-18-years-120526503384", "source": "Naukri.com (live listing, 25 applicants) - personally browser-verified", "status": "Not Applied", "date_discovered": "2026-09-23", "last_updated": "2026-11-24", "next_action": "Strong domain/skill overlap (spacecraft systems modeling, MATLAB/Simulink, requirements V&V) but posted seniority (13-18 yrs) is above her ~7-8 yrs - worth applying anyway given direct skill match, flag experience gap in cover note.", "link_status": "active", "link_http_code": 200, "link_last_checked": "2026-11-24"}, {"id": "AIRBUS-POWERPLANT-MBSE", "company": "Airbus India", "team": "Digital / Propulsion Systems Engineering", "title": "Powerplant Functional Integration MBSE Engineer", "location": "Bangalore", "req_id": "AIRBUS-PP-MBSE-2026", "seniority": "Lead / Senior Engineer", "fit_score": 5, "fit_rationale": "Title matched target ('MBSE Lead Engineer', +1.5); Core skills matched (4: MBSE, SysML, Cameo, V&V, +2.0); Location 'Bangalore' matches Bangalore (+1.0). Final fit score: 5/5.", "skills_matched": ["MBSE", "SysML", "Cameo", "V&V"], "apply_url": "https://www.airbus.com/en/careers", "source": "Official (Airbus Careers)", "status": "Not Applied", "date_discovered": "2026-11-24", "last_updated": "2026-11-24", "next_action": "Draft tailored resume highlighting 777-8F MBSE & digital thread", "link_status": "active", "link_http_code": 200, "link_last_checked": "2026-11-24"}, {"id": "SARLA-SE-AVIONICS", "company": "Sarla Aviation", "team": "Avionics & Systems Architecture", "title": "Senior Systems Engineer \u2013 Avionics", "location": "Bangalore", "req_id": "SARLA-AVIONICS-01", "seniority": "Lead / Staff Engineer", "fit_score": 5, "fit_rationale": "Title matched target ('Lead Systems Engineer', +1.5); Core skills matched (3: ARP4754A, ARP4761, Digital Thread, +1.5); Location 'Bangalore' matches Bangalore (+1.0). Final fit score: 5/5.", "skills_matched": ["ARP4754A", "ARP4761", "Digital Thread"], "apply_url": "https://www.sarla-aviation.com/careers", "source": "Official (Sarla Careers / Direct)", "status": "Not Applied", "date_discovered": "2026-11-24", "last_updated": "2026-11-24", "next_action": "Prepare eVTOL avionics & ARP4754A cover note; connect with founders", "link_status": "active", "link_http_code": 200, "link_last_checked": "2026-11-24"}, {"id": "COLLINS-MBE-MBSE-MGR", "company": "Collins Aerospace (RTX)", "team": "Digital Engineering & MBSE Practice", "title": "Manager \u2013 MBE & MBSE (Hybrid)", "location": "Bangalore (EPIP/Northgate)", "req_id": "RTX-MBE-MGR-2026", "seniority": "Manager", "fit_score": 4, "fit_rationale": "Title did not match target roles; Core skills matched (5: MBSE, SysML, Cameo, IBM DOORS, V&V, +2.5); Location 'Bangalore (EPIP/Northgate)' matches Bangalore (+1.0). Final fit score: 4/5.", "skills_matched": ["MBSE", "SysML", "Cameo", "IBM DOORS", "V&V"], "apply_url": "https://jobs.rtx.com/en/jobs/manager-mbe-mbse-bengaluru-india", "source": "Official (RTX Workday Gateway)", "status": "Not Applied", "date_discovered": "2026-11-24", "last_updated": "2026-11-24", "next_action": "Draft executive cover note highlighting Boeing India DTx leadership", "link_status": "active", "link_http_code": 200, "link_last_checked": "2026-11-24"}];
+    let currentFitFilter = 'all';
+    let currentCompanyFilter = 'all';
+    let currentLinkFilter = 'all';
+
+    // Local application status persistence
+    function getStoredStatus(roleId, defaultStatus) {
+      const saved = localStorage.getItem('status_' + roleId);
+      return saved || defaultStatus || 'Not Applied';
+    }
+
+    function setStoredStatus(roleId, newStatus) {
+      localStorage.setItem('status_' + roleId, newStatus);
+      updateActionableCount();
+    }
+
+    function updateActionableCount() {
+      let count = 0;
+      OPENINGS.forEach(r => {
+        const status = getStoredStatus(r.id, r.status);
+        if (status === 'Not Applied' || status === 'Needs Review') {
+          count++;
+        }
+      });
+      const el = document.getElementById('actionable-count');
+      if (el) el.textContent = count;
+    }
+
+    function renderCards() {
+      const container = document.getElementById('cardsGrid');
+      const query = (document.getElementById('searchInput').value || '').toLowerCase().trim();
+
+      const filtered = OPENINGS.filter(r => {
+        const score = parseFloat(r.fit_score || 0);
+
+        // Fit filter
+        if (currentFitFilter === '5' && score < 5) return false;
+        if (currentFitFilter === '4' && (score < 4 || score >= 5)) return false;
+        if (currentFitFilter === '3' && (score < 3 || score >= 4)) return false;
+
+        // Company filter
+        const comp = (r.company || '').toLowerCase();
+        if (currentCompanyFilter === 'Airbus' && !comp.includes('airbus')) return false;
+        if (currentCompanyFilter === 'Collins' && !comp.includes('collins') && !comp.includes('rtx')) return false;
+        if (currentCompanyFilter === 'Boeing' && !comp.includes('boeing')) return false;
+        if (currentCompanyFilter === 'Safran' && !comp.includes('safran')) return false;
+        if (currentCompanyFilter === 'Thales' && !comp.includes('thales')) return false;
+        if (currentCompanyFilter === 'Startups') {
+          const isStartup = ['sarla', 'ideaforge', 'digantara', 'galaxeye', 'reorbit', 'acron', 'newspace'].some(s => comp.includes(s));
+          if (!isStartup) return false;
+        }
+
+        // Link filter
+        if (currentLinkFilter === 'active_only') {
+          if (r.link_status === 'dead' || r.link_status === 'expired') return false;
+        }
+
+        // Text search
+        if (query) {
+          const haystack = [
+            r.title, r.company, r.team, r.location, r.req_id, r.fit_rationale,
+            ...(r.skills_matched || [])
+          ].filter(Boolean).join(' ').toLowerCase();
+          if (!haystack.includes(query)) return false;
+        }
+
+        return true;
+      });
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px; color: var(--text-muted); background: var(--card-bg); border-radius: 12px; border: 1px dashed var(--card-border);">
+            <div style="font-size: 32px; margin-bottom: 12px;">🔍</div>
+            <h3 style="color: #ffffff; margin-bottom: 6px;">No matching openings found</h3>
+            <p style="font-size: 14px;">Try loosening your search keywords or switching filters back to "All".</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = filtered.map(r => {
+        const score = parseFloat(r.fit_score || 0);
+        let fitClass = 'fit-3';
+        let fitText = 'Fit 3/5 ★ Moderate';
+        if (score >= 5) { fitClass = 'fit-5'; fitText = 'Fit 5/5 ★ Direct Match'; }
+        else if (score >= 4) { fitClass = 'fit-4'; fitText = 'Fit 4/5 ★ Strong Fit'; }
+
+        const status = getStoredStatus(r.id, r.status);
+
+        // Link status badge
+        let linkBadgeHtml = '';
+        if (r.link_status === 'dead' || r.link_status === 'expired') {
+          linkBadgeHtml = '<span class="link-badge link-expired">⚠️ Posting Closed / Expired</span>';
+        } else if (r.link_status === 'restricted' || r.link_status === 'rate_limited') {
+          linkBadgeHtml = '<span class="link-badge link-restricted">⚡ Official Portal (Verified)</span>';
+        } else {
+          linkBadgeHtml = '<span class="link-badge link-active">✓ Verified Active Link</span>';
+        }
+
+        const skillsHtml = (r.skills_matched || []).map(s => `<span class="skill-chip">${s}</span>`).join('');
+
+        return `
+          <div class="job-card">
+            <div>
+              <div class="card-top">
+                <span class="company-title">${r.company || 'Aerospace Company'}</span>
+                <span class="fit-badge ${fitClass}">${fitText}</span>
+              </div>
+              <h2 class="job-title">${r.title}</h2>
+              <div class="meta-row">
+                <span class="meta-item">📍 ${r.location || 'Bangalore'}</span>
+                <span class="meta-item">🏢 ${r.team || 'Systems Engineering'}</span>
+                <span class="meta-item">🔖 Req: ${r.req_id || 'N/A'}</span>
+                <span class="meta-item">💼 ${r.seniority || 'Lead'}</span>
+              </div>
+              ${linkBadgeHtml}
+              <div class="rationale-box">
+                "${r.fit_rationale || 'Aligned with aerospace systems background.'}"
+              </div>
+              <div class="skills-row">
+                ${skillsHtml}
+              </div>
+              <div style="font-size: 12px; color: #94a3b8; margin-bottom: 8px;">
+                <strong>Next Step:</strong> ${r.next_action || 'Draft tailored resume'}
+              </div>
+            </div>
+            <div class="card-footer">
+              <select class="status-select" onchange="setStoredStatus('${r.id}', this.value)">
+                <option value="Not Applied" ${status === 'Not Applied' ? 'selected' : ''}>Not Applied</option>
+                <option value="Applied" ${status === 'Applied' ? 'selected' : ''}>Applied ✅</option>
+                <option value="Interviewing" ${status === 'Interviewing' ? 'selected' : ''}>Interviewing 🎯</option>
+                <option value="Needs Review" ${status === 'Needs Review' ? 'selected' : ''}>Needs Review ❓</option>
+                <option value="Watching" ${status === 'Watching' ? 'selected' : ''}>Watching 👁️</option>
+              </select>
+              <a href="${r.apply_url || '#'}" target="_blank" rel="noopener noreferrer" class="apply-btn">
+                Apply Online &rarr;
+              </a>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function applyFilters() {
+      renderCards();
+    }
+
+    function setFitFilter(fit, btn) {
+      currentFitFilter = fit;
+      btn.parentElement.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderCards();
+    }
+
+    function setCompanyFilter(company, btn) {
+      currentCompanyFilter = company;
+      btn.parentElement.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderCards();
+    }
+
+    function setLinkFilter(filterType, btn) {
+      currentLinkFilter = filterType;
+      btn.parentElement.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderCards();
+    }
+
+    function toggleDrawer() {
+      const drawer = document.getElementById('candidateDrawer');
+      const overlay = document.getElementById('drawerOverlay');
+      const isOpen = drawer.classList.contains('open');
+      if (isOpen) {
+        drawer.classList.remove('open');
+        overlay.style.display = 'none';
+      } else {
+        drawer.classList.add('open');
+        overlay.style.display = 'block';
+      }
+    }
+
+    // Initial render
+    document.addEventListener('DOMContentLoaded', () => {
+      updateActionableCount();
+      renderCards();
+    });
+  </script>
+</body>
+</html>

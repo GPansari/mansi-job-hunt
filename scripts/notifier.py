@@ -29,6 +29,10 @@ DEFAULT_HISTORY_PATH = Path("reports/sent_history.json")
 DEFAULT_REPORTS_DIR = Path("reports")
 DEFAULT_CANDIDATE_NAME = "Mansi"
 DEFAULT_MIN_FIT_SCORE = 3.0
+DEFAULT_PORTAL_URL = os.environ.get(
+    "JOB_PORTAL_URL",
+    "https://gpansari.github.io/mansi-job-hunt/",
+)
 
 
 def _safe_float(val: Any, default: float = 0.0) -> float:
@@ -117,6 +121,7 @@ def generate_digest(
     candidate_name: str = DEFAULT_CANDIDATE_NAME,
     new_only: bool = True,
     date_str: str | None = None,
+    portal_url: str = DEFAULT_PORTAL_URL,
 ) -> tuple[str, str]:
     """Generate crisp plain-text and mobile-responsive HTML job digest.
 
@@ -136,6 +141,7 @@ def generate_digest(
         "=" * 80,
         f"WEEKLY EXECUTIVE JOB HUNT DIGEST - {candidate_name.upper()} AGRAWAL",
         f"Date: {date_str} | New High-Fit Matches: {total_count}",
+        f"Online Review Portal: {portal_url}",
         "=" * 80,
         "",
     ]
@@ -281,6 +287,7 @@ def generate_digest(
 
     candidate_esc = html.escape(str(candidate_name), quote=True)
     date_esc = html.escape(str(date_str), quote=True)
+    portal_url_esc = html.escape(str(portal_url), quote=True)
 
     html_body = f"""<!DOCTYPE html>
 <html>
@@ -336,6 +343,27 @@ def generate_digest(
                 </td>
             </tr>
         </table>
+
+        <!-- Live Review Portal Banner -->
+        <div style="background-color: #ffffff; border: 1px solid #bfdbfe; border-left: 4px solid #0284c7; border-radius: 8px; padding: 14px 18px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+            <table width="100%" cellpadding="0" cellspacing="0">
+                <tr>
+                    <td valign="middle">
+                        <div style="font-size: 14px; font-weight: 700; color: #0369a1;">
+                            🌐 Interactive Role Review Portal
+                        </div>
+                        <div style="font-size: 12px; color: #64748b; margin-top: 2px;">
+                            Filter by company, check live application links, and track statuses online.
+                        </div>
+                    </td>
+                    <td align="right" valign="middle" style="white-space: nowrap; padding-left: 12px;">
+                        <a href="{portal_url_esc}" target="_blank" style="display: inline-block; background-color: #0284c7; color: #ffffff; text-decoration: none; font-size: 13px; font-weight: 600; padding: 8px 14px; border-radius: 6px;">
+                            Open Portal &rarr;
+                        </a>
+                    </td>
+                </tr>
+            </table>
+        </div>
 
         <!-- Openings Cards -->
         {cards_joined}
@@ -468,6 +496,7 @@ def main() -> int:
     parser.add_argument("--history", default=str(DEFAULT_HISTORY_PATH), help=f"Path to history JSON (default: {DEFAULT_HISTORY_PATH})")
     parser.add_argument("--all", action="store_true", help="Include already-sent roles (ignore history)")
     parser.add_argument("--subject", default=None, help="Custom email subject")
+    parser.add_argument("--portal-url", default=DEFAULT_PORTAL_URL, help=f"Web URL for role review portal (default: {DEFAULT_PORTAL_URL})")
 
     args = parser.parse_args()
 
@@ -492,7 +521,12 @@ def main() -> int:
         return 0
 
     date_str = datetime.now().strftime("%Y-%m-%d")
-    text_body, html_body = generate_digest(unnotified, candidate_name=DEFAULT_CANDIDATE_NAME, date_str=date_str)
+    text_body, html_body = generate_digest(
+        unnotified,
+        candidate_name=DEFAULT_CANDIDATE_NAME,
+        date_str=date_str,
+        portal_url=args.portal_url,
+    )
     subject = args.subject or f"Weekly Job Hunt Digest - {date_str} ({len(unnotified)} High-Fit Matches)"
 
     # Default to dry-run unless --send is explicitly given

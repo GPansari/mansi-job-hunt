@@ -371,6 +371,13 @@ def main() -> None:
         sync_json_to_markdown(args.json_path, args.md_path)
         print(f"Successfully synced {args.json_path} -> {args.md_path}")
 
+    # Keep web portal in sync
+    try:
+        from scripts.generate_site import build_site
+        build_site(openings_path=args.json_path)
+    except Exception as e:
+        pass
+
 
 if __name__ == "__main__":
     main()
