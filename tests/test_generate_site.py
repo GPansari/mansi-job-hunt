@@ -2,7 +2,6 @@
 
 import json
 from pathlib import Path
-import pytest
 from scripts.generate_site import build_site
 
 
@@ -19,17 +18,52 @@ def test_build_site_success(tmp_path: Path):
             "location": "Bangalore",
             "req_id": "JR123",
             "fit_score": 5,
-            "fit_rationale": "Perfect aerospace MBSE fit.",
+            "fit_rationale": "Strong aerospace MBSE fit.",
             "skills_matched": ["MBSE", "Cameo", "SysML"],
             "apply_url": "https://ag.wd3.myworkdayjobs.com/test",
+            "url_type": "direct_requisition",
+            "date_discovered": "2026-11-27",
             "status": "Not Applied",
             "link_status": "active",
-        }
+        },
+        {
+            "id": "TEST-02",
+            "company": "Green Aero Propulsion",
+            "title": "Drone Engineer",
+            "location": "Bengaluru",
+            "req_id": "GA-1",
+            "fit_score": 4,
+            "fit_rationale": "UAV systems role.",
+            "skills_matched": ["UAV"],
+            "apply_url": "https://www.greenaero.in/careers/#roles",
+            "url_type": "board_role_anchor",
+            "date_discovered": "2026-11-26",
+            "status": "Not Applied",
+            "link_status": "active",
+        },
+        {
+            "id": "TEST-INACTIVE",
+            "company": "Old Corp",
+            "title": "Expired Role",
+            "location": "Bangalore",
+            "req_id": "OLD-1",
+            "fit_score": 5,
+            "skills_matched": ["MBSE"],
+            "apply_url": "https://example.com/old",
+            "url_type": "direct_requisition",
+            "date_discovered": "2026-09-22",
+            "status": "Inactive Posting",
+            "link_status": "expired",
+        },
     ]
     sample_candidate = {
         "name": "Mansi Agrawal",
         "current_title": "Lead Systems Engineer",
+        "experience_years": 10,
         "education": "MS Aerospace, Georgia Tech",
+        "core_skills": ["MBSE", "SysML", "Cameo"],
+        "target_titles": ["Lead Systems Engineer"],
+        "target_domains": ["Commercial Aircraft", "UAV"],
     }
 
     openings_file.write_text(json.dumps(sample_openings), encoding="utf-8")
@@ -45,6 +79,7 @@ def test_build_site_success(tmp_path: Path):
     assert output_html.exists()
     content = output_html.read_text(encoding="utf-8")
 
+    # Core elements & dynamic JSON embedding
     assert "Mansi Agrawal" in content
     assert "TEST-01" in content
     assert "https://ag.wd3.myworkdayjobs.com/test" in content
@@ -53,3 +88,21 @@ def test_build_site_success(tmp_path: Path):
     assert "searchInput" in content
     assert "categoryFilter" in content
     assert "viewBtnTable" in content
+
+    # Phase 3 UX & security features
+    assert "Discovered" in content
+    assert "sortSelect" in content
+    assert "Newest First" in content
+    assert "Fit + Recency" in content
+    assert "Direct ATS" in content
+    assert "Career Board Role" in content
+    assert "populateCompanyFilter()" in content
+    assert "renderCandidateDrawer()" in content
+    assert "const CANDIDATE =" in content
+    assert "function escapeHtml(" in content
+    assert "exportStatusesJson" in content
+    assert "importStatusesJson" in content
+    assert "toggleMobileFilters" in content
+    # Accurate active/actionable counts (2 active, 1 inactive excluded)
+    assert 'id="kpi-active">2<' in content
+    assert 'id="kpi-actionable">2<' in content

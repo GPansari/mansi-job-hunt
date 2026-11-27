@@ -246,7 +246,7 @@ def _count_pdf_pages_via_pdftotext(stdout: str) -> int | None:
 
 
 def _get_pdf_page_count(pdf_path: Path) -> int | None:
-    """Determine PDF page count via `pdfinfo`, falling back to `pdftotext` form feeds."""
+    """Determine PDF page count via `pdfinfo`, `pdftotext`, or pure-Python `pypdf` fallback."""
     if not pdf_path.exists():
         return None
 
@@ -278,7 +278,14 @@ def _get_pdf_page_count(pdf_path: Path) -> int | None:
     except (OSError, subprocess.SubprocessError):
         pass
 
-    return None
+    try:
+        from pypdf import PdfReader
+
+        reader = PdfReader(str(pdf_path))
+        page_count = len(reader.pages)
+        return page_count if page_count > 0 else None
+    except Exception:
+        return None
 
 
 def audit_application(

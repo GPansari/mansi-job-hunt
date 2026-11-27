@@ -88,8 +88,12 @@ It solves the friction of manual job board browsing by combining:
 │   ├── target_companies.json           # 60+ aerospace companies, portals, ATS types & tiers
 │   ├── openings.json                   # Canonical opportunities tracker (JSON)
 │   └── Openings_Tracker.md             # Human-readable Markdown tracker table
+├── docs/
+│   └── index.html                      # Live single-page review portal (GitHub Pages)
 ├── scripts/
 │   ├── __init__.py
+│   ├── generate_site.py                # Static web portal builder for GitHub Pages
+│   ├── verify_links.py                 # Live HTTP link health & ATS expiration auditor
 │   ├── search_engine.py                # Multi-tier job search & ATS ingestion engine
 │   ├── scorer.py                       # Candidate fit & relevance scoring engine
 │   ├── notifier.py                     # Weekly digest compiler & Gmail dispatcher
@@ -136,7 +140,7 @@ Run the complete test suite to confirm data integrity and engine functions:
 pytest -v
 ```
 
-All 57+ tests should pass out of the box.
+All 110+ tests should pass out of the box.
 
 ---
 
@@ -175,7 +179,7 @@ python scripts/search_engine.py --scan-ats --dry-run
 
 Score a single job opening payload from JSON:
 ```bash
-python scripts/scorer.py --job '{"title": "MBSE Leader", "company": "Airbus", "location": "Bangalore"}'
+python scripts/scorer.py --job-json '{"title": "MBSE Leader", "company": "Airbus", "location": "Bangalore"}'
 ```
 
 Batch re-score all openings in `data/openings.json` and update scores:
@@ -195,6 +199,12 @@ python scripts/sync_tracker.py --to-md
 Sync manual edits in Markdown tracker back into JSON (e.g. status changes, notes):
 ```bash
 python scripts/sync_tracker.py --to-json
+```
+
+Verify live posting links and regenerate the static GitHub Pages review portal:
+```bash
+python scripts/verify_links.py
+python scripts/generate_site.py
 ```
 
 ---

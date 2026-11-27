@@ -225,3 +225,13 @@ def test_audit_fails_when_pdf_exists_but_page_count_unreadable(tmp_path: Path):
     assert report["passed"] is False
     assert "Could not read page count from tailored_resume.pdf" in report["issues"]
 
+
+def test_get_pdf_page_count_falls_back_to_pypdf_when_poppler_missing():
+    from scripts.application_reviewer import _get_pdf_page_count
+
+    resume_pdf = Path("profile/Mansi_Agrawal_Resume.pdf")
+    with patch("scripts.application_reviewer.subprocess.run", side_effect=FileNotFoundError("poppler missing")):
+        pages = _get_pdf_page_count(resume_pdf)
+    assert isinstance(pages, int) and pages >= 1
+
+

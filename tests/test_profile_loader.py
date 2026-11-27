@@ -83,6 +83,16 @@ def test_extract_pdf_text_reads_resume():
     assert len(text.strip()) > 200
 
 
+def test_extract_pdf_text_falls_back_to_pypdf_when_pdftotext_missing(monkeypatch):
+    def missing_pdftotext(*args, **kwargs):
+        raise FileNotFoundError("pdftotext not found")
+
+    monkeypatch.setattr("scripts.profile_loader.subprocess.run", missing_pdftotext)
+    text = extract_pdf_text(Path("profile/Mansi_Agrawal_Resume.pdf"))
+    assert "Mansi" in text
+    assert len(text.strip()) > 200
+
+
 def test_load_master_profile_loads_real_files():
     profile = load_master_profile()
     assert profile["candidate"]["name"] == "Mansi Agrawal"

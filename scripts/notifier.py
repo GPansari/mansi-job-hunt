@@ -86,7 +86,7 @@ def filter_unnotified_roles(
     history: set[str] | list[str] | None = None,
     min_fit_score: float | int = DEFAULT_MIN_FIT_SCORE,
 ) -> list[dict[str, Any]]:
-    """Filter out openings already notified in history or below min_fit_score."""
+    """Filter out openings already notified, inactive/dead/expired, or below min_fit_score."""
     history_set = set(history) if history is not None else set()
     unnotified: list[dict[str, Any]] = []
 
@@ -95,6 +95,14 @@ def filter_unnotified_roles(
             continue
         role_id = role.get("id")
         if not role_id or role_id in history_set:
+            continue
+
+        status = str(role.get("status") or "").strip().casefold()
+        if status == "inactive posting":
+            continue
+
+        link_status = str(role.get("link_status") or "").strip().casefold()
+        if link_status in ("dead", "expired"):
             continue
 
         raw_score = role.get("fit_score")

@@ -203,3 +203,17 @@ def test_cli_score_all_update(tmp_path):
     tracker_content = tracker_file.read_text(encoding="utf-8")
     assert "Airbus India" in tracker_content
     assert "Collins Aerospace" in tracker_content
+
+
+def test_scorer_matches_master_dossier_skills_and_target_domains():
+    job = {
+        "title": "Avionics Systems Architect",
+        "description": "Requires SysML v2, ARINC 429, AFDX, MSOSA, DESE, ReqHub, DataHub, and AS9100 for eVTOL and UAV programs.",
+        "location": "Bengaluru",
+    }
+    res = score_job(job)
+    assert res["fit_score"] >= 4
+    for skill in ("SysML v2", "ARINC 429", "AFDX", "MSOSA", "DESE", "ReqHub", "DataHub", "AS9100"):
+        assert skill in res["skills_matched"]
+    assert "eVTOL" in res["domains_matched"] or "UAV" in res["domains_matched"]
+

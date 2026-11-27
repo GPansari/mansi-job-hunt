@@ -34,16 +34,35 @@ def _resolve_existing_path(path: Path | str) -> Path:
     raise FileNotFoundError(f"Required file not found: {candidate}")
 
 
+def _extract_pdf_text_pypdf(resolved: Path) -> str:
+    """Pure-Python PDF text extraction fallback using `pypdf`."""
+    try:
+        from pypdf import PdfReader
+    except ImportError as exc:
+        raise RuntimeError(
+            "PDF text extraction requires `pdftotext` on PATH or the `pypdf` package."
+        ) from exc
+
+    reader = PdfReader(str(resolved))
+    pages_text: list[str] = []
+    for page in reader.pages:
+        pages_text.append(page.extract_text() or "")
+    return "\x0c".join(pages_text)
+
+
 def extract_pdf_text(pdf_path: Path) -> str:
-    """Extract plain text from a PDF file using `pdftotext`."""
+    """Extract plain text from a PDF file using `pdftotext` with a pure-Python `pypdf` fallback."""
     resolved = _resolve_existing_path(pdf_path)
-    result = subprocess.run(
-        ["pdftotext", str(resolved), "-"],
-        capture_output=True,
-        text=True,
-        check=True,
-    )
-    return result.stdout
+    try:
+        result = subprocess.run(
+            ["pdftotext", str(resolved), "-"],
+            capture_output=True,
+            text=True,
+            check=True,
+        )
+        return result.stdout
+    except (FileNotFoundError, OSError, subprocess.SubprocessError):
+        return _extract_pdf_text_pypdf(resolved)
 
 
 def parse_dossier_sections(dossier_markdown: str) -> dict[str, str]:

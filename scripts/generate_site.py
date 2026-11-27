@@ -1,16 +1,16 @@
 #!/usr/bin/env python3
 """Static Site Generator for Mansi Agrawal's Job Hunt Portal.
 
-Generates a modern, clean light-themed single-page application at docs/index.html.
+Generates a clean, responsive single-page application at docs/index.html.
 Features:
 - Light theme (B2B SaaS / clean enterprise aesthetic)
-- Compact, single-row filter bar to minimize vertical space
-- Tabular List View (Default) with sortable columns and expandable drawer rows
-- Grid Card View (Toggleable)
-- Active / Validated jobs filter enabled by default
-- Company Category filter (Enterprise / OEM vs Startup / Emerging)
-- Application status tracker persisted in localStorage
-- Slide-out Candidate Profile Reference Drawer
+- Discovered date column + sort options (Newest First, Fit + Recency, Fit Score, Company)
+- `url_type` badge (Direct ATS vs Career Board Role)
+- Non-overlapping sticky toolbar, sticky table headers, and collapsible mobile filter drawer
+- Dynamic `companyFilter` and Candidate Profile drawer populated from JSON
+- Accurate `kpi-active` and `kpi-actionable` counts (excluding inactive/dead/expired roles)
+- Strict HTML escaping (`escapeHtml`) for every interpolated JS field
+- Status Export / Import JSON controls for localStorage portability
 """
 
 from __future__ import annotations
@@ -30,6 +30,22 @@ DEFAULT_CANDIDATE_PATH = Path("profile/candidate.json")
 DEFAULT_OUTPUT_PATH = Path("docs/index.html")
 
 
+def _safe_json_for_script(data: Any) -> str:
+    """Serialize JSON safely for inline <script> blocks (preventing </script> breakout)."""
+    return json.dumps(data, ensure_ascii=False).replace("</", "<\\/")
+
+
+def _is_role_active(role: dict[str, Any]) -> bool:
+    """Return True if a role is active (not Inactive Posting and link not dead/expired)."""
+    status = str(role.get("status") or "").strip().casefold()
+    if status == "inactive posting":
+        return False
+    link_status = str(role.get("link_status") or "").strip().casefold()
+    if link_status in ("dead", "expired"):
+        return False
+    return True
+
+
 def build_site(
     openings_path: Path = DEFAULT_OPENINGS_PATH,
     candidate_path: Path = DEFAULT_CANDIDATE_PATH,
@@ -44,30 +60,46 @@ def build_site(
     if candidate_path.exists():
         candidate = json.loads(candidate_path.read_text(encoding="utf-8"))
 
-    # Assign company_category if missing
+    # Normalize company_category and url_type if missing
     for r in openings:
-        if "company_category" not in r:
+        if not r.get("company_category"):
             comp = (r.get("company") or "").lower()
-            if any(s in comp for s in ["sarla", "ideaforge", "digantara", "galaxeye", "reorbit", "acron", "newspace", "green aero", "airbound"]):
+            if any(
+                s in comp
+                for s in ("sarla", "ideaforge", "digantara", "galaxeye", "reorbit", "newspace", "green aero", "airbound")
+            ):
                 r["company_category"] = "Startup / Emerging"
             else:
                 r["company_category"] = "Enterprise / OEM"
+        if not r.get("url_type"):
+            url_str = str(r.get("apply_url") or "")
+            r["url_type"] = "board_role_anchor" if "#roles" in url_str.lower() else "direct_requisition"
 
     total_count = len(openings)
     fit_5_count = sum(1 for r in openings if float(r.get("fit_score", 0) or 0) >= 5)
     fit_4_count = sum(1 for r in openings if 4 <= float(r.get("fit_score", 0) or 0) < 5)
-    active_count = sum(1 for r in openings if r.get("link_status") in ("active", "rate_limited", "restricted", None))
+    active_count = sum(1 for r in openings if _is_role_active(r))
+    actionable_count = sum(
+        1
+        for r in openings
+        if _is_role_active(r) and str(r.get("status") or "Not Applied") in ("Not Applied", "Needs Review")
+    )
 
-    openings_json_str = json.dumps(openings)
-    candidate_json_str = json.dumps(candidate)
+    openings_json_str = _safe_json_for_script(openings)
+    candidate_json_str = _safe_json_for_script(candidate)
     generated_at = datetime.now().strftime("%B %d, %Y")
+
+    candidate_name = str(candidate.get("name") or "Mansi Agrawal")
+    candidate_title = str(candidate.get("current_title") or "Lead Systems Engineer")
+    candidate_edu = str(candidate.get("education") or "MS Aerospace Engineering, Georgia Tech")
+    candidate_exp = candidate.get("experience_years", 10)
 
     html_content = f"""<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mansi Agrawal &bull; Aerospace & MBSE Career Portal</title>
+  <title>{candidate_name} &bull; Aerospace &amp; MBSE Career Portal</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -83,7 +115,6 @@ def build_site(
       --text-muted: #64748b;
       --brand-primary: #0284c7;
       --brand-hover: #0369a1;
-      --brand-surface: #f0f9ff;
       --tag-bg: #f1f5f9;
       --tag-text: #334155;
       --green-bg: #ecfdf5;
@@ -98,6 +129,9 @@ def build_site(
       --red-bg: #fef2f2;
       --red-text: #b91c1c;
       --red-border: #fecaca;
+      --purple-bg: #f5f3ff;
+      --purple-text: #6d28d9;
+      --purple-border: #ddd6fe;
       --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
       --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
     }}
@@ -111,18 +145,17 @@ def build_site(
       -webkit-font-smoothing: antialiased;
     }}
 
-    /* Top Navigation Bar */
+    /* Top Navigation Bar — natural flow (no double-sticky overlap with toolbar) */
     header {{
       background: var(--bg-surface);
       border-bottom: 1px solid var(--border-subtle);
       padding: 12px 24px;
-      position: sticky;
-      top: 0;
-      z-index: 50;
+      position: relative;
+      z-index: 20;
       box-shadow: var(--shadow-sm);
     }}
     .header-inner {{
-      max-width: 1400px;
+      max-width: 1440px;
       margin: 0 auto;
       display: flex;
       justify-content: space-between;
@@ -157,15 +190,16 @@ def build_site(
     .header-actions {{
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
+      flex-wrap: wrap;
     }}
     .btn {{
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 600;
-      padding: 8px 14px;
+      padding: 7px 12px;
       border-radius: 6px;
       border: 1px solid transparent;
       cursor: pointer;
@@ -181,18 +215,11 @@ def build_site(
       background: #f1f5f9;
       color: var(--text-primary);
     }}
-    .btn-primary {{
-      background: var(--brand-primary);
-      color: #ffffff;
-    }}
-    .btn-primary:hover {{
-      background: var(--brand-hover);
-    }}
 
     /* Main Container */
     main {{
-      max-width: 1400px;
-      margin: 20px auto 40px auto;
+      max-width: 1440px;
+      margin: 18px auto 40px auto;
       padding: 0 24px;
     }}
 
@@ -205,7 +232,7 @@ def build_site(
       border: 1px solid var(--border-subtle);
       border-radius: 10px;
       padding: 12px 20px;
-      margin-bottom: 16px;
+      margin-bottom: 14px;
       box-shadow: var(--shadow-sm);
       flex-wrap: wrap;
     }}
@@ -232,36 +259,30 @@ def build_site(
       font-weight: 300;
     }}
 
-    /* Compact Toolbar & Filter Bar - Sticky on Scroll */
+    /* Single Sticky Toolbar */
     .toolbar-container {{
       background: var(--bg-surface);
       border: 1px solid var(--border-subtle);
       border-radius: 10px;
-      padding: 10px 16px;
-      margin-bottom: 16px;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
+      padding: 10px 14px;
+      margin-bottom: 14px;
+      box-shadow: var(--shadow-md);
       position: sticky;
-      top: 69px;
+      top: 0;
       z-index: 40;
     }}
-    .toolbar-left {{
+    .toolbar-top-row {{
       display: flex;
       align-items: center;
-      flex-wrap: wrap;
+      justify-content: space-between;
       gap: 10px;
-      flex: 1;
-      min-width: 320px;
+      flex-wrap: wrap;
     }}
     .search-box {{
       position: relative;
       flex: 1;
-      min-width: 240px;
-      max-width: 380px;
+      min-width: 220px;
+      max-width: 360px;
     }}
     .search-box svg {{
       position: absolute;
@@ -280,7 +301,6 @@ def build_site(
       font-size: 13px;
       background: #f8fafc;
       color: var(--text-primary);
-      transition: all 0.15s ease;
     }}
     .search-input:focus {{
       outline: none;
@@ -288,43 +308,44 @@ def build_site(
       background: #ffffff;
       box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.12);
     }}
+    .filters-drawer {{
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 8px;
+    }}
+    .mobile-filter-toggle {{
+      display: none;
+    }}
     .select-filter {{
-      padding: 7px 10px;
+      padding: 6px 10px;
       border-radius: 6px;
       border: 1px solid var(--border-medium);
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 500;
       background: #ffffff;
       color: var(--text-primary);
       cursor: pointer;
-      outline: none;
     }}
-    .select-filter:focus {{
-      border-color: var(--border-focus);
-    }}
-
-    /* Checkbox Pill for Active Only */
     .active-toggle {{
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 600;
-      padding: 6px 12px;
+      padding: 6px 10px;
       background: var(--green-bg);
       border: 1px solid var(--green-border);
       color: var(--green-text);
       border-radius: 6px;
       cursor: pointer;
       user-select: none;
-      transition: all 0.15s ease;
     }}
     .active-toggle input {{
       cursor: pointer;
       accent-color: #059669;
     }}
-
-    /* View Switcher */
     .view-switcher {{
       display: inline-flex;
       background: #f1f5f9;
@@ -333,7 +354,7 @@ def build_site(
       padding: 2px;
     }}
     .view-btn {{
-      padding: 6px 10px;
+      padding: 5px 10px;
       border-radius: 4px;
       border: none;
       background: transparent;
@@ -343,8 +364,7 @@ def build_site(
       cursor: pointer;
       display: inline-flex;
       align-items: center;
-      gap: 5px;
-      transition: all 0.15s ease;
+      gap: 4px;
     }}
     .view-btn.active {{
       background: #ffffff;
@@ -352,14 +372,14 @@ def build_site(
       box-shadow: var(--shadow-sm);
     }}
 
-    /* Filter Tag Pills (Active Filters row) */
+    /* Filter Tag Pills */
     .active-filters-bar {{
       display: flex;
       align-items: center;
       gap: 8px;
       font-size: 12px;
       color: var(--text-muted);
-      margin-bottom: 14px;
+      margin-bottom: 12px;
       flex-wrap: wrap;
     }}
     .active-tag {{
@@ -368,62 +388,47 @@ def build_site(
       padding: 2px 8px;
       border-radius: 4px;
       font-weight: 600;
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-    }}
-    .active-tag span {{
-      cursor: pointer;
-      font-weight: bold;
     }}
 
-    /* Tabular List View (Default) */
+    /* Tabular List View with Sticky Table Headers */
     .table-container {{
       background: var(--bg-surface);
       border: 1px solid var(--border-subtle);
       border-radius: 10px;
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
+      overflow: auto;
+      max-height: 75vh;
       box-shadow: var(--shadow-sm);
-    }}
-    .table-scroll-hint {{
-      display: none;
-      font-size: 11px;
-      color: var(--text-muted);
-      padding: 6px 12px;
-      background: #f1f5f9;
-      border-bottom: 1px solid var(--border-subtle);
-      text-align: right;
     }}
     table.jobs-table {{
       width: 100%;
-      border-collapse: collapse;
+      border-collapse: separate;
+      border-spacing: 0;
       text-align: left;
       font-size: 13px;
     }}
-    table.jobs-table th {{
+    table.jobs-table thead th {{
+      position: sticky;
+      top: 0;
+      z-index: 10;
       background: #f8fafc;
       color: var(--text-muted);
       font-weight: 600;
-      font-size: 12px;
+      font-size: 11px;
       text-transform: uppercase;
       letter-spacing: 0.6px;
-      padding: 12px 16px;
+      padding: 11px 14px;
       border-bottom: 1px solid var(--border-subtle);
       cursor: pointer;
       user-select: none;
       white-space: nowrap;
     }}
-    table.jobs-table th:hover {{
+    table.jobs-table thead th:hover {{
       color: var(--text-primary);
     }}
     table.jobs-table td {{
-      padding: 14px 16px;
+      padding: 12px 14px;
       border-bottom: 1px solid var(--border-subtle);
       vertical-align: middle;
-    }}
-    table.jobs-table tr.job-row {{
-      transition: background 0.15s ease;
     }}
     table.jobs-table tr.job-row:hover {{
       background: #f8fafc;
@@ -442,6 +447,7 @@ def build_site(
       display: flex;
       align-items: center;
       gap: 6px;
+      flex-wrap: wrap;
     }}
     .category-chip {{
       font-size: 10px;
@@ -449,18 +455,22 @@ def build_site(
       padding: 1px 6px;
       border-radius: 4px;
       text-transform: uppercase;
-      letter-spacing: 0.4px;
     }}
-    .cat-enterprise {{
-      background: #e2e8f0;
-      color: #334155;
-    }}
-    .cat-startup {{
-      background: #fef3c7;
-      color: #92400e;
-    }}
+    .cat-enterprise {{ background: #e2e8f0; color: #334155; }}
+    .cat-startup {{ background: #fef3c7; color: #92400e; }}
 
-    /* Badges */
+    .url-type-badge {{
+      display: inline-flex;
+      align-items: center;
+      font-size: 10px;
+      font-weight: 600;
+      padding: 1px 6px;
+      border-radius: 4px;
+      white-space: nowrap;
+    }}
+    .url-type-direct {{ background: var(--blue-bg); color: var(--blue-text); border: 1px solid var(--blue-border); }}
+    .url-type-board {{ background: var(--purple-bg); color: var(--purple-text); border: 1px solid var(--purple-border); }}
+
     .badge {{
       display: inline-flex;
       align-items: center;
@@ -500,13 +510,17 @@ def build_site(
       margin: 1px 3px 1px 0;
       font-family: 'JetBrains Mono', monospace;
     }}
-
+    .date-mono {{
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-secondary);
+      white-space: nowrap;
+    }}
     .status-select-sm {{
       padding: 5px 8px;
       border-radius: 6px;
       border: 1px solid var(--border-medium);
       font-size: 12px;
-      font-weight: 500;
       background: #ffffff;
       color: var(--text-primary);
       cursor: pointer;
@@ -520,58 +534,41 @@ def build_site(
       padding: 6px 12px;
       border-radius: 6px;
       white-space: nowrap;
-      transition: background 0.15s ease;
       display: inline-flex;
       align-items: center;
       gap: 4px;
     }}
-    .btn-apply-sm:hover {{
-      background: var(--brand-hover);
-    }}
+    .btn-apply-sm:hover {{ background: var(--brand-hover); }}
 
-    /* Expandable Rationale Details Row */
-    .details-row {{
-      background: #fafafa;
-      display: none;
-    }}
-    .details-row.open {{
-      display: table-row;
-    }}
+    .details-row {{ background: #fafafa; display: none; }}
+    .details-row.open {{ display: table-row; }}
     .details-content {{
       padding: 12px 18px;
       font-size: 13px;
       color: var(--text-secondary);
       border-left: 3px solid var(--brand-primary);
-      margin: 8px 16px;
+      margin: 6px 12px;
       background: #ffffff;
       border-radius: 0 6px 6px 0;
       box-shadow: var(--shadow-sm);
     }}
 
-    /* Card View (Toggleable) */
+    /* Cards View */
     .cards-grid {{
       display: none;
-      grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
       gap: 16px;
     }}
-    .cards-grid.active {{
-      display: grid;
-    }}
+    .cards-grid.active {{ display: grid; }}
     .job-card {{
       background: var(--bg-surface);
       border: 1px solid var(--border-subtle);
       border-radius: 10px;
-      padding: 18px;
+      padding: 16px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       box-shadow: var(--shadow-sm);
-      transition: transform 0.15s ease, box-shadow 0.15s ease;
-    }}
-    .job-card:hover {{
-      transform: translateY(-2px);
-      box-shadow: var(--shadow-md);
-      border-color: var(--border-medium);
     }}
     .card-top {{
       display: flex;
@@ -582,21 +579,20 @@ def build_site(
     }}
     .card-footer {{
       border-top: 1px solid var(--border-subtle);
-      padding-top: 12px;
-      margin-top: 14px;
+      padding-top: 10px;
+      margin-top: 12px;
       display: flex;
       justify-content: space-between;
       align-items: center;
       gap: 10px;
     }}
 
-    /* Drawer */
+    /* Candidate Profile Drawer */
     .drawer-overlay {{
       display: none;
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
       background: rgba(15, 23, 42, 0.4);
-      backdrop-filter: blur(2px);
       z-index: 99;
     }}
     .drawer {{
@@ -605,7 +601,7 @@ def build_site(
       background: #ffffff;
       box-shadow: -4px 0 24px rgba(0,0,0,0.12);
       z-index: 100;
-      transition: right 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: right 0.25s ease;
       padding: 24px;
       overflow-y: auto;
     }}
@@ -621,104 +617,55 @@ def build_site(
     .drawer-title {{ font-size: 16px; font-weight: 700; color: var(--text-primary); }}
     .close-btn {{ background: none; border: none; font-size: 20px; cursor: pointer; color: var(--text-muted); }}
 
-    /* Responsive adjustments */
+    /* Responsive Mobile Collapsible Filter Drawer */
     @media (max-width: 900px) {{
-      header {{
-        padding: 12px 16px;
-      }}
-      main {{
-        padding: 0 14px;
-        margin-top: 14px;
-      }}
-      .brand-title h1 {{
-        font-size: 16px;
-      }}
-      .brand-title p {{
-        font-size: 12px;
-      }}
-      .kpi-row {{
-        gap: 10px;
-        padding: 10px 14px;
-      }}
-      .kpi-sep {{
+      header {{ padding: 12px 14px; }}
+      main {{ padding: 0 12px; margin-top: 12px; }}
+      .kpi-sep {{ display: none; }}
+      .kpi-item {{ flex: 1 1 42%; }}
+      .mobile-filter-toggle {{ display: inline-flex; }}
+      .filters-drawer {{
         display: none;
-      }}
-      .kpi-item {{
-        flex: 1 1 40%;
-      }}
-      /* On mobile screens, keep header natural scroll and let the toolbar stick to the top: 0 */
-      header {{
-        position: relative;
-        top: auto;
-      }}
-      .toolbar-container {{
-        position: sticky;
-        top: 0;
-        z-index: 60;
-        padding: 10px 12px;
-        gap: 8px;
         flex-direction: column;
         align-items: stretch;
+        padding-top: 8px;
+        border-top: 1px solid var(--border-subtle);
       }}
-      .toolbar-left {{
-        flex-direction: row;
-        flex-wrap: wrap;
-        gap: 6px;
-        min-width: 0;
+      .filters-drawer.mobile-open {{
+        display: flex;
       }}
-      .search-box {{
-        flex: 1 1 100%;
-        max-width: 100%;
-      }}
-      .select-filter {{
-        flex: 1 1 calc(50% - 4px);
-        min-width: 130px;
-        font-size: 12px;
-        padding: 6px 8px;
-      }}
-      .active-toggle {{
-        flex: 1 1 100%;
-        justify-content: center;
-        padding: 7px;
-        font-size: 12px;
-      }}
-      .view-switcher {{
-        align-self: flex-end;
-      }}
-      .table-scroll-hint {{
-        display: block;
-      }}
-      table.jobs-table th, table.jobs-table td {{
-        padding: 10px 12px;
-      }}
-      table.jobs-table th:nth-child(4), table.jobs-table td:nth-child(4) {{
-        display: none;
-      }}
+      .select-filter {{ width: 100%; }}
+      .table-container {{ max-height: 68vh; }}
     }}
   </style>
 </head>
 <body>
 
-  <!-- Top Navigation Bar -->
   <header>
     <div class="header-inner">
       <div class="brand-title">
         <div class="brand-badge">AEROSPACE</div>
         <div>
-          <h1>Mansi Agrawal &bull; Job Hunt Engine</h1>
-          <p>10+ Yrs Systems Engineering &bull; MBSE &bull; Lead Engineer @ Boeing India &bull; MS Georgia Tech</p>
+          <h1 id="headerCandidateName">{candidate_name} &bull; Job Hunt Engine</h1>
+          <p id="headerCandidateMeta">{candidate_exp}+ Yrs Systems Engineering &bull; {candidate_title} &bull; {candidate_edu}</p>
         </div>
       </div>
       <div class="header-actions">
+        <button class="btn btn-default" onclick="exportStatusesJson()" title="Download saved statuses as JSON">
+          Export Statuses
+        </button>
+        <label class="btn btn-default" title="Import saved statuses from JSON" style="margin:0;">
+          Import Statuses
+          <input type="file" id="importStatusInput" accept=".json,application/json" style="display:none;" onchange="importStatusesJson(event)">
+        </label>
         <button class="btn btn-default" onclick="toggleDrawer()">
-          <span>👤</span> Candidate Profile
+          Candidate Profile
         </button>
       </div>
     </div>
   </header>
 
   <main>
-    <!-- KPI Summary Row -->
     <div class="kpi-row">
       <div class="kpi-item">
         <span class="kpi-val" id="kpi-total">{total_count}</span>
@@ -741,7 +688,7 @@ def build_site(
       </div>
       <span class="kpi-sep">|</span>
       <div class="kpi-item">
-        <span class="kpi-val" style="color: #6366f1;" id="kpi-actionable">0</span>
+        <span class="kpi-val" style="color: #6366f1;" id="kpi-actionable">{actionable_count}</span>
         <span class="kpi-label">Actionable (Not Applied)</span>
       </div>
       <div style="margin-left: auto; font-size: 12px; color: var(--text-muted);">
@@ -749,16 +696,32 @@ def build_site(
       </div>
     </div>
 
-    <!-- Compact Toolbar (Filters + Search + View Switcher) -->
     <div class="toolbar-container">
-      <div class="toolbar-left">
-        <!-- Instant Search -->
+      <div class="toolbar-top-row">
         <div class="search-box">
           <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
           <input type="text" id="searchInput" class="search-input" placeholder="Search title, company, req ID, skill..." oninput="applyFilters()">
         </div>
 
-        <!-- Fit Score Select Filter -->
+        <div style="display:flex; align-items:center; gap:8px;">
+          <button id="mobileFilterBtn" class="btn btn-default mobile-filter-toggle" onclick="toggleMobileFilters()">
+            Filters
+          </button>
+          <div class="view-switcher">
+            <button id="viewBtnTable" class="view-btn active" onclick="setView('table')">Table</button>
+            <button id="viewBtnCards" class="view-btn" onclick="setView('cards')">Cards</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="filtersDrawer" class="filters-drawer">
+        <select id="sortSelect" class="select-filter" onchange="applyFilters()" aria-label="Sort openings">
+          <option value="fit_recency">Sort: Fit + Recency</option>
+          <option value="newest">Sort: Newest First</option>
+          <option value="fit_score">Sort: Fit Score</option>
+          <option value="company">Sort: Company</option>
+        </select>
+
         <select id="fitFilter" class="select-filter" onchange="applyFilters()">
           <option value="all">Fit: All Scores</option>
           <option value="5">5★ Direct Fits</option>
@@ -766,143 +729,96 @@ def build_site(
           <option value="3">3★ Moderate Matches</option>
         </select>
 
-        <!-- Company Category Select Filter (Enterprise vs Startup) -->
         <select id="categoryFilter" class="select-filter" onchange="applyFilters()">
-          <option value="all">Company Category: All</option>
+          <option value="all">Category: All</option>
           <option value="Enterprise / OEM">Enterprise / OEM</option>
           <option value="Startup / Emerging">Startup / Emerging</option>
         </select>
 
-        <!-- Company Name Select Filter -->
         <select id="companyFilter" class="select-filter" onchange="applyFilters()">
           <option value="all">Company: All</option>
-          <option value="Airbus">Airbus India</option>
-          <option value="Collins">Collins Aerospace</option>
-          <option value="Boeing">Boeing India</option>
-          <option value="Safran">Safran</option>
-          <option value="Thales">Thales</option>
-          <option value="Sarla">Sarla Aviation (eVTOL)</option>
-          <option value="Digantara">Digantara (Spacetech)</option>
-          <option value="ideaForge">ideaForge (UAVs)</option>
-          <option value="Quest">Quest Global</option>
-          <option value="Tata">Tata Elxsi</option>
         </select>
 
-        <!-- Status Filter -->
         <select id="statusFilter" class="select-filter" onchange="applyFilters()">
           <option value="all">Status: All</option>
-          <option value="Not Applied">Not Applied (Pending)</option>
-          <option value="Applied">Applied ✅</option>
-          <option value="Interviewing">Interviewing 🎯</option>
-          <option value="Needs Review">Needs Review ❓</option>
-          <option value="Watching">Watching 👁️</option>
+          <option value="Not Applied">Not Applied</option>
+          <option value="Applied">Applied</option>
+          <option value="Interviewing">Interviewing</option>
+          <option value="Needs Review">Needs Review</option>
+          <option value="Watching">Watching</option>
         </select>
 
-        <!-- Active Jobs Only Checkbox Toggle (Enabled by default) -->
-        <label class="active-toggle" title="Filter out expired or filled job requisitions">
+        <label class="active-toggle" title="Hide inactive, closed, or expired postings">
           <input type="checkbox" id="activeOnlyToggle" checked onchange="applyFilters()">
           <span>Active Jobs Only</span>
         </label>
       </div>
-
-      <!-- View Switcher (Table vs Cards) -->
-      <div class="view-switcher">
-        <button id="viewBtnTable" class="view-btn active" onclick="setView('table')">
-          <svg width="14" height="14" fill="currentColor" viewBox="0 0 16 16"><path d="M0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2zm15 2h-4v3h4V4zm0 4h-4v3h4V8zm0 4h-4v3h3a1 1 0 0 0 1-1v-2zm-5 3v-3H6v3h4zm-5 0v-3H1v2a1 1 0 0 0 1 1h3zm-4-4h4V8H1v3zm0-4h4V4H1v3zm5-3v3h4V4H6zm4 4H6v3h4V8z"/></svg>
-          Table
-        </button>
-        <button id="viewBtnCards" class="view-btn" onclick="setView('cards')">
-          <svg width="14" height="14" fill="currentColor" viewBox="0 0 16 16"><path d="M1 2.5A1.5 1.5 0 0 1 2.5 1h3A1.5 1.5 0 0 1 7 2.5v3A1.5 1.5 0 0 1 5.5 7h-3A1.5 1.5 0 0 1 1 5.5v-3zm8 0A1.5 1.5 0 0 1 10.5 1h3A1.5 1.5 0 0 1 15 2.5v3A1.5 1.5 0 0 1 13.5 7h-3A1.5 1.5 0 0 1 9 5.5v-3zm-8 8A1.5 1.5 0 0 1 2.5 9h3A1.5 1.5 0 0 1 7 10.5v3A1.5 1.5 0 0 1 5.5 15h-3A1.5 1.5 0 0 1 1 13.5v-3zm8 0A1.5 1.5 0 0 1 10.5 9h3a1.5 1.5 0 0 1 1.5 1.5v3a1.5 1.5 0 0 1-1.5 1.5h-3A1.5 1.5 0 0 1 9 13.5v-3z"/></svg>
-          Cards
-        </button>
-      </div>
     </div>
 
-    <!-- Active Filter Counter Text -->
     <div class="active-filters-bar">
       <span>Showing <strong id="matching-count">0</strong> matching roles</span>
-      <span id="active-tag-container" style="display: inline-flex; gap: 6px;"></span>
+      <span id="active-tag-container" style="display: inline-flex; gap: 6px; flex-wrap: wrap;"></span>
     </div>
 
-    <!-- 1. Table View (Default) -->
     <div id="tableView" class="table-container">
-      <div class="table-scroll-hint">&larr; Swipe sideways to view all columns &rarr;</div>
       <table class="jobs-table">
         <thead>
           <tr>
-            <th onclick="sortTable('fit_score')" style="width: 110px;">Fit Score ▾</th>
-            <th onclick="sortTable('title')">Role & Company ▾</th>
-            <th onclick="sortTable('location')">Location & Team</th>
-            <th>Matched Competencies</th>
-            <th>Link Status</th>
+            <th onclick="setSort('fit_score')" style="width: 110px;">Fit Score</th>
+            <th onclick="setSort('company')">Role &amp; Company</th>
+            <th>Location &amp; Team</th>
+            <th onclick="setSort('newest')">Discovered</th>
+            <th>Matched Skills</th>
+            <th>Link &amp; Source</th>
             <th>Tracker Status</th>
             <th style="text-align: right;">Action</th>
           </tr>
         </thead>
-        <tbody id="tableBody">
-          <!-- Populated by JS -->
-        </tbody>
+        <tbody id="tableBody"></tbody>
       </table>
     </div>
 
-    <!-- 2. Cards View (Toggleable) -->
-    <div id="cardsView" class="cards-grid">
-      <!-- Populated by JS -->
-    </div>
+    <div id="cardsView" class="cards-grid"></div>
   </main>
 
-  <!-- Candidate Profile Reference Drawer -->
   <div id="drawerOverlay" class="drawer-overlay" onclick="toggleDrawer()"></div>
   <aside id="candidateDrawer" class="drawer">
     <div class="drawer-header">
-      <h3 class="drawer-title">Mansi Agrawal &bull; Candidate Reference</h3>
+      <h3 class="drawer-title" id="drawerCandidateTitle">Candidate Reference</h3>
       <button class="close-btn" onclick="toggleDrawer()">&times;</button>
     </div>
-    <div style="font-size: 13px; color: var(--text-secondary); display: flex; flex-direction: column; gap: 16px;">
-      <div>
-        <strong style="color: var(--text-primary); display: block; margin-bottom: 4px;">Profile & Experience</strong>
-        <p><strong>Current:</strong> Lead Systems Engineer @ Boeing India (Bangalore)</p>
-        <p><strong>Experience:</strong> 10+ Years in Aerospace Systems & MBSE</p>
-        <p><strong>Education:</strong> MS Aerospace Engineering, Georgia Tech</p>
-        <p><strong>Target Location:</strong> Bangalore / Bengaluru (Hybrid / Onsite)</p>
-      </div>
-      <div>
-        <strong style="color: var(--text-primary); display: block; margin-bottom: 6px;">Core Competencies</strong>
-        <div style="display: flex; flex-wrap: wrap; gap: 4px;">
-          <span class="skill-chip">MBSE</span>
-          <span class="skill-chip">Cameo Modeler</span>
-          <span class="skill-chip">MagicDraw</span>
-          <span class="skill-chip">SysML (v1 & v2)</span>
-          <span class="skill-chip">ARP4754A</span>
-          <span class="skill-chip">ARP4761</span>
-          <span class="skill-chip">DO-178C</span>
-          <span class="skill-chip">DO-254</span>
-          <span class="skill-chip">IBM DOORS / DNG</span>
-          <span class="skill-chip">3DEXPERIENCE</span>
-          <span class="skill-chip">ConOps</span>
-          <span class="skill-chip">Digital Thread</span>
-          <span class="skill-chip">V&V</span>
-          <span class="skill-chip">ARINC 429</span>
-        </div>
-      </div>
-      <div>
-        <strong style="color: var(--text-primary); display: block; margin-bottom: 4px;">Target Titles</strong>
-        <p>Lead Engineer &bull; Staff Systems Engineer &bull; Systems Architecture Manager &bull; MBSE Capability Lead &bull; V&V Lead</p>
-      </div>
-      <div style="border-top: 1px solid var(--border-subtle); padding-top: 12px;">
-        <strong style="color: var(--text-primary); display: block; margin-bottom: 4px;">Autonomous Engine Info</strong>
-        <p>Synced with <code>data/openings.json</code> and validated with automated HTTP link auditing.</p>
-      </div>
-    </div>
+    <div id="candidateDrawerBody" style="font-size: 13px; color: var(--text-secondary); display: flex; flex-direction: column; gap: 16px;"></div>
   </aside>
 
   <script>
     const OPENINGS = {openings_json_str};
+    const CANDIDATE = {candidate_json_str};
     let currentView = 'table';
-    let sortKey = 'fit_score';
-    let sortAsc = false;
 
-    // Local application status persistence
+    function escapeHtml(value) {{
+      if (value === null || value === undefined) return '';
+      return String(value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }}
+
+    function safeUrl(url) {{
+      const raw = String(url || '').trim();
+      if (/^https?:\\/\\//i.test(raw)) return escapeHtml(raw);
+      return '#';
+    }}
+
+    function isRoleActive(r) {{
+      const st = String(r.status || '').trim().toLowerCase();
+      if (st === 'inactive posting') return false;
+      const ls = String(r.link_status || '').trim().toLowerCase();
+      if (ls === 'dead' || ls === 'expired') return false;
+      return true;
+    }}
+
     function getStoredStatus(roleId, defaultStatus) {{
       const saved = localStorage.getItem('status_' + roleId);
       return saved || defaultStatus || 'Not Applied';
@@ -914,15 +830,106 @@ def build_site(
     }}
 
     function updateKpis() {{
+      let active = 0;
       let actionable = 0;
       OPENINGS.forEach(r => {{
-        const s = getStoredStatus(r.id, r.status);
-        if (s === 'Not Applied' || s === 'Needs Review') {{
-          actionable++;
+        if (isRoleActive(r)) {{
+          active++;
+          const s = getStoredStatus(r.id, r.status);
+          if (s === 'Not Applied' || s === 'Needs Review') {{
+            actionable++;
+          }}
         }}
       }});
-      const el = document.getElementById('kpi-actionable');
-      if (el) el.textContent = actionable;
+      const activeEl = document.getElementById('kpi-active');
+      const actionEl = document.getElementById('kpi-actionable');
+      if (activeEl) activeEl.textContent = active;
+      if (actionEl) actionEl.textContent = actionable;
+    }}
+
+    function populateCompanyFilter() {{
+      const select = document.getElementById('companyFilter');
+      if (!select) return;
+      const companies = Array.from(new Set(OPENINGS.map(r => (r.company || '').trim()).filter(Boolean)))
+        .sort((a, b) => a.localeCompare(b));
+      select.innerHTML = '<option value="all">Company: All</option>' +
+        companies.map(c => `<option value="${{escapeHtml(c)}}">${{escapeHtml(c)}}</option>`).join('');
+    }}
+
+    function renderCandidateDrawer() {{
+      const titleEl = document.getElementById('drawerCandidateTitle');
+      const bodyEl = document.getElementById('candidateDrawerBody');
+      if (!bodyEl) return;
+      const name = CANDIDATE.name || 'Mansi Agrawal';
+      if (titleEl) titleEl.textContent = name + ' \u2022 Candidate Reference';
+
+      const skills = Array.isArray(CANDIDATE.core_skills) ? CANDIDATE.core_skills : [];
+      const titles = Array.isArray(CANDIDATE.target_titles) ? CANDIDATE.target_titles : [];
+      const domains = Array.isArray(CANDIDATE.target_domains) ? CANDIDATE.target_domains : [];
+
+      bodyEl.innerHTML = `
+        <div>
+          <strong style="color: var(--text-primary); display: block; margin-bottom: 4px;">Profile &amp; Experience</strong>
+          <p><strong>Current:</strong> ${{escapeHtml(CANDIDATE.current_title || 'Lead Systems Engineer')}}</p>
+          <p><strong>Experience:</strong> ${{escapeHtml(CANDIDATE.experience_years || 10)}}+ Years</p>
+          <p><strong>Education:</strong> ${{escapeHtml(CANDIDATE.education || 'MS Aerospace Engineering, Georgia Tech')}}</p>
+          <p><strong>Location:</strong> ${{escapeHtml(CANDIDATE.location || 'Bangalore, India')}}</p>
+        </div>
+        ${{CANDIDATE.summary ? `<div><strong style="color: var(--text-primary); display: block; margin-bottom: 4px;">Summary</strong><p>${{escapeHtml(CANDIDATE.summary)}}</p></div>` : ''}}
+        <div>
+          <strong style="color: var(--text-primary); display: block; margin-bottom: 6px;">Core Competencies</strong>
+          <div style="display: flex; flex-wrap: wrap; gap: 4px;">
+            ${{skills.map(s => `<span class="skill-chip">${{escapeHtml(s)}}</span>`).join('')}}
+          </div>
+        </div>
+        <div>
+          <strong style="color: var(--text-primary); display: block; margin-bottom: 4px;">Target Titles</strong>
+          <p>${{escapeHtml(titles.join(' \u2022 '))}}</p>
+        </div>
+        <div>
+          <strong style="color: var(--text-primary); display: block; margin-bottom: 4px;">Target Domains</strong>
+          <p>${{escapeHtml(domains.join(' \u2022 '))}}</p>
+        </div>
+      `;
+    }}
+
+    function exportStatusesJson() {{
+      const payload = {{ exported_at: new Date().toISOString(), statuses: {{}} }};
+      OPENINGS.forEach(r => {{
+        const saved = localStorage.getItem('status_' + r.id);
+        if (saved) payload.statuses[r.id] = saved;
+      }});
+      const blob = new Blob([JSON.stringify(payload, null, 2)], {{ type: 'application/json' }});
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'mansi_job_hunt_statuses.json';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }}
+
+    function importStatusesJson(event) {{
+      const file = event.target.files && event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {{
+        try {{
+          const parsed = JSON.parse(e.target.result);
+          const map = parsed.statuses || parsed;
+          if (map && typeof map === 'object') {{
+            Object.keys(map).forEach(id => {{
+              if (typeof map[id] === 'string') {{
+                localStorage.setItem('status_' + id, map[id]);
+              }}
+            }});
+            updateKpis();
+            render();
+          }}
+        }} catch (err) {{
+          alert('Invalid status JSON file: ' + err.message);
+        }}
+      }};
+      reader.readAsText(file);
     }}
 
     function setView(view) {{
@@ -934,25 +941,25 @@ def build_site(
       render();
     }}
 
-    function sortTable(key) {{
-      if (sortKey === key) {{
-        sortAsc = !sortAsc;
-      }} else {{
-        sortKey = key;
-        sortAsc = (key === 'title' || key === 'company');
-      }}
+    function setSort(mode) {{
+      const sel = document.getElementById('sortSelect');
+      if (sel) sel.value = mode;
       render();
+    }}
+
+    function toggleMobileFilters() {{
+      const drawer = document.getElementById('filtersDrawer');
+      if (drawer) drawer.classList.toggle('mobile-open');
     }}
 
     function toggleDetails(idx) {{
       const row = document.getElementById('details-' + idx);
-      if (row) {{
-        row.classList.toggle('open');
-      }}
+      if (row) row.classList.toggle('open');
     }}
 
     function getFilteredOpenings() {{
       const query = (document.getElementById('searchInput').value || '').toLowerCase().trim();
+      const sortMode = (document.getElementById('sortSelect').value || 'fit_recency');
       const fitFilter = document.getElementById('fitFilter').value;
       const categoryFilter = document.getElementById('categoryFilter').value;
       const companyFilter = document.getElementById('companyFilter').value;
@@ -961,137 +968,129 @@ def build_site(
 
       return OPENINGS.filter(r => {{
         const score = parseFloat(r.fit_score || 0);
-
-        // Active only filter
-        if (activeOnly) {{
-          if (r.link_status === 'dead' || r.link_status === 'expired') return false;
-        }}
-
-        // Fit filter
+        if (activeOnly && !isRoleActive(r)) return false;
         if (fitFilter === '5' && score < 5) return false;
         if (fitFilter === '4' && (score < 4 || score >= 5)) return false;
         if (fitFilter === '3' && (score < 3 || score >= 4)) return false;
-
-        // Category filter
-        if (categoryFilter !== 'all') {{
-          if (r.company_category !== categoryFilter) return false;
-        }}
-
-        // Company filter
-        if (companyFilter !== 'all') {{
-          const comp = (r.company || '').toLowerCase();
-          if (!comp.includes(companyFilter.toLowerCase())) return false;
-        }}
-
-        // Status filter
-        if (statusFilter !== 'all') {{
-          const currentStatus = getStoredStatus(r.id, r.status);
-          if (currentStatus !== statusFilter) return false;
-        }}
-
-        // Search text
+        if (categoryFilter !== 'all' && r.company_category !== categoryFilter) return false;
+        if (companyFilter !== 'all' && (r.company || '').trim() !== companyFilter) return false;
+        if (statusFilter !== 'all' && getStoredStatus(r.id, r.status) !== statusFilter) return false;
         if (query) {{
           const haystack = [
             r.title, r.company, r.team, r.location, r.req_id, r.fit_rationale,
-            r.company_category, ...(r.skills_matched || [])
+            r.company_category, r.date_discovered, ...(r.skills_matched || [])
           ].filter(Boolean).join(' ').toLowerCase();
           if (!haystack.includes(query)) return false;
         }}
-
         return true;
       }}).sort((a, b) => {{
-        let valA = a[sortKey];
-        let valB = b[sortKey];
-        if (sortKey === 'fit_score') {{
-          valA = parseFloat(valA || 0);
-          valB = parseFloat(valB || 0);
-        }} else {{
-          valA = (valA || '').toString().toLowerCase();
-          valB = (valB || '').toString().toLowerCase();
+        const scoreA = parseFloat(a.fit_score || 0);
+        const scoreB = parseFloat(b.fit_score || 0);
+        const dateA = String(a.date_discovered || '');
+        const dateB = String(b.date_discovered || '');
+        const compA = String(a.company || '').toLowerCase();
+        const compB = String(b.company || '').toLowerCase();
+
+        if (sortMode === 'newest') {{
+          if (dateB !== dateA) return dateB.localeCompare(dateA);
+          return scoreB - scoreA;
         }}
-        if (valA < valB) return sortAsc ? -1 : 1;
-        if (valA > valB) return sortAsc ? 1 : -1;
-        return 0;
+        if (sortMode === 'fit_score') {{
+          if (scoreB !== scoreA) return scoreB - scoreA;
+          return compA.localeCompare(compB);
+        }}
+        if (sortMode === 'company') {{
+          if (compA !== compB) return compA.localeCompare(compB);
+          return scoreB - scoreA;
+        }}
+        // Default: fit_recency
+        if (scoreB !== scoreA) return scoreB - scoreA;
+        return dateB.localeCompare(dateA);
       }});
+    }}
+
+    function urlTypeBadgeHtml(urlType) {{
+      if (urlType === 'board_role_anchor') {{
+        return '<span class="url-type-badge url-type-board">Career Board Role</span>';
+      }}
+      return '<span class="url-type-badge url-type-direct">Direct ATS</span>';
+    }}
+
+    function linkPillHtml(r) {{
+      if (!isRoleActive(r)) {{
+        return '<span class="link-pill link-pill-dead">Closed / Inactive</span>';
+      }}
+      if (r.link_status === 'restricted' || r.link_status === 'rate_limited') {{
+        return '<span class="link-pill link-pill-restricted">Official ATS</span>';
+      }}
+      return '<span class="link-pill link-pill-active">Active Link</span>';
+    }}
+
+    function statusOptionsHtml(status) {{
+      const opts = ['Not Applied', 'Applied', 'Interviewing', 'Needs Review', 'Watching'];
+      return opts.map(opt => `<option value="${{escapeHtml(opt)}}" ${{status === opt ? 'selected' : ''}}>${{escapeHtml(opt)}}</option>`).join('');
     }}
 
     function renderTable(items) {{
       const tbody = document.getElementById('tableBody');
       if (items.length === 0) {{
-        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding: 40px; color: var(--text-muted);">No matching openings found. Try adjusting your filters.</td></tr>`;
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding: 36px; color: var(--text-muted);">No matching openings found. Try adjusting your filters.</td></tr>';
         return;
       }}
 
       tbody.innerHTML = items.map((r, idx) => {{
         const score = parseFloat(r.fit_score || 0);
-        let badgeClass = 'badge-3';
-        let badgeText = '3★ Match';
-        if (score >= 5) {{ badgeClass = 'badge-5'; badgeText = '5★ Direct Fit'; }}
-        else if (score >= 4) {{ badgeClass = 'badge-4'; badgeText = '4★ Strong Fit'; }}
-
+        const badgeClass = score >= 5 ? 'badge-5' : (score >= 4 ? 'badge-4' : 'badge-3');
+        const badgeText = score >= 5 ? '5★ Direct Fit' : (score >= 4 ? '4★ Strong Fit' : '3★ Match');
         const status = getStoredStatus(r.id, r.status);
-        const isDead = (r.link_status === 'dead' || r.link_status === 'expired');
-
-        let linkPill = '';
-        if (isDead) {{
-          linkPill = '<span class="link-pill link-pill-dead">⚠️ Closed</span>';
-        }} else if (r.link_status === 'restricted' || r.link_status === 'rate_limited') {{
-          linkPill = '<span class="link-pill link-pill-restricted">⚡ Official ATS</span>';
-        }} else {{
-          linkPill = '<span class="link-pill link-pill-active">✓ Active Link</span>';
-        }}
-
-        const catClass = (r.company_category === 'Startup / Emerging') ? 'cat-startup' : 'cat-enterprise';
-        const skillsHtml = (r.skills_matched || []).slice(0, 3).map(s => `<span class="skill-chip">${{s}}</span>`).join('') +
-          ((r.skills_matched || []).length > 3 ? `<span style="font-size:11px; color:var(--text-muted);">+${{r.skills_matched.length - 3}}</span>` : '');
+        const catClass = r.company_category === 'Startup / Emerging' ? 'cat-startup' : 'cat-enterprise';
+        const skills = Array.isArray(r.skills_matched) ? r.skills_matched : [];
+        const skillsHtml = skills.slice(0, 3).map(s => `<span class="skill-chip">${{escapeHtml(s)}}</span>`).join('') +
+          (skills.length > 3 ? `<span style="font-size:11px; color:var(--text-muted);">+${{skills.length - 3}}</span>` : '');
 
         return `
           <tr class="job-row">
-            <td>
-              <span class="badge ${{badgeClass}}">${{badgeText}}</span>
-            </td>
+            <td><span class="badge ${{badgeClass}}">${{escapeHtml(badgeText)}}</span></td>
             <td>
               <span class="role-cell">
-                <a href="javascript:void(0)" onclick="toggleDetails(${{idx}})" style="color:var(--text-primary); text-decoration:none;" title="Click for AI rationale and details">
-                  ${{r.title}} <span style="font-size:11px; color:var(--brand-primary); font-weight:normal;">ℹ️</span>
+                <a href="javascript:void(0)" onclick="toggleDetails(${{idx}})" style="color:var(--text-primary); text-decoration:none;">
+                  ${{escapeHtml(r.title)}}
                 </a>
               </span>
               <div class="company-cell">
-                <span>${{r.company}}</span>
-                <span class="category-chip ${{catClass}}">${{r.company_category || 'Enterprise'}}</span>
+                <span>${{escapeHtml(r.company)}}</span>
+                <span class="category-chip ${{catClass}}">${{escapeHtml(r.company_category || 'Enterprise / OEM')}}</span>
               </div>
             </td>
             <td>
-              <div style="font-weight: 500;">${{r.location || 'Bangalore'}}</div>
-              <div style="font-size: 11px; color: var(--text-muted);">${{r.team || 'Systems Engineering'}} &bull; Req: ${{r.req_id || 'N/A'}}</div>
+              <div style="font-weight: 500;">${{escapeHtml(r.location || 'Bangalore')}}</div>
+              <div style="font-size: 11px; color: var(--text-muted);">${{escapeHtml(r.team || 'Systems Engineering')}} &bull; Req: ${{escapeHtml(r.req_id || 'N/A')}}</div>
+            </td>
+            <td class="date-mono">${{escapeHtml(r.date_discovered || '—')}}</td>
+            <td>${{skillsHtml || '<span style="color:var(--text-muted);font-size:11px;">None listed</span>'}}</td>
+            <td>
+              <div style="display:flex; flex-direction:column; gap:4px; align-items:flex-start;">
+                ${{linkPillHtml(r)}}
+                ${{urlTypeBadgeHtml(r.url_type)}}
+              </div>
             </td>
             <td>
-              <div>${{skillsHtml || '<span style="color:var(--text-muted);font-size:11px;">None listed</span>'}}</div>
-            </td>
-            <td>
-              ${{linkPill}}
-            </td>
-            <td>
-              <select class="status-select-sm" onchange="setStoredStatus('${{r.id}}', this.value)">
-                <option value="Not Applied" ${{status === 'Not Applied' ? 'selected' : ''}}>Not Applied</option>
-                <option value="Applied" ${{status === 'Applied' ? 'selected' : ''}}>Applied ✅</option>
-                <option value="Interviewing" ${{status === 'Interviewing' ? 'selected' : ''}}>Interviewing 🎯</option>
-                <option value="Needs Review" ${{status === 'Needs Review' ? 'selected' : ''}}>Needs Review ❓</option>
-                <option value="Watching" ${{status === 'Watching' ? 'selected' : ''}}>Watching 👁️</option>
+              <select class="status-select-sm" onchange="setStoredStatus('${{escapeHtml(r.id)}}', this.value)">
+                ${{statusOptionsHtml(status)}}
               </select>
             </td>
             <td style="text-align: right;">
-              <a href="${{r.apply_url || '#'}}" target="_blank" rel="noopener noreferrer" class="btn-apply-sm">
-                Apply &rarr;
-              </a>
+              <a href="${{safeUrl(r.apply_url)}}" target="_blank" rel="noopener noreferrer" class="btn-apply-sm">Apply &rarr;</a>
             </td>
           </tr>
           <tr id="details-${{idx}}" class="details-row">
-            <td colspan="7">
+            <td colspan="8">
               <div class="details-content">
-                <strong>AI Match Rationale:</strong> "${{r.fit_rationale || 'Direct fit based on aerospace systems engineering background.'}}"<br/>
+                <strong>AI Match Rationale:</strong> ${{escapeHtml(r.fit_rationale || 'Direct fit based on aerospace systems engineering background.')}}<br/>
                 <span style="display:inline-block; margin-top:4px; font-size:12px; color:var(--text-muted);">
-                  <strong>Next Action:</strong> ${{r.next_action || 'Draft tailored resume'}} &bull; <strong>Seniority:</strong> ${{r.seniority || 'Lead'}}
+                  <strong>Next Action:</strong> ${{escapeHtml(r.next_action || 'Draft tailored resume')}} &bull;
+                  <strong>Seniority:</strong> ${{escapeHtml(r.seniority || 'Lead')}} &bull;
+                  <strong>Source:</strong> ${{escapeHtml(r.source || 'Official ATS')}}
                 </span>
               </div>
             </td>
@@ -1103,57 +1102,46 @@ def build_site(
     function renderCards(items) {{
       const container = document.getElementById('cardsView');
       if (items.length === 0) {{
-        container.innerHTML = `<div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: var(--text-muted);">No matching openings found.</div>`;
+        container.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; padding: 36px; color: var(--text-muted);">No matching openings found.</div>';
         return;
       }}
 
       container.innerHTML = items.map(r => {{
         const score = parseFloat(r.fit_score || 0);
-        let badgeClass = 'badge-3';
-        let badgeText = '3★ Match';
-        if (score >= 5) {{ badgeClass = 'badge-5'; badgeText = '5★ Direct Fit'; }}
-        else if (score >= 4) {{ badgeClass = 'badge-4'; badgeText = '4★ Strong Fit'; }}
-
+        const badgeClass = score >= 5 ? 'badge-5' : (score >= 4 ? 'badge-4' : 'badge-3');
+        const badgeText = score >= 5 ? '5★ Direct Fit' : (score >= 4 ? '4★ Strong Fit' : '3★ Match');
         const status = getStoredStatus(r.id, r.status);
-        const isDead = (r.link_status === 'dead' || r.link_status === 'expired');
-
-        let linkPill = isDead
-          ? '<span class="link-pill link-pill-dead">⚠️ Closed</span>'
-          : '<span class="link-pill link-pill-active">✓ Active Link</span>';
-
-        const catClass = (r.company_category === 'Startup / Emerging') ? 'cat-startup' : 'cat-enterprise';
-        const skillsHtml = (r.skills_matched || []).map(s => `<span class="skill-chip">${{s}}</span>`).join('');
+        const catClass = r.company_category === 'Startup / Emerging' ? 'cat-startup' : 'cat-enterprise';
+        const skillsHtml = (r.skills_matched || []).map(s => `<span class="skill-chip">${{escapeHtml(s)}}</span>`).join('');
 
         return `
           <div class="job-card">
             <div>
               <div class="card-top">
-                <span style="font-size:12px; font-weight:700; color:var(--brand-primary); text-transform:uppercase;">${{r.company}}</span>
-                <span class="badge ${{badgeClass}}">${{badgeText}}</span>
+                <span style="font-size:12px; font-weight:700; color:var(--brand-primary); text-transform:uppercase;">${{escapeHtml(r.company)}}</span>
+                <span class="badge ${{badgeClass}}">${{escapeHtml(badgeText)}}</span>
               </div>
-              <h2 style="font-size:15px; font-weight:700; margin-bottom:4px; color:var(--text-primary); line-height:1.3;">${{r.title}}</h2>
-              <div style="font-size:12px; color:var(--text-muted); margin-bottom:8px; display:flex; gap:6px; align-items:center;">
-                <span>📍 ${{r.location || 'Bangalore'}}</span>
+              <h2 style="font-size:15px; font-weight:700; margin-bottom:4px; color:var(--text-primary); line-height:1.3;">${{escapeHtml(r.title)}}</h2>
+              <div style="font-size:12px; color:var(--text-muted); margin-bottom:8px; display:flex; gap:6px; align-items:center; flex-wrap:wrap;">
+                <span>${{escapeHtml(r.location || 'Bangalore')}}</span>
                 <span>&bull;</span>
-                <span class="category-chip ${{catClass}}">${{r.company_category || 'Enterprise'}}</span>
+                <span class="date-mono">${{escapeHtml(r.date_discovered || '—')}}</span>
+                <span class="category-chip ${{catClass}}">${{escapeHtml(r.company_category || 'Enterprise / OEM')}}</span>
               </div>
-              <div style="margin-bottom:8px;">${{linkPill}}</div>
-              <div style="background:#f8fafc; border-left:3px solid var(--brand-primary); padding:6px 10px; font-size:12px; color:var(--text-secondary); margin-bottom:10px; border-radius:0 4px 4px 0;">
-                "${{r.fit_rationale || 'Direct fit based on aerospace systems background.'}}"
+              <div style="display:flex; gap:6px; margin-bottom:8px; flex-wrap:wrap;">
+                ${{linkPillHtml(r)}}
+                ${{urlTypeBadgeHtml(r.url_type)}}
+              </div>
+              <div style="background:#f8fafc; border-left:3px solid var(--brand-primary); padding:6px 10px; font-size:12px; color:var(--text-secondary); margin-bottom:10px;">
+                ${{escapeHtml(r.fit_rationale || 'Direct fit based on aerospace systems background.')}}
               </div>
               <div style="margin-bottom:10px;">${{skillsHtml}}</div>
             </div>
             <div class="card-footer">
-              <select class="status-select-sm" onchange="setStoredStatus('${{r.id}}', this.value)">
-                <option value="Not Applied" ${{status === 'Not Applied' ? 'selected' : ''}}>Not Applied</option>
-                <option value="Applied" ${{status === 'Applied' ? 'selected' : ''}}>Applied ✅</option>
-                <option value="Interviewing" ${{status === 'Interviewing' ? 'selected' : ''}}>Interviewing 🎯</option>
-                <option value="Needs Review" ${{status === 'Needs Review' ? 'selected' : ''}}>Needs Review ❓</option>
-                <option value="Watching" ${{status === 'Watching' ? 'selected' : ''}}>Watching 👁️</option>
+              <select class="status-select-sm" onchange="setStoredStatus('${{escapeHtml(r.id)}}', this.value)">
+                ${{statusOptionsHtml(status)}}
               </select>
-              <a href="${{r.apply_url || '#'}}" target="_blank" rel="noopener noreferrer" class="btn-apply-sm">
-                Apply &rarr;
-              </a>
+              <a href="${{safeUrl(r.apply_url)}}" target="_blank" rel="noopener noreferrer" class="btn-apply-sm">Apply &rarr;</a>
             </div>
           </div>
         `;
@@ -1164,16 +1152,17 @@ def build_site(
       const items = getFilteredOpenings();
       document.getElementById('matching-count').textContent = items.length;
 
-      // Update active tag indicators
       const tagContainer = document.getElementById('active-tag-container');
       const activeOnly = document.getElementById('activeOnlyToggle').checked;
       const fitFilter = document.getElementById('fitFilter').value;
       const categoryFilter = document.getElementById('categoryFilter').value;
+      const companyFilter = document.getElementById('companyFilter').value;
 
-      let tags = [];
+      const tags = [];
       if (activeOnly) tags.push('<span class="active-tag">Active Jobs Only</span>');
-      if (fitFilter !== 'all') tags.push(`<span class="active-tag">${{fitFilter}}★ Fits</span>`);
-      if (categoryFilter !== 'all') tags.push(`<span class="active-tag">${{categoryFilter}}</span>`);
+      if (fitFilter !== 'all') tags.push(`<span class="active-tag">${{escapeHtml(fitFilter)}}★ Fits</span>`);
+      if (categoryFilter !== 'all') tags.push(`<span class="active-tag">${{escapeHtml(categoryFilter)}}</span>`);
+      if (companyFilter !== 'all') tags.push(`<span class="active-tag">${{escapeHtml(companyFilter)}}</span>`);
       tagContainer.innerHTML = tags.join('');
 
       if (currentView === 'table') {{
@@ -1191,16 +1180,13 @@ def build_site(
       const drawer = document.getElementById('candidateDrawer');
       const overlay = document.getElementById('drawerOverlay');
       const isOpen = drawer.classList.contains('open');
-      if (isOpen) {{
-        drawer.classList.remove('open');
-        overlay.style.display = 'none';
-      }} else {{
-        drawer.classList.add('open');
-        overlay.style.display = 'block';
-      }}
+      drawer.classList.toggle('open', !isOpen);
+      overlay.style.display = isOpen ? 'none' : 'block';
     }}
 
     document.addEventListener('DOMContentLoaded', () => {{
+      populateCompanyFilter();
+      renderCandidateDrawer();
       updateKpis();
       render();
     }});

@@ -27,6 +27,19 @@ def test_filter_unnotified_roles():
     assert unnotified[0]["id"] == "RTX-01868963"
 
 
+def test_filter_unnotified_roles_excludes_inactive_and_dead_links():
+    openings = [
+        {"id": "ACTIVE-1", "fit_score": 5, "status": "Not Applied", "link_status": "active"},
+        {"id": "ACTIVE-NO-LINK-STATUS", "fit_score": 4, "status": "Not Applied"},
+        {"id": "INACTIVE-1", "fit_score": 5, "status": "Inactive Posting", "link_status": "active"},
+        {"id": "DEAD-LINK-1", "fit_score": 5, "status": "Not Applied", "link_status": "dead"},
+        {"id": "EXPIRED-LINK-1", "fit_score": 5, "status": "Not Applied", "link_status": "expired"},
+    ]
+    unnotified = filter_unnotified_roles(openings, set(), min_fit_score=3)
+    ids = [r["id"] for r in unnotified]
+    assert ids == ["ACTIVE-1", "ACTIVE-NO-LINK-STATUS"]
+
+
 def test_filter_unnotified_roles_edge_cases():
     assert filter_unnotified_roles([], set()) == []
     

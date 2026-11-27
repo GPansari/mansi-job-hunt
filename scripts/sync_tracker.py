@@ -372,11 +372,18 @@ def main() -> None:
         print(f"Successfully synced {args.json_path} -> {args.md_path}")
 
     # Keep web portal in sync
+    repo_root = Path(__file__).resolve().parent.parent
+    if str(repo_root) not in sys.path:
+        sys.path.insert(0, str(repo_root))
     try:
         from scripts.generate_site import build_site
         build_site(openings_path=args.json_path)
     except Exception as e:
-        pass
+        import logging
+        logging.getLogger(__name__).error(
+            "Failed to rebuild web portal after tracker sync: %s", e, exc_info=True
+        )
+        sys.exit(1)
 
 
 if __name__ == "__main__":

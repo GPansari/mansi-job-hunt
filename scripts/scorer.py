@@ -3,7 +3,8 @@
 Scores job opportunities against candidate profile criteria based on:
 - Excluded keywords (instant disqualification: fit_score=1, passed_gate=False)
 - Title alignment (+1.5 score)
-- Core skills match (+0.5 per skill, max +2.5)
+- Core & verified dossier skills match (+0.5 per skill, max +2.5)
+- Target aerospace domain alignment (+0.5 bonus when matched)
 - Location preference (Bangalore / Bengaluru: +1.0; other: -1.0)
 - Baseline score: 1.0 (clamped 1-5)
 Gate passes if fit_score >= 3 and no excluded keywords triggered.
@@ -14,7 +15,7 @@ import json
 from pathlib import Path
 import re
 import sys
-from typing import Any, Dict, List, Optional, Set, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 # Ensure repo root is on sys.path for direct script execution
 REPO_ROOT = Path(__file__).resolve().parent.parent
@@ -33,18 +34,45 @@ STOP_WORDS = {
     "-", "/", "to", "at", "area", "with", "on", "by"
 }
 
+MASTER_DOSSIER_EXTRA_SKILLS: List[str] = [
+    "MSOSA",
+    "DESE",
+    "ReqHub",
+    "DataHub",
+    "AS9100",
+    "SysML v2",
+    "ARINC 429",
+    "AFDX",
+]
+
 SKILL_ALIASES: Dict[str, List[str]] = {
-    "IBM DOORS": ["IBM DOORS", "DOORS"],
-    "DOORS": ["DOORS", "IBM DOORS"],
-    "Cameo": ["Cameo", "Cameo Systems Modeler", "Cameo Enterprise Modeler", "No Magic Cameo", "NoMagic"],
+    "IBM DOORS": ["IBM DOORS", "DOORS", "DOORS Next", "DNG"],
+    "DOORS": ["DOORS", "IBM DOORS", "DOORS Next", "DNG"],
+    "Cameo": ["Cameo", "Cameo Systems Modeler", "Cameo Enterprise Modeler", "No Magic Cameo", "NoMagic", "CATIA Magic"],
     "MagicDraw": ["MagicDraw", "Magic Draw", "No Magic"],
     "3DEXPERIENCE": ["3DEXPERIENCE", "3D Experience", "3DS"],
     "V&V": ["V&V", "V & V", "Verification & Validation", "Verification and Validation", "IVVQ"],
-    "ARP4754A": ["ARP4754A", "ARP4754", "ARP 4754A", "ARP 4754", "ED-79A"],
-    "ARP4761": ["ARP4761", "ARP 4761"],
-    "DO-178C": ["DO-178C", "DO 178C", "DO178C", "DO-178"],
+    "ARP4754A": ["ARP4754A", "ARP4754", "ARP 4754A", "ARP 4754", "ARP-4754", "ED-79A"],
+    "ARP4761": ["ARP4761", "ARP 4761", "ARP-4761"],
+    "DO-178C": ["DO-178C", "DO 178C", "DO178C", "DO-178", "DO-178B/C"],
     "DO-254": ["DO-254", "DO 254", "DO254"],
     "Digital Thread": ["Digital Thread", "Digital Engineering", "DTx"],
+    "MSOSA": ["MSOSA"],
+    "DESE": ["DESE"],
+    "ReqHub": ["ReqHub", "Req Hub"],
+    "DataHub": ["DataHub", "Data Hub"],
+    "AS9100": ["AS9100", "AS 9100", "AS9100D"],
+    "SysML v2": ["SysML v2", "SysMLv2", "SysML 2.0", "SysML v2.0"],
+    "ARINC 429": ["ARINC 429", "ARINC-429", "ARINC429"],
+    "AFDX": ["AFDX", "ARINC 664", "ARINC-664"],
+}
+
+DOMAIN_ALIASES: Dict[str, List[str]] = {
+    "Commercial Aircraft": ["commercial aircraft", "commercial aviation", "airliner", "aircraft"],
+    "UAV": ["uav", "unmanned aerial", "unmanned aircraft", "drone", "uas", "haps"],
+    "eVTOL": ["evtol", "urban air mobility", "advanced air mobility", "aam"],
+    "Spacetech": ["spacetech", "satellite", "spacecraft", "orbital", "launch vehicle"],
+    "Defense Aerospace": ["defense aerospace", "defence aerospace", "avionics", "aerospace", "flight control"],
 }
 
 
@@ -133,14 +161,15 @@ def check_excluded_keywords(text: str, excluded_keywords: List[str]) -> List[str
 
 
 def match_skills(text: str, core_skills: List[str]) -> List[str]:
-    """Identify matched core skills in text using keyword and alias boundary checks."""
+    """Identify matched core and verified dossier skills in text using boundary checks."""
     if not text or not core_skills:
         return []
 
     matched: List[str] = []
+    seen_cf: set[str] = set()
     for skill in core_skills:
         skill_clean = skill.strip()
-        if not skill_clean:
+        if not skill_clean or skill_clean.casefold() in seen_cf:
             continue
 
         # Look for primary skill name and known aliases
@@ -152,8 +181,32 @@ def match_skills(text: str, core_skills: List[str]) -> List[str]:
             pattern = r"(?<!\w)" + re.escape(variant) + r"(?!\w)"
             if re.search(pattern, text, re.IGNORECASE):
                 matched.append(skill_clean)
+                seen_cf.add(skill_clean.casefold())
                 break
 
+    return matched
+
+
+def match_domains(text: str, target_domains: List[str]) -> List[str]:
+    """Identify matched target aerospace domains in text."""
+    if not text or not target_domains:
+        return []
+
+    matched: List[str] = []
+    seen_cf: set[str] = set()
+    for domain in target_domains:
+        dom_clean = domain.strip()
+        if not dom_clean or dom_clean.casefold() in seen_cf:
+            continue
+        variants = DOMAIN_ALIASES.get(dom_clean, [dom_clean])
+        if dom_clean not in variants:
+            variants = [dom_clean] + variants
+        for variant in variants:
+            pattern = r"(?<!\w)" + re.escape(variant) + r"(?!\w)"
+            if re.search(pattern, text, re.IGNORECASE):
+                matched.append(dom_clean)
+                seen_cf.add(dom_clean.casefold())
+                break
     return matched
 
 
@@ -186,6 +239,7 @@ def score_job(job_dict: Dict[str, Any], candidate_profile: Optional[Dict[str, An
         Dict containing:
             fit_score: int (clamped 1-5)
             skills_matched: list of str
+            domains_matched: list of str
             fit_rationale: str
             passed_gate: bool (True if fit_score >= 3 and no excluded keywords triggered)
     """
@@ -199,7 +253,15 @@ def score_job(job_dict: Dict[str, Any], candidate_profile: Optional[Dict[str, An
 
     excluded_keywords = candidate_profile.get("excluded_keywords", [])
     target_titles = candidate_profile.get("target_titles", [])
-    core_skills = candidate_profile.get("core_skills", [])
+    base_skills = list(candidate_profile.get("core_skills", []))
+    # Always include verified skills from master_dossier.md without duplicating
+    seen_skills = {s.casefold() for s in base_skills}
+    for extra in MASTER_DOSSIER_EXTRA_SKILLS:
+        if extra.casefold() not in seen_skills:
+            base_skills.append(extra)
+            seen_skills.add(extra.casefold())
+
+    target_domains = candidate_profile.get("target_domains", [])
     target_locations = candidate_profile.get("target_locations", ["Bangalore", "Bengaluru"])
 
     # 1. Excluded keywords check (triggers immediate fit_score 1 and passed_gate = False)
@@ -208,6 +270,7 @@ def score_job(job_dict: Dict[str, Any], candidate_profile: Optional[Dict[str, An
         return {
             "fit_score": 1,
             "skills_matched": [],
+            "domains_matched": [],
             "fit_rationale": f"Disqualified: excluded keyword(s) found ({', '.join(matched_exclusions)}).",
             "passed_gate": False,
         }
@@ -224,8 +287,8 @@ def score_job(job_dict: Dict[str, Any], candidate_profile: Optional[Dict[str, An
     else:
         rationale_parts.append("Title did not match target roles")
 
-    # 4. Core skills match (+0.5 per skill, max +2.5)
-    matched_skills = match_skills(full_text, core_skills)
+    # 4. Core & dossier skills match (+0.5 per skill, max +2.5)
+    matched_skills = match_skills(full_text, base_skills)
     skills_score = min(2.5, len(matched_skills) * 0.5)
     raw_score += skills_score
     if matched_skills:
@@ -233,7 +296,13 @@ def score_job(job_dict: Dict[str, Any], candidate_profile: Optional[Dict[str, An
     else:
         rationale_parts.append("No core skills matched")
 
-    # 5. Location match (Bangalore: +1.0; other: -1.0)
+    # 5. Target aerospace domain bonus (+0.5 max)
+    matched_domains = match_domains(full_text, target_domains)
+    if matched_domains:
+        raw_score += 0.5
+        rationale_parts.append(f"Domain matched ({', '.join(matched_domains)}, +0.5)")
+
+    # 6. Location match (Bangalore: +1.0; other: -1.0)
     loc_matched = match_location(job_loc, target_locations)
     if loc_matched:
         raw_score += 1.0
@@ -243,7 +312,7 @@ def score_job(job_dict: Dict[str, Any], candidate_profile: Optional[Dict[str, An
         loc_display = job_loc if job_loc else "Unspecified"
         rationale_parts.append(f"Location '{loc_display}' outside Bangalore (-1.0)")
 
-    # 6. Clamping between 1 and 5
+    # 7. Clamping between 1 and 5
     clamped_score = max(1.0, min(5.0, raw_score))
     fit_score = int(round(clamped_score))
     fit_score = max(1, min(5, fit_score))
@@ -256,6 +325,7 @@ def score_job(job_dict: Dict[str, Any], candidate_profile: Optional[Dict[str, An
     return {
         "fit_score": fit_score,
         "skills_matched": matched_skills,
+        "domains_matched": matched_domains,
         "fit_rationale": fit_rationale,
         "passed_gate": passed_gate,
     }
