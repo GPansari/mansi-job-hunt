@@ -83,13 +83,15 @@ def test_build_site_success(tmp_path: Path):
     assert "Mansi Agrawal" in content
     assert "TEST-01" in content
     assert "https://ag.wd3.myworkdayjobs.com/test" in content
-    assert "5★ Direct Fits" in content
+    assert "5★" in content
+    assert "Direct Fit" not in content
+    assert "Strong Fit" not in content
     assert "Candidate Reference" in content
     assert "searchInput" in content
     assert "categoryFilter" in content
     assert "viewBtnTable" in content
 
-    # Phase 3 UX & security features
+    # Phase 3 & 6 UX features
     assert "Posted" in content
     assert "sortSelect" in content
     assert "Recently Posted" in content
@@ -99,6 +101,12 @@ def test_build_site_success(tmp_path: Path):
     assert "populateCompanyFilter()" in content
     assert "renderCandidateDrawer()" in content
     assert "const CANDIDATE =" in content
+    assert "const COMPANIES =" in content
+    assert "tabBtnJobs" in content
+    assert "tabBtnCompanies" in content
+    assert "renderCompanies()" in content
+    assert "formatLocation(" in content
+    assert "let pageSize = 50;" in content
     assert "function escapeHtml(" in content
     assert "exportStatusesJson" not in content
     assert "importStatusesJson" not in content

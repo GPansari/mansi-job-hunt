@@ -317,6 +317,16 @@ def score_job(job_dict: Dict[str, Any], candidate_profile: Optional[Dict[str, An
     fit_score = int(round(clamped_score))
     fit_score = max(1, min(5, fit_score))
 
+    # Guardrail: roles with 0 matched skills must at least carry an explicit
+    # aerospace/systems engineering title keyword to pass the gate.
+    eng_title_pattern = re.compile(
+        r"\b(mbse|sysml|systems?|avionics|aerospace|aircraft|uav|evtol|drone|spacecraft|satellite|flight|v&v|ivvq|simulation|digital\s+engineering|architect(?:ure)?)\b",
+        re.IGNORECASE,
+    )
+    if not matched_skills and not eng_title_pattern.search(job_title):
+        fit_score = min(fit_score, 2)
+        rationale_parts.append("No core skills or aerospace/systems title keyword matched (capped <= 2)")
+
     # Gate passes if fit_score >= 3 and no excluded keywords
     passed_gate = (fit_score >= 3)
 

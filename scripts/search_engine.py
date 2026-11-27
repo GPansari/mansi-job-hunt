@@ -791,15 +791,19 @@ def _query_freshteam(
         if req_id in seen_ids:
             continue
         seen_ids.add(req_id)
-        title = _strip_html(inner_html) or slug_part.replace("-", " ").title()
+        heading_match = re.search(r"<(?:h[1-6]|strong|span)[^>]*>(.*?)</(?:h[1-6]|strong|span)>", inner_html, re.IGNORECASE | re.DOTALL)
+        raw_card_text = _strip_html(inner_html)
+        clean_title = _strip_html(heading_match.group(1)) if heading_match else ""
+        if not clean_title or len(clean_title) > 100 or "responsibilities" in clean_title.lower():
+            clean_title = slug_part.replace("-", " ").title()
         apply_url = urljoin(endpoint, href)
         jobs.append({
-            "title": title,
+            "title": clean_title,
             "req_id": req_id,
             "location": company.get("location") or "Bangalore",
             "team": "Engineering",
             "apply_url": apply_url,
-            "description": title,
+            "description": raw_card_text or clean_title,
             "source_type": "Freshteam",
         })
 

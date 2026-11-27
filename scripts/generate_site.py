@@ -25,6 +25,7 @@ logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 logger = logging.getLogger(__name__)
 
 DEFAULT_OPENINGS_PATH = Path("data/openings.json")
+DEFAULT_COMPANIES_PATH = Path("data/target_companies.json")
 DEFAULT_CANDIDATE_PATH = Path("profile/candidate.json")
 DEFAULT_OUTPUT_PATH = Path("docs/index.html")
 
@@ -49,6 +50,7 @@ def build_site(
     openings_path: Path = DEFAULT_OPENINGS_PATH,
     candidate_path: Path = DEFAULT_CANDIDATE_PATH,
     output_path: Path = DEFAULT_OUTPUT_PATH,
+    companies_path: Path = DEFAULT_COMPANIES_PATH,
 ) -> Path:
     """Build the single-page HTML application."""
     if not openings_path.exists():
@@ -58,6 +60,9 @@ def build_site(
     candidate: dict[str, Any] = {}
     if candidate_path.exists():
         candidate = json.loads(candidate_path.read_text(encoding="utf-8"))
+    companies: list[dict[str, Any]] = []
+    if companies_path.exists():
+        companies = json.loads(companies_path.read_text(encoding="utf-8"))
 
     # Normalize company_category and url_type if missing
     for r in openings:
@@ -84,7 +89,8 @@ def build_site(
 
     openings_json_str = _safe_json_for_script(openings)
     candidate_json_str = _safe_json_for_script(candidate)
-    generated_at = datetime.now().strftime("%B %d, %Y")
+    companies_json_str = _safe_json_for_script(companies)
+    generated_at = datetime.now().strftime("%b %d, %Y")
 
     candidate_name = str(candidate.get("name") or "Mansi Agrawal")
     candidate_title = str(candidate.get("current_title") or "Lead Systems Engineer")
@@ -146,7 +152,7 @@ def build_site(
     header {{
       background: var(--bg-surface);
       border-bottom: 1px solid var(--border-subtle);
-      padding: 12px 24px;
+      padding: 8px 20px;
       position: relative;
       z-index: 20;
       box-shadow: var(--shadow-sm);
@@ -157,38 +163,86 @@ def build_site(
       display: flex;
       justify-content: space-between;
       align-items: center;
-      gap: 16px;
+      gap: 12px;
       flex-wrap: wrap;
     }}
     .brand-title {{
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
     }}
     .brand-badge {{
       background: #0284c7;
       color: #ffffff;
-      padding: 6px 10px;
-      border-radius: 8px;
+      padding: 4px 8px;
+      border-radius: 6px;
       font-weight: 700;
-      font-size: 13px;
+      font-size: 11px;
       letter-spacing: 0.5px;
     }}
     .brand-title h1 {{
-      font-size: 18px;
+      font-size: 16px;
       font-weight: 800;
       color: var(--text-primary);
       letter-spacing: -0.3px;
     }}
-    .brand-title p {{
-      font-size: 13px;
-      color: var(--text-muted);
+    .header-kpis {{
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      font-size: 12px;
+      color: var(--text-secondary);
+    }}
+    .kpi-pill {{
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: #f8fafc;
+      border: 1px solid var(--border-subtle);
+      border-radius: 999px;
+      padding: 3px 9px;
+      font-size: 12px;
+      font-weight: 600;
+    }}
+    .kpi-pill strong {{
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
     }}
     .header-actions {{
       display: flex;
       align-items: center;
       gap: 8px;
       flex-wrap: wrap;
+    }}
+    .tab-switcher {{
+      display: inline-flex;
+      background: #f1f5f9;
+      border: 1px solid var(--border-subtle);
+      border-radius: 7px;
+      padding: 2px;
+    }}
+    .tab-btn {{
+      padding: 5px 12px;
+      border-radius: 5px;
+      border: none;
+      background: transparent;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }}
+    .tab-btn.active {{
+      background: #ffffff;
+      color: var(--brand-primary);
+      box-shadow: var(--shadow-sm);
+    }}
+    .clamp-2 {{
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
     }}
     .btn {{
       display: inline-flex;
@@ -216,8 +270,8 @@ def build_site(
     /* Main Container */
     main {{
       max-width: 1440px;
-      margin: 18px auto 40px auto;
-      padding: 0 24px;
+      margin: 12px auto 32px auto;
+      padding: 0 20px;
     }}
 
     /* KPI Summary Row */
@@ -642,140 +696,159 @@ def build_site(
     <div class="header-inner">
       <div class="brand-title">
         <div class="brand-badge">AEROSPACE</div>
-        <div>
-          <h1 id="headerCandidateName">{candidate_name} &bull; Job Hunt Engine</h1>
-          <p id="headerCandidateMeta">{candidate_exp}+ Yrs Systems Engineering &bull; {candidate_title} &bull; {candidate_edu}</p>
-        </div>
+        <h1 id="headerCandidateName">{candidate_name} &bull; Job Hunt</h1>
+      </div>
+      <div class="header-kpis">
+        <span class="kpi-pill"><strong style="color:#0284c7;" id="kpi-active">{active_count}</strong> Active</span>
+        <span class="kpi-pill"><strong style="color:#047857;">{fit_5_count}</strong> 5★</span>
+        <span class="kpi-pill"><strong style="color:#1d4ed8;">{fit_4_count}</strong> 4★</span>
+        <span class="kpi-pill"><strong style="color:#6366f1;" id="kpi-companies">{active_companies_count}</strong> Companies</span>
+        <span class="kpi-pill" style="color:var(--text-muted);">Tracked <strong id="kpi-total">{total_count}</strong> &bull; {generated_at}</span>
       </div>
       <div class="header-actions">
-        <button class="btn btn-default" onclick="toggleDrawer()">
-          Candidate Profile
-        </button>
+        <div class="tab-switcher" role="tablist">
+          <button id="tabBtnJobs" class="tab-btn active" onclick="setTab('jobs')">Jobs ({active_count})</button>
+          <button id="tabBtnCompanies" class="tab-btn" onclick="setTab('companies')">Companies ({len(companies)})</button>
+        </div>
+        <button class="btn btn-default" onclick="toggleDrawer()">Profile</button>
       </div>
     </div>
   </header>
 
   <main>
-    <div class="kpi-row">
-      <div class="kpi-item">
-        <span class="kpi-val" id="kpi-total">{total_count}</span>
-        <span class="kpi-label">Total Tracked</span>
-      </div>
-      <span class="kpi-sep">|</span>
-      <div class="kpi-item">
-        <span class="kpi-val" style="color: #047857;">{fit_5_count}</span>
-        <span class="kpi-label">5★ Direct Fits</span>
-      </div>
-      <span class="kpi-sep">|</span>
-      <div class="kpi-item">
-        <span class="kpi-val" style="color: #1d4ed8;">{fit_4_count}</span>
-        <span class="kpi-label">4★ Strong Fits</span>
-      </div>
-      <span class="kpi-sep">|</span>
-      <div class="kpi-item">
-        <span class="kpi-val" style="color: #0284c7;" id="kpi-active">{active_count}</span>
-        <span class="kpi-label">Active Openings</span>
-      </div>
-      <span class="kpi-sep">|</span>
-      <div class="kpi-item">
-        <span class="kpi-val" style="color: #6366f1;" id="kpi-companies">{active_companies_count}</span>
-        <span class="kpi-label">Active Companies</span>
-      </div>
-      <div style="margin-left: auto; font-size: 12px; color: var(--text-muted);">
-        Synced: <strong>{generated_at}</strong>
-      </div>
-    </div>
+    <section id="jobsSection">
+      <div class="toolbar-container" style="padding: 8px 14px; margin-bottom: 10px; gap: 8px;">
+        <div class="toolbar-top-row">
+          <div class="search-box">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+            <input type="text" id="searchInput" class="search-input" placeholder="Search title, company, req ID, skill..." oninput="applyFilters()">
+          </div>
 
-    <div class="toolbar-container">
-      <div class="toolbar-top-row">
-        <div class="search-box">
-          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-          <input type="text" id="searchInput" class="search-input" placeholder="Search title, company, req ID, skill..." oninput="applyFilters()">
+          <div style="display:flex; align-items:center; gap:8px;">
+            <button id="mobileFilterBtn" class="btn btn-default mobile-filter-toggle" onclick="toggleMobileFilters()">Filters</button>
+            <div class="view-switcher">
+              <button id="viewBtnTable" class="view-btn active" onclick="setView('table')">Table</button>
+              <button id="viewBtnCards" class="view-btn" onclick="setView('cards')">Cards</button>
+            </div>
+          </div>
         </div>
 
+        <div id="filtersDrawer" class="filters-drawer">
+          <select id="sortSelect" class="select-filter" onchange="applyFilters()" aria-label="Sort openings">
+            <option value="fit_recency">Sort: Fit + Posted</option>
+            <option value="newest">Sort: Recently Posted</option>
+            <option value="fit_score">Sort: Fit Score</option>
+            <option value="company">Sort: Company</option>
+          </select>
+
+          <select id="fitFilter" class="select-filter" onchange="applyFilters()">
+            <option value="all">Fit: All</option>
+            <option value="5">5★</option>
+            <option value="4">4★</option>
+            <option value="3">3★</option>
+          </select>
+
+          <select id="categoryFilter" class="select-filter" onchange="applyFilters()">
+            <option value="all">Category: All</option>
+            <option value="Enterprise / OEM">Enterprise / OEM</option>
+            <option value="Startup / Emerging">Startup / Emerging</option>
+          </select>
+
+          <select id="companyFilter" class="select-filter" onchange="applyFilters()">
+            <option value="all">Company: All</option>
+          </select>
+
+          <label class="active-toggle" title="Hide inactive, closed, or expired postings">
+            <input type="checkbox" id="activeOnlyToggle" checked onchange="onActiveToggleChange()">
+            <span>Active Only</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="active-filters-bar" style="margin-bottom: 10px;">
+        <span>Showing <strong id="matching-count">0</strong> roles</span>
+        <span id="active-tag-container" style="display: inline-flex; gap: 6px; flex-wrap: wrap;"></span>
+        <button id="clearFiltersBtn" class="btn btn-default" style="display:none; padding:2px 9px; font-size:11px;" onclick="clearFilters()">Clear Filters</button>
+      </div>
+
+      <div id="tableView" class="table-container">
+        <table class="jobs-table">
+          <thead>
+            <tr>
+              <th onclick="setSort('fit_score')" style="width: 72px;">Fit</th>
+              <th onclick="setSort('company')">Role &amp; Company</th>
+              <th style="width: 240px;">Location &amp; Team</th>
+              <th onclick="setSort('newest')" style="width: 112px;">Posted</th>
+              <th>Matched Skills</th>
+              <th style="width: 135px;">Link &amp; Source</th>
+              <th style="text-align: right; width: 92px;">Action</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody"></tbody>
+        </table>
+      </div>
+
+      <div id="cardsView" class="cards-grid"></div>
+
+      <div id="paginationBar" class="kpi-row" style="margin-top: 12px; justify-content: space-between; padding: 8px 14px;">
+        <div style="display:flex; align-items:center; gap:8px; font-size:12px; color:var(--text-secondary);">
+          <span id="pageSummary">Showing 0 roles</span>
+          <select id="pageSizeSelect" class="select-filter" style="padding:4px 8px; font-size:12px;" onchange="changePageSize()" aria-label="Rows per page">
+            <option value="25">25 / page</option>
+            <option value="50" selected>50 / page</option>
+            <option value="100">100 / page</option>
+            <option value="all">Show All</option>
+          </select>
+        </div>
         <div style="display:flex; align-items:center; gap:8px;">
-          <button id="mobileFilterBtn" class="btn btn-default mobile-filter-toggle" onclick="toggleMobileFilters()">
-            Filters
-          </button>
-          <div class="view-switcher">
-            <button id="viewBtnTable" class="view-btn active" onclick="setView('table')">Table</button>
-            <button id="viewBtnCards" class="view-btn" onclick="setView('cards')">Cards</button>
+          <button id="prevPageBtn" class="btn btn-default" style="padding:4px 10px; font-size:12px;" onclick="changePage(-1)">&larr; Prev</button>
+          <span id="pageIndicator" style="font-size:12px; font-weight:600; color:var(--text-secondary);">Page 1 of 1</span>
+          <button id="nextPageBtn" class="btn btn-default" style="padding:4px 10px; font-size:12px;" onclick="changePage(1)">Next &rarr;</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="companiesSection" style="display:none;">
+      <div class="toolbar-container" style="padding: 8px 14px; margin-bottom: 10px; gap: 8px;">
+        <div class="toolbar-top-row">
+          <div class="search-box">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+            <input type="text" id="companySearchInput" class="search-input" placeholder="Search target companies, segment, city..." oninput="renderCompanies()">
+          </div>
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <select id="companySortSelect" class="select-filter" onchange="renderCompanies()">
+              <option value="openings" selected>Sort: Open Positions</option>
+              <option value="relevance">Sort: Relevance</option>
+              <option value="name">Sort: Name</option>
+            </select>
+            <select id="companyTierFilter" class="select-filter" onchange="renderCompanies()">
+              <option value="all">Tier: All</option>
+              <option value="Enterprise / OEM">Enterprise / OEM</option>
+              <option value="Startup / Emerging">Startup / Emerging</option>
+            </select>
           </div>
         </div>
       </div>
 
-      <div id="filtersDrawer" class="filters-drawer">
-        <select id="sortSelect" class="select-filter" onchange="applyFilters()" aria-label="Sort openings">
-          <option value="fit_recency">Sort: Fit + Posted</option>
-          <option value="newest">Sort: Recently Posted</option>
-          <option value="fit_score">Sort: Fit Score</option>
-          <option value="company">Sort: Company</option>
-        </select>
-
-        <select id="fitFilter" class="select-filter" onchange="applyFilters()">
-          <option value="all">Fit: All Scores</option>
-          <option value="5">5★ Direct Fits</option>
-          <option value="4">4★ Strong Fits</option>
-          <option value="3">3★ Moderate Matches</option>
-        </select>
-
-        <select id="categoryFilter" class="select-filter" onchange="applyFilters()">
-          <option value="all">Category: All</option>
-          <option value="Enterprise / OEM">Enterprise / OEM</option>
-          <option value="Startup / Emerging">Startup / Emerging</option>
-        </select>
-
-        <select id="companyFilter" class="select-filter" onchange="applyFilters()">
-          <option value="all">Company: All</option>
-        </select>
-
-        <label class="active-toggle" title="Hide inactive, closed, or expired postings">
-          <input type="checkbox" id="activeOnlyToggle" checked onchange="applyFilters()">
-          <span>Active Jobs Only</span>
-        </label>
+      <div class="active-filters-bar" style="margin-bottom: 10px;">
+        <span>Showing <strong id="companies-count">0</strong> target companies</span>
       </div>
-    </div>
 
-    <div class="active-filters-bar">
-      <span>Showing <strong id="matching-count">0</strong> matching roles</span>
-      <span id="active-tag-container" style="display: inline-flex; gap: 6px; flex-wrap: wrap;"></span>
-      <button id="clearFiltersBtn" class="btn btn-default" style="display:none; padding:3px 10px; font-size:11px;" onclick="clearFilters()">Clear Filters</button>
-    </div>
-
-    <div id="tableView" class="table-container">
-      <table class="jobs-table">
-        <thead>
-          <tr>
-            <th onclick="setSort('fit_score')" style="width: 110px;">Fit Score</th>
-            <th onclick="setSort('company')">Role &amp; Company</th>
-            <th>Location &amp; Team</th>
-            <th onclick="setSort('newest')">Posted</th>
-            <th>Matched Skills</th>
-            <th>Link &amp; Source</th>
-            <th style="text-align: right;">Action</th>
-          </tr>
-        </thead>
-        <tbody id="tableBody"></tbody>
-      </table>
-    </div>
-
-    <div id="cardsView" class="cards-grid"></div>
-
-    <div id="paginationBar" class="kpi-row" style="margin-top: 14px; justify-content: space-between; padding: 10px 16px;">
-      <div style="display:flex; align-items:center; gap:8px; font-size:12px; color:var(--text-secondary);">
-        <span id="pageSummary">Showing 0 roles</span>
-        <select id="pageSizeSelect" class="select-filter" style="padding:4px 8px; font-size:12px;" onchange="changePageSize()" aria-label="Rows per page">
-          <option value="25" selected>25 / page</option>
-          <option value="50">50 / page</option>
-          <option value="all">Show All</option>
-        </select>
+      <div class="table-container">
+        <table class="jobs-table">
+          <thead>
+            <tr>
+              <th style="width: 220px;">Company</th>
+              <th>Profile &amp; Focus</th>
+              <th style="width: 150px;">Location</th>
+              <th style="width: 115px;">Openings</th>
+              <th style="width: 210px; text-align: right;">Job Portals</th>
+            </tr>
+          </thead>
+          <tbody id="companiesBody"></tbody>
+        </table>
       </div>
-      <div style="display:flex; align-items:center; gap:8px;">
-        <button id="prevPageBtn" class="btn btn-default" style="padding:5px 10px; font-size:12px;" onclick="changePage(-1)">&larr; Prev</button>
-        <span id="pageIndicator" style="font-size:12px; font-weight:600; color:var(--text-secondary);">Page 1 of 1</span>
-        <button id="nextPageBtn" class="btn btn-default" style="padding:5px 10px; font-size:12px;" onclick="changePage(1)">Next &rarr;</button>
-      </div>
-    </div>
+    </section>
   </main>
 
   <div id="drawerOverlay" class="drawer-overlay" onclick="toggleDrawer()"></div>
@@ -790,6 +863,8 @@ def build_site(
   <script>
     const OPENINGS = {openings_json_str};
     const CANDIDATE = {candidate_json_str};
+    const COMPANIES = {companies_json_str};
+    let currentTab = 'jobs';
     let currentView = 'table';
 
     function escapeHtml(value) {{
@@ -817,10 +892,19 @@ def build_site(
     }}
 
     let currentPage = 1;
-    let pageSize = 25;
+    let pageSize = 50;
 
     function getEffectiveDate(r) {{
       return String(r.date_posted || r.date_discovered || '');
+    }}
+
+    function formatLocation(raw) {{
+      const s = String(raw || '').trim();
+      if (!s) return 'Bengaluru';
+      if (/IN-KA-BENGALURU-NORTHGATE/i.test(s) || /Venkatala/i.test(s)) return 'Bengaluru (Northgate, Yelahanka)';
+      if (/Bangalore Area/i.test(s)) return 'Bengaluru';
+      const cleaned = s.replace(/,\s*Karnataka,\s*India$/i, '').replace(/,\s*India$/i, '').replace(/,\s*Karnataka$/i, '').trim();
+      return cleaned.length > 36 ? cleaned.slice(0, 33) + '...' : cleaned;
     }}
 
     function formatPostedHtml(r) {{
@@ -829,6 +913,17 @@ def build_site(
         return `<span class="date-mono" title="${{tip}}">${{escapeHtml(r.date_posted)}}</span>`;
       }}
       return `<span class="date-mono" style="color:var(--text-muted);" title="Posting date unavailable; showing discovery date">Disc. ${{escapeHtml(r.date_discovered || '—')}}</span>`;
+    }}
+
+    function getActiveCountsByCompany() {{
+      const counts = {{}};
+      OPENINGS.forEach(r => {{
+        if (isRoleActive(r) && r.company) {{
+          const c = String(r.company).trim();
+          counts[c] = (counts[c] || 0) + 1;
+        }}
+      }});
+      return counts;
     }}
 
     function updateKpis() {{
@@ -849,10 +944,41 @@ def build_site(
     function populateCompanyFilter() {{
       const select = document.getElementById('companyFilter');
       if (!select) return;
-      const companies = Array.from(new Set(OPENINGS.map(r => (r.company || '').trim()).filter(Boolean)))
-        .sort((a, b) => a.localeCompare(b));
+      const prev = select.value || 'all';
+      const activeOnly = document.getElementById('activeOnlyToggle') ? document.getElementById('activeOnlyToggle').checked : true;
+      const counts = {{}};
+      OPENINGS.forEach(r => {{
+        if (activeOnly && !isRoleActive(r)) return;
+        const c = (r.company || '').trim();
+        if (c) counts[c] = (counts[c] || 0) + 1;
+      }});
+      const companies = Object.keys(counts).sort((a, b) => counts[b] - counts[a] || a.localeCompare(b));
       select.innerHTML = '<option value="all">Company: All</option>' +
-        companies.map(c => `<option value="${{escapeHtml(c)}}">${{escapeHtml(c)}}</option>`).join('');
+        companies.map(c => `<option value="${{escapeHtml(c)}}">${{escapeHtml(c)}} (${{counts[c]}})</option>`).join('');
+      if (prev !== 'all' && counts[prev]) select.value = prev;
+    }}
+
+    function onActiveToggleChange() {{
+      populateCompanyFilter();
+      applyFilters();
+    }}
+
+    function setTab(tab) {{
+      currentTab = tab;
+      document.getElementById('tabBtnJobs').classList.toggle('active', tab === 'jobs');
+      document.getElementById('tabBtnCompanies').classList.toggle('active', tab === 'companies');
+      document.getElementById('jobsSection').style.display = tab === 'jobs' ? 'block' : 'none';
+      document.getElementById('companiesSection').style.display = tab === 'companies' ? 'block' : 'none';
+      if (tab === 'companies') renderCompanies();
+    }}
+
+    function filterByCompanyFromTab(companyName) {{
+      setTab('jobs');
+      const activeToggle = document.getElementById('activeOnlyToggle');
+      if (activeToggle && !activeToggle.checked) {{ activeToggle.checked = true; populateCompanyFilter(); }}
+      const sel = document.getElementById('companyFilter');
+      if (sel) sel.value = companyName;
+      applyFilters();
     }}
 
     function renderCandidateDrawer() {{
@@ -998,17 +1124,19 @@ def build_site(
       tbody.innerHTML = items.map((r, idx) => {{
         const score = parseFloat(r.fit_score || 0);
         const badgeClass = score >= 5 ? 'badge-5' : (score >= 4 ? 'badge-4' : 'badge-3');
-        const badgeText = score >= 5 ? '5★ Direct Fit' : (score >= 4 ? '4★ Strong Fit' : '3★ Match');
+        const badgeText = `${{Math.round(score)}}★`;
         const catClass = r.company_category === 'Startup / Emerging' ? 'cat-startup' : 'cat-enterprise';
         const skills = Array.isArray(r.skills_matched) ? r.skills_matched : [];
         const skillsHtml = skills.slice(0, 3).map(s => `<span class="skill-chip">${{escapeHtml(s)}}</span>`).join('') +
           (skills.length > 3 ? `<span style="font-size:11px; color:var(--text-muted);">+${{skills.length - 3}}</span>` : '');
+        const locShort = formatLocation(r.location);
+        const locFull = r.location || 'Bengaluru';
 
         return `
           <tr class="job-row">
             <td><span class="badge ${{badgeClass}}">${{escapeHtml(badgeText)}}</span></td>
             <td>
-              <span class="role-cell">
+              <span class="role-cell clamp-2" title="${{escapeHtml(r.title)}}">
                 <a href="javascript:void(0)" onclick="toggleDetails(${{idx}})" style="color:var(--text-primary); text-decoration:none;">
                   ${{escapeHtml(r.title)}}
                 </a>
@@ -1019,8 +1147,8 @@ def build_site(
               </div>
             </td>
             <td>
-              <div style="font-weight: 500;">${{escapeHtml(r.location || 'Bangalore')}}</div>
-              <div style="font-size: 11px; color: var(--text-muted);">${{escapeHtml(r.team || 'Systems Engineering')}} &bull; Req: ${{escapeHtml(r.req_id || 'N/A')}}</div>
+              <div style="font-weight: 500;" title="${{escapeHtml(locFull)}}">${{escapeHtml(locShort)}}</div>
+              <div style="font-size: 11px; color: var(--text-muted);" class="clamp-2">${{escapeHtml(r.team || 'Systems Engineering')}} &bull; Req: ${{escapeHtml(r.req_id || 'N/A')}}</div>
             </td>
             <td>${{formatPostedHtml(r)}}</td>
             <td>${{skillsHtml || '<span style="color:var(--text-muted);font-size:11px;">None listed</span>'}}</td>
@@ -1060,9 +1188,11 @@ def build_site(
       container.innerHTML = items.map(r => {{
         const score = parseFloat(r.fit_score || 0);
         const badgeClass = score >= 5 ? 'badge-5' : (score >= 4 ? 'badge-4' : 'badge-3');
-        const badgeText = score >= 5 ? '5★ Direct Fit' : (score >= 4 ? '4★ Strong Fit' : '3★ Match');
+        const badgeText = `${{Math.round(score)}}★`;
         const catClass = r.company_category === 'Startup / Emerging' ? 'cat-startup' : 'cat-enterprise';
         const skillsHtml = (r.skills_matched || []).map(s => `<span class="skill-chip">${{escapeHtml(s)}}</span>`).join('');
+        const locShort = formatLocation(r.location);
+        const locFull = r.location || 'Bengaluru';
 
         return `
           <div class="job-card">
@@ -1071,9 +1201,9 @@ def build_site(
                 <span style="font-size:12px; font-weight:700; color:var(--brand-primary); text-transform:uppercase;">${{escapeHtml(r.company)}}</span>
                 <span class="badge ${{badgeClass}}">${{escapeHtml(badgeText)}}</span>
               </div>
-              <h2 style="font-size:15px; font-weight:700; margin-bottom:4px; color:var(--text-primary); line-height:1.3;">${{escapeHtml(r.title)}}</h2>
+              <h2 style="font-size:15px; font-weight:700; margin-bottom:4px; color:var(--text-primary); line-height:1.3;" class="clamp-2" title="${{escapeHtml(r.title)}}">${{escapeHtml(r.title)}}</h2>
               <div style="font-size:12px; color:var(--text-muted); margin-bottom:8px; display:flex; gap:6px; align-items:center; flex-wrap:wrap;">
-                <span>${{escapeHtml(r.location || 'Bangalore')}}</span>
+                <span title="${{escapeHtml(locFull)}}">${{escapeHtml(locShort)}}</span>
                 <span>&bull;</span>
                 ${{formatPostedHtml(r)}}
                 <span class="category-chip ${{catClass}}">${{escapeHtml(r.company_category || 'Enterprise / OEM')}}</span>
@@ -1108,9 +1238,83 @@ def build_site(
 
     function changePageSize() {{
       const val = document.getElementById('pageSizeSelect').value;
-      pageSize = val === 'all' ? 999999 : parseInt(val, 10) || 25;
+      pageSize = val === 'all' ? 999999 : parseInt(val, 10) || 50;
       currentPage = 1;
       render();
+    }}
+
+    function resolveCompanyActiveCount(companyName, activeCounts) {{
+      if (activeCounts[companyName]) return activeCounts[companyName];
+      const norm = companyName.toLowerCase();
+      let total = 0;
+      Object.keys(activeCounts).forEach(k => {{
+        const kl = k.toLowerCase();
+        if (kl === norm || kl.includes(norm.split('(')[0].trim()) || norm.includes(kl.split('(')[0].trim())) {{
+          total += activeCounts[k];
+        }}
+      }});
+      return total;
+    }}
+
+    function renderCompanies() {{
+      const tbody = document.getElementById('companiesBody');
+      if (!tbody) return;
+      const q = (document.getElementById('companySearchInput').value || '').toLowerCase().trim();
+      const sortMode = document.getElementById('companySortSelect').value || 'openings';
+      const tierFilter = document.getElementById('companyTierFilter').value || 'all';
+      const activeCounts = getActiveCountsByCompany();
+
+      const enriched = COMPANIES.map(c => ({{ ...c, open_count: resolveCompanyActiveCount(c.name || '', activeCounts) }}))
+        .filter(c => {{
+          if (tierFilter !== 'all' && c.tier !== tierFilter) return false;
+          if (q) {{
+            const hay = [c.name, c.segment, c.location, c.notes, c.ats_type, c.tier].filter(Boolean).join(' ').toLowerCase();
+            if (!hay.includes(q)) return false;
+          }}
+          return true;
+        }})
+        .sort((a, b) => {{
+          if (sortMode === 'relevance') return (b.relevance || 0) - (a.relevance || 0) || b.open_count - a.open_count;
+          if (sortMode === 'name') return String(a.name || '').localeCompare(String(b.name || ''));
+          return b.open_count - a.open_count || (b.relevance || 0) - (a.relevance || 0) || String(a.name || '').localeCompare(String(b.name || ''));
+        }});
+
+      const countEl = document.getElementById('companies-count');
+      if (countEl) countEl.textContent = enriched.length;
+
+      if (enriched.length === 0) {{
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:32px; color:var(--text-muted);">No matching companies found.</td></tr>';
+        return;
+      }}
+
+      tbody.innerHTML = enriched.map(c => {{
+        const catClass = c.tier === 'Startup / Emerging' ? 'cat-startup' : 'cat-enterprise';
+        const liUrl = `https://www.linkedin.com/jobs/search/?keywords=${{encodeURIComponent(c.name || '')}}&location=Bengaluru`;
+        const openBadge = c.open_count > 0
+          ? `<button class="badge badge-5" style="cursor:pointer;" onclick="filterByCompanyFromTab('${{escapeHtml(c.name)}}')">${{c.open_count}} open</button>`
+          : `<span style="font-size:12px; color:var(--text-muted);">0</span>`;
+        const summary = c.segment || c.notes || '';
+        return `
+          <tr class="job-row">
+            <td>
+              <div style="font-weight:700; color:var(--text-primary);">${{escapeHtml(c.name)}}</div>
+              <div style="display:flex; gap:5px; margin-top:3px; flex-wrap:wrap;">
+                <span class="category-chip ${{catClass}}">${{escapeHtml(c.tier || 'Enterprise / OEM')}}</span>
+                <span class="url-type-badge url-type-direct">${{escapeHtml(String(c.ats_type || 'custom').toUpperCase())}}</span>
+              </div>
+            </td>
+            <td>
+              <div style="font-size:12px; color:var(--text-secondary);" class="clamp-2" title="${{escapeHtml(c.notes || summary)}}">${{escapeHtml(summary)}}</div>
+            </td>
+            <td style="font-size:12px; color:var(--text-secondary);">${{escapeHtml(formatLocation(c.location || 'Bengaluru'))}}</td>
+            <td>${{openBadge}}</td>
+            <td style="text-align:right; white-space:nowrap;">
+              <a href="${{safeUrl(c.careers_url)}}" target="_blank" rel="noopener noreferrer" class="btn btn-default" style="padding:4px 9px; font-size:11px;">Careers &rarr;</a>
+              <a href="${{safeUrl(liUrl)}}" target="_blank" rel="noopener noreferrer" class="btn btn-default" style="padding:4px 9px; font-size:11px; margin-left:4px;">LinkedIn &rarr;</a>
+            </td>
+          </tr>
+        `;
+      }}).join('');
     }}
 
     function changePage(delta) {{
@@ -1196,8 +1400,14 @@ def build_site(
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Generate static HTML job hunt portal.")
     parser.add_argument("--openings", type=Path, default=DEFAULT_OPENINGS_PATH, help="Path to openings.json")
+    parser.add_argument("--companies", type=Path, default=DEFAULT_COMPANIES_PATH, help="Path to target_companies.json")
     parser.add_argument("--candidate", type=Path, default=DEFAULT_CANDIDATE_PATH, help="Path to candidate.json")
     parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT_PATH, help="Output path for HTML")
     args = parser.parse_args()
 
-    build_site(openings_path=args.openings, candidate_path=args.candidate, output_path=args.output)
+    build_site(
+        openings_path=args.openings,
+        candidate_path=args.candidate,
+        output_path=args.output,
+        companies_path=args.companies,
+    )
