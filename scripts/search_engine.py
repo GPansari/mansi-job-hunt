@@ -109,6 +109,26 @@ def _strip_html(text: str) -> str:
     return re.sub(r"\s+", " ", cleaned).strip()
 
 
+def _sanitize_scraped_title(title: str, slug_fallback: str = "") -> str:
+    """Clean HTML-scraped job titles and fall back to URL slug when card body leaks in."""
+    cleaned = re.sub(r"\s+", " ", (title or "")).strip()
+    noise_markers = (
+        r"\s+We are\b.*$",
+        r"\s+Who we are:?\b.*$",
+        r"\s+Job Description\b.*$",
+        r"\s+\.\.\.\s*Full\s*Time\s*$",
+    )
+    for pattern in noise_markers:
+        cleaned = re.sub(pattern, "", cleaned, flags=re.IGNORECASE).strip()
+    slug_title = slug_fallback.replace("-", " ").strip().title() if slug_fallback else ""
+    if not cleaned or len(cleaned) > 100 or "responsibilities" in cleaned.lower():
+        if slug_title:
+            return slug_title
+        if len(cleaned) > 100:
+            return cleaned[:100].rsplit(" ", 1)[0].strip()
+    return cleaned
+
+
 def parse_date_posted(raw_value: Any, reference_date: Optional[date] = None) -> str:
     """Normalize ATS posting dates (ISO, epoch ms, or Workday relative strings) to YYYY-MM-DD."""
     if raw_value is None:
@@ -709,7 +729,7 @@ def _query_kula(
         if req_id in seen_ids:
             continue
         seen_ids.add(req_id)
-        title = _strip_html(inner_html) or job_slug.replace("-", " ").title()
+        title = _sanitize_scraped_title(_strip_html(inner_html), job_slug)
         apply_url = f"https://careers.kula.ai/{slug}/{req_id}-{job_slug}"
         jobs.append({
             "title": title,
@@ -791,11 +811,12 @@ def _query_freshteam(
         if req_id in seen_ids:
             continue
         seen_ids.add(req_id)
-        heading_match = re.search(r"<(?:h[1-6]|strong|span)[^>]*>(.*?)</(?:h[1-6]|strong|span)>", inner_html, re.IGNORECASE | re.DOTALL)
+        heading_match = re.search(r"<(?:h[1-6]|strong)[^>]*>(.*?)</(?:h[1-6]|strong)>", inner_html, re.IGNORECASE | re.DOTALL)
+        if not heading_match:
+            heading_match = re.search(r"<span[^>]*>(.*?)</span>", inner_html, re.IGNORECASE | re.DOTALL)
         raw_card_text = _strip_html(inner_html)
-        clean_title = _strip_html(heading_match.group(1)) if heading_match else ""
-        if not clean_title or len(clean_title) > 100 or "responsibilities" in clean_title.lower():
-            clean_title = slug_part.replace("-", " ").title()
+        extracted_heading = _strip_html(heading_match.group(1)) if heading_match else ""
+        clean_title = _sanitize_scraped_title(extracted_heading, slug_part)
         apply_url = urljoin(endpoint, href)
         jobs.append({
             "title": clean_title,
@@ -1001,7 +1022,7 @@ def ingest_openings(
 
         job_id = str(job.get("id", "")).strip()
         job_url = str(job.get("apply_url", "")).strip().rstrip("/")
-        title = str(job.get("title", "")).strip()
+        title = _sanitize_scraped_title(str(job.get("title", "")).strip())
 
         if not job_id:
             continue
@@ -1028,6 +1049,7 @@ def ingest_openings(
             continue
 
         clean_entry = {k: job.get(k) for k in canonical_keys}
+        clean_entry["title"] = title
         clean_entry["status"] = clean_entry["status"] or "Not Applied"
         clean_entry["skills_matched"] = clean_entry["skills_matched"] or []
         clean_entry["req_id"] = clean_entry["req_id"] or "-"
