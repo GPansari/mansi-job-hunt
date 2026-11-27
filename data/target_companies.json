@@ -1080,5 +1080,18 @@
     "bangalore_presence": "Confirmed",
     "hiring_likelihood": "Medium",
     "notes": "Deprioritized - searched, no public funding/revenue data found; not independently confirmed"
+  },
+  {
+    "name": "Green Aero Propulsion",
+    "relevance": 4,
+    "careers_url": "https://www.greenaero.in/careers",
+    "ats_type": "custom",
+    "tier": "Startup / Emerging",
+    "segment": "Indigenous jet engines, airframes, autonomous aircraft",
+    "origin": "Indian",
+    "location": "Bengaluru, Karnataka (KIADB Hitech Defence & Aerospace Park, Devanahalli)",
+    "bangalore_presence": "Confirmed",
+    "hiring_likelihood": "High",
+    "notes": "Bengaluru deep-tech aerospace startup building indigenous jet engines and autonomous aircraft"
   }
 ]
