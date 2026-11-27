@@ -306,7 +306,7 @@
     "name": "Thales India",
     "relevance": 4,
     "careers_url": "https://careers.thalesgroup.com/",
-    "ats_type": "workday",
+    "ats_type": "custom",
     "tier": "Enterprise / OEM",
     "segment": "Avionics, Flight Control Computers, Mission Systems & Radar",
     "origin": "Foreign",
@@ -1135,5 +1135,19 @@
     "hiring_likelihood": "Medium-High",
     "search_status": "Active Ashby board — monitor for Systems/Avionics Engineering roles",
     "notes": "Bengaluru-based autonomous cargo drone startup; Ashby ATS"
+  },
+  {
+    "name": "ReOrbit",
+    "relevance": 4,
+    "careers_url": "https://careers.reorbit.space/",
+    "ats_type": "custom",
+    "tier": "Startup / Emerging",
+    "segment": "Software-defined satellites, avionics, spaceflight systems",
+    "origin": "Foreign",
+    "location": "Bengaluru, India / Helsinki, Finland (Hybrid)",
+    "bangalore_presence": "Confirmed",
+    "hiring_likelihood": "Medium-High",
+    "search_status": "Monitor ReOrbit careers board for Bangalore avionics/systems engineering roles",
+    "notes": "Added from tracked openings history (REORBIT-5685519)"
   }
 ]

@@ -136,14 +136,17 @@ def test_cli_execution(tmp_path):
     json_file.write_text(json.dumps(sample, indent=2))
 
     # Test CLI --to-md
+    site_file = tmp_path / "index.html"
     res = subprocess.run([
         sys.executable, "scripts/sync_tracker.py",
         "--to-md",
         "--json-path", str(json_file),
-        "--md-path", str(md_file)
+        "--md-path", str(md_file),
+        "--site-output", str(site_file),
     ], capture_output=True, text=True)
     assert res.returncode == 0
     assert md_file.exists()
+    assert site_file.exists()
     assert "Boeing" in md_file.read_text()
 
     # Modify markdown and test CLI --to-json
@@ -154,7 +157,8 @@ def test_cli_execution(tmp_path):
         sys.executable, "scripts/sync_tracker.py",
         "--to-json",
         "--json-path", str(json_file),
-        "--md-path", str(md_file)
+        "--md-path", str(md_file),
+        "--site-output", str(site_file),
     ], capture_output=True, text=True)
     assert res.returncode == 0
     updated = json.loads(json_file.read_text())

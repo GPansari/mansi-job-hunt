@@ -100,8 +100,9 @@ def test_build_site_success(tmp_path: Path):
     assert "renderCandidateDrawer()" in content
     assert "const CANDIDATE =" in content
     assert "function escapeHtml(" in content
-    assert "exportStatusesJson" in content
-    assert "importStatusesJson" in content
+    assert "exportStatusesJson" not in content
+    assert "importStatusesJson" not in content
+    assert "localStorage" not in content
     assert "toggleMobileFilters" in content
     # Accurate active/actionable counts (2 active, 1 inactive excluded)
     assert 'id="kpi-active">2<' in content

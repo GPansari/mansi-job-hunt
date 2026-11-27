@@ -35,7 +35,12 @@
     "Digital Thread",
     "MATLAB",
     "Simulink",
-    "V&V"
+    "V&V",
+    "MSOSA",
+    "DESE",
+    "ReqHub",
+    "DataHub",
+    "AS9100"
   ],
   "target_domains": [
     "Commercial Aircraft",

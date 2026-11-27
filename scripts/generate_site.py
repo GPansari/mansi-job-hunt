@@ -10,7 +10,6 @@ Features:
 - Dynamic `companyFilter` and Candidate Profile drawer populated from JSON
 - Accurate `kpi-active` and `kpi-actionable` counts (excluding inactive/dead/expired roles)
 - Strict HTML escaping (`escapeHtml`) for every interpolated JS field
-- Status Export / Import JSON controls for localStorage portability
 """
 
 from __future__ import annotations
@@ -651,13 +650,6 @@ def build_site(
         </div>
       </div>
       <div class="header-actions">
-        <button class="btn btn-default" onclick="exportStatusesJson()" title="Download saved statuses as JSON">
-          Export Statuses
-        </button>
-        <label class="btn btn-default" title="Import saved statuses from JSON" style="margin:0;">
-          Import Statuses
-          <input type="file" id="importStatusInput" accept=".json,application/json" style="display:none;" onchange="importStatusesJson(event)">
-        </label>
         <button class="btn btn-default" onclick="toggleDrawer()">
           Candidate Profile
         </button>
@@ -770,7 +762,7 @@ def build_site(
             <th onclick="setSort('newest')">Discovered</th>
             <th>Matched Skills</th>
             <th>Link &amp; Source</th>
-            <th>Tracker Status</th>
+            <th>Status</th>
             <th style="text-align: right;">Action</th>
           </tr>
         </thead>
@@ -819,23 +811,13 @@ def build_site(
       return true;
     }}
 
-    function getStoredStatus(roleId, defaultStatus) {{
-      const saved = localStorage.getItem('status_' + roleId);
-      return saved || defaultStatus || 'Not Applied';
-    }}
-
-    function setStoredStatus(roleId, newStatus) {{
-      localStorage.setItem('status_' + roleId, newStatus);
-      updateKpis();
-    }}
-
     function updateKpis() {{
       let active = 0;
       let actionable = 0;
       OPENINGS.forEach(r => {{
         if (isRoleActive(r)) {{
           active++;
-          const s = getStoredStatus(r.id, r.status);
+          const s = r.status || 'Not Applied';
           if (s === 'Not Applied' || s === 'Needs Review') {{
             actionable++;
           }}
@@ -893,44 +875,7 @@ def build_site(
       `;
     }}
 
-    function exportStatusesJson() {{
-      const payload = {{ exported_at: new Date().toISOString(), statuses: {{}} }};
-      OPENINGS.forEach(r => {{
-        const saved = localStorage.getItem('status_' + r.id);
-        if (saved) payload.statuses[r.id] = saved;
-      }});
-      const blob = new Blob([JSON.stringify(payload, null, 2)], {{ type: 'application/json' }});
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = 'mansi_job_hunt_statuses.json';
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-    }}
 
-    function importStatusesJson(event) {{
-      const file = event.target.files && event.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = function(e) {{
-        try {{
-          const parsed = JSON.parse(e.target.result);
-          const map = parsed.statuses || parsed;
-          if (map && typeof map === 'object') {{
-            Object.keys(map).forEach(id => {{
-              if (typeof map[id] === 'string') {{
-                localStorage.setItem('status_' + id, map[id]);
-              }}
-            }});
-            updateKpis();
-            render();
-          }}
-        }} catch (err) {{
-          alert('Invalid status JSON file: ' + err.message);
-        }}
-      }};
-      reader.readAsText(file);
-    }}
 
     function setView(view) {{
       currentView = view;
@@ -974,7 +919,7 @@ def build_site(
         if (fitFilter === '3' && (score < 3 || score >= 4)) return false;
         if (categoryFilter !== 'all' && r.company_category !== categoryFilter) return false;
         if (companyFilter !== 'all' && (r.company || '').trim() !== companyFilter) return false;
-        if (statusFilter !== 'all' && getStoredStatus(r.id, r.status) !== statusFilter) return false;
+        if (statusFilter !== 'all' && (r.status || 'Not Applied') !== statusFilter) return false;
         if (query) {{
           const haystack = [
             r.title, r.company, r.team, r.location, r.req_id, r.fit_rationale,
@@ -1026,10 +971,7 @@ def build_site(
       return '<span class="link-pill link-pill-active">Active Link</span>';
     }}
 
-    function statusOptionsHtml(status) {{
-      const opts = ['Not Applied', 'Applied', 'Interviewing', 'Needs Review', 'Watching'];
-      return opts.map(opt => `<option value="${{escapeHtml(opt)}}" ${{status === opt ? 'selected' : ''}}>${{escapeHtml(opt)}}</option>`).join('');
-    }}
+
 
     function renderTable(items) {{
       const tbody = document.getElementById('tableBody');
@@ -1042,7 +984,7 @@ def build_site(
         const score = parseFloat(r.fit_score || 0);
         const badgeClass = score >= 5 ? 'badge-5' : (score >= 4 ? 'badge-4' : 'badge-3');
         const badgeText = score >= 5 ? '5★ Direct Fit' : (score >= 4 ? '4★ Strong Fit' : '3★ Match');
-        const status = getStoredStatus(r.id, r.status);
+        const status = r.status || 'Not Applied';
         const catClass = r.company_category === 'Startup / Emerging' ? 'cat-startup' : 'cat-enterprise';
         const skills = Array.isArray(r.skills_matched) ? r.skills_matched : [];
         const skillsHtml = skills.slice(0, 3).map(s => `<span class="skill-chip">${{escapeHtml(s)}}</span>`).join('') +
@@ -1074,11 +1016,7 @@ def build_site(
                 ${{urlTypeBadgeHtml(r.url_type)}}
               </div>
             </td>
-            <td>
-              <select class="status-select-sm" onchange="setStoredStatus('${{escapeHtml(r.id)}}', this.value)">
-                ${{statusOptionsHtml(status)}}
-              </select>
-            </td>
+            <td><span class="skill-chip">${{escapeHtml(status)}}</span></td>
             <td style="text-align: right;">
               <a href="${{safeUrl(r.apply_url)}}" target="_blank" rel="noopener noreferrer" class="btn-apply-sm">Apply &rarr;</a>
             </td>
@@ -1110,7 +1048,7 @@ def build_site(
         const score = parseFloat(r.fit_score || 0);
         const badgeClass = score >= 5 ? 'badge-5' : (score >= 4 ? 'badge-4' : 'badge-3');
         const badgeText = score >= 5 ? '5★ Direct Fit' : (score >= 4 ? '4★ Strong Fit' : '3★ Match');
-        const status = getStoredStatus(r.id, r.status);
+        const status = r.status || 'Not Applied';
         const catClass = r.company_category === 'Startup / Emerging' ? 'cat-startup' : 'cat-enterprise';
         const skillsHtml = (r.skills_matched || []).map(s => `<span class="skill-chip">${{escapeHtml(s)}}</span>`).join('');
 
@@ -1138,9 +1076,7 @@ def build_site(
               <div style="margin-bottom:10px;">${{skillsHtml}}</div>
             </div>
             <div class="card-footer">
-              <select class="status-select-sm" onchange="setStoredStatus('${{escapeHtml(r.id)}}', this.value)">
-                ${{statusOptionsHtml(status)}}
-              </select>
+              <span class="skill-chip">${{escapeHtml(status)}}</span>
               <a href="${{safeUrl(r.apply_url)}}" target="_blank" rel="noopener noreferrer" class="btn-apply-sm">Apply &rarr;</a>
             </div>
           </div>

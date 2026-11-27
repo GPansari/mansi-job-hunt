@@ -361,6 +361,17 @@ def main() -> None:
         default=Path("data/Openings_Tracker.md"),
         help="Path to Markdown file (default: data/Openings_Tracker.md)",
     )
+    parser.add_argument(
+        "--site-output",
+        type=Path,
+        default=None,
+        help="Optional output path for generated HTML portal (default: docs/index.html)",
+    )
+    parser.add_argument(
+        "--no-site",
+        action="store_true",
+        help="Skip rebuilding the static HTML portal after tracker sync",
+    )
 
     args = parser.parse_args()
 
@@ -371,19 +382,21 @@ def main() -> None:
         sync_json_to_markdown(args.json_path, args.md_path)
         print(f"Successfully synced {args.json_path} -> {args.md_path}")
 
-    # Keep web portal in sync
-    repo_root = Path(__file__).resolve().parent.parent
-    if str(repo_root) not in sys.path:
-        sys.path.insert(0, str(repo_root))
-    try:
-        from scripts.generate_site import build_site
-        build_site(openings_path=args.json_path)
-    except Exception as e:
-        import logging
-        logging.getLogger(__name__).error(
-            "Failed to rebuild web portal after tracker sync: %s", e, exc_info=True
-        )
-        sys.exit(1)
+    # Keep web portal in sync unless --no-site is passed
+    if not args.no_site:
+        repo_root = Path(__file__).resolve().parent.parent
+        if str(repo_root) not in sys.path:
+            sys.path.insert(0, str(repo_root))
+        try:
+            from scripts.generate_site import DEFAULT_OUTPUT_PATH, build_site
+            target_site = args.site_output if args.site_output is not None else DEFAULT_OUTPUT_PATH
+            build_site(openings_path=args.json_path, output_path=target_site)
+        except Exception as e:
+            import logging
+            logging.getLogger(__name__).error(
+                "Failed to rebuild web portal after tracker sync: %s", e, exc_info=True
+            )
+            sys.exit(1)
 
 
 if __name__ == "__main__":
