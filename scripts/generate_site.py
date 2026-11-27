@@ -903,7 +903,7 @@ def build_site(
       if (!s) return 'Bengaluru';
       if (/IN-KA-BENGALURU-NORTHGATE/i.test(s) || /Venkatala/i.test(s)) return 'Bengaluru (Northgate, Yelahanka)';
       if (/Bangalore Area/i.test(s)) return 'Bengaluru';
-      const cleaned = s.replace(/,\s*Karnataka,\s*India$/i, '').replace(/,\s*India$/i, '').replace(/,\s*Karnataka$/i, '').trim();
+      const cleaned = s.replace(/,\\s*Karnataka,\\s*India$/i, '').replace(/,\\s*India$/i, '').replace(/,\\s*Karnataka$/i, '').trim();
       return cleaned.length > 36 ? cleaned.slice(0, 33) + '...' : cleaned;
     }}
 

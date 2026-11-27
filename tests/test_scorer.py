@@ -217,3 +217,16 @@ def test_scorer_matches_master_dossier_skills_and_target_domains():
         assert skill in res["skills_matched"]
     assert "eVTOL" in res["domains_matched"] or "UAV" in res["domains_matched"]
 
+
+def test_non_engineering_zero_skill_gate():
+    job = {
+        "title": "Corporate Communications Manager",
+        "description": "Lead internal communications, executive messaging, and brand strategy.",
+        "location": "Bengaluru",
+    }
+    res = score_job(job)
+    assert res["skills_matched"] == []
+    assert res["fit_score"] <= 2
+    assert res["passed_gate"] is False
+    assert "capped <= 2" in res["fit_rationale"]
+

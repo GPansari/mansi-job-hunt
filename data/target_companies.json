@@ -1149,5 +1149,61 @@
     "hiring_likelihood": "Medium-High",
     "search_status": "Monitor ReOrbit careers board for Bangalore avionics/systems engineering roles",
     "notes": "Added from tracked openings history (REORBIT-5685519)"
+  },
+  {
+    "name": "ADA (Aeronautical Development Agency)",
+    "relevance": 5,
+    "careers_url": "https://ada.gov.in/recruitment",
+    "ats_type": "custom",
+    "tier": "Enterprise / OEM",
+    "segment": "Combat aircraft design, LCA Tejas, avionics & flight systems",
+    "origin": "Indian",
+    "location": "Bengaluru, India",
+    "bangalore_presence": "Confirmed",
+    "hiring_likelihood": "Medium",
+    "search_status": "PSU/Gov Watchlist — monitor recruitment portal for Systems/Avionics openings",
+    "notes": "DRDO/MoD autonomous society in Bengaluru"
+  },
+  {
+    "name": "CSIR-NAL",
+    "relevance": 5,
+    "careers_url": "https://www.nal.res.in/en/careers",
+    "ats_type": "custom",
+    "tier": "Enterprise / OEM",
+    "segment": "Aerospace R&D, civil aircraft, UAVs, flight systems",
+    "origin": "Indian",
+    "location": "Bengaluru, India",
+    "bangalore_presence": "Confirmed",
+    "hiring_likelihood": "Medium",
+    "search_status": "PSU/Gov Watchlist — monitor CSIR-NAL careers for Systems/Avionics openings",
+    "notes": "National Aerospace Laboratories in Bengaluru"
+  },
+  {
+    "name": "DRDO (ADE / GTRE Bengaluru)",
+    "relevance": 5,
+    "careers_url": "https://drdo.gov.in/drdo/careers",
+    "ats_type": "custom",
+    "tier": "Enterprise / OEM",
+    "segment": "Defense aerospace, UAVs, gas turbine & avionics systems",
+    "origin": "Indian",
+    "location": "Bengaluru, India",
+    "bangalore_presence": "Confirmed",
+    "hiring_likelihood": "Medium",
+    "search_status": "PSU/Gov Watchlist — monitor DRDO careers for ADE/GTRE Bengaluru openings",
+    "notes": "Aeronautical Development Establishment & Gas Turbine Research Establishment"
+  },
+  {
+    "name": "ISRO / NSIL",
+    "relevance": 5,
+    "careers_url": "https://www.isro.gov.in/Careers.html",
+    "ats_type": "custom",
+    "tier": "Enterprise / OEM",
+    "segment": "Spacecraft systems, launch vehicles, satellite avionics",
+    "origin": "Indian",
+    "location": "Bengaluru, India",
+    "bangalore_presence": "Confirmed",
+    "hiring_likelihood": "Medium",
+    "search_status": "PSU/Gov Watchlist — monitor ISRO/NSIL careers for Systems Engineering openings",
+    "notes": "Indian Space Research Organisation & NewSpace India Limited"
   }
 ]

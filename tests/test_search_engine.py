@@ -477,3 +477,38 @@ def test_generate_dorking_queries_custom_domains():
     assert any("hypersonics" in q.lower() for q in queries)
     assert any("autonomous flight" in q.lower() for q in queries)
 
+
+def test_parse_date_posted():
+    from datetime import date
+    from scripts.search_engine import parse_date_posted
+
+    ref = date(2026, 11, 28)
+    assert parse_date_posted("2026-11-15T10:00:00Z", reference_date=ref) == "2026-11-15"
+    assert parse_date_posted(1732752000000, reference_date=ref) == "2024-11-28"
+    assert parse_date_posted("Posted Today", reference_date=ref) == "2026-11-28"
+    assert parse_date_posted("Posted Yesterday", reference_date=ref) == "2026-11-27"
+    assert parse_date_posted("Posted 3 days ago", reference_date=ref) == "2026-11-25"
+    assert parse_date_posted("Posted 30+ days ago", reference_date=ref) == ""
+    assert parse_date_posted(None, reference_date=ref) == ""
+    assert parse_date_posted("", reference_date=ref) == ""
+
+
+def test_query_freshteam_heading_extraction(requests_mock):
+    from scripts.search_engine import _query_freshteam
+
+    careers_url = "https://example.freshteam.com/jobs"
+    html_body = """
+    <html><body>
+      <a href="/jobs/101/senior-systems-engineer"><h5>Senior Systems Engineer</h5></a>
+      <a href="/jobs/102/avionics-lead"><h4>Avionics Lead</h4></a>
+    </body></html>
+    """
+    requests_mock.get(careers_url, text=html_body, headers={"Content-Type": "text/html"})
+
+    company = {"name": "ExampleAero", "careers_url": careers_url, "location": "Bengaluru"}
+    jobs = _query_freshteam(company)
+    assert len(jobs) == 2
+    assert jobs[0]["title"] == "Senior Systems Engineer"
+    assert jobs[0]["apply_url"] == "https://example.freshteam.com/jobs/101/senior-systems-engineer"
+    assert jobs[1]["title"] == "Avionics Lead"
+

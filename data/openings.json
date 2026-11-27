@@ -20,8 +20,8 @@
     "date_discovered": "2026-11-27",
     "last_updated": "2026-11-27",
     "next_action": "Apply via Green Aero #roles modal highlighting MS Aerospace (Georgia Tech), Eco-Modular Aircraft & MALE UAV design",
-    "link_status": "active",
-    "link_http_code": 200,
+    "link_status": "restricted",
+    "link_http_code": 403,
     "link_last_checked": "2026-11-28",
     "company_category": "Startup / Emerging",
     "url_type": "board_role_anchor"
@@ -47,8 +47,8 @@
     "date_discovered": "2026-11-27",
     "last_updated": "2026-11-27",
     "next_action": "Apply via Green Aero #roles modal emphasizing UAV systems architecture & integration",
-    "link_status": "active",
-    "link_http_code": 200,
+    "link_status": "restricted",
+    "link_http_code": 403,
     "link_last_checked": "2026-11-28",
     "company_category": "Startup / Emerging",
     "url_type": "board_role_anchor"
@@ -74,8 +74,8 @@
     "date_discovered": "2026-11-27",
     "last_updated": "2026-11-27",
     "next_action": "Evaluate aerospace QMS / certification leadership overlap with Boeing & Collins experience",
-    "link_status": "active",
-    "link_http_code": 200,
+    "link_status": "restricted",
+    "link_http_code": 403,
     "link_last_checked": "2026-11-28",
     "company_category": "Startup / Emerging",
     "url_type": "board_role_anchor"
@@ -101,8 +101,8 @@
     "date_discovered": "2026-11-27",
     "last_updated": "2026-11-27",
     "next_action": "Review Airbound Flight Systems JD for systems vs board-design balance",
-    "link_status": "active",
-    "link_http_code": 200,
+    "link_status": "restricted",
+    "link_http_code": 403,
     "link_last_checked": "2026-11-28",
     "company_category": "Startup / Emerging",
     "url_type": "direct_requisition"
@@ -129,8 +129,8 @@
     "date_discovered": "2026-11-27",
     "last_updated": "2026-11-27",
     "next_action": "Assess OBC hardware-software systems leadership fit",
-    "link_status": "active",
-    "link_http_code": 200,
+    "link_status": "restricted",
+    "link_http_code": 403,
     "link_last_checked": "2026-11-28",
     "company_category": "Startup / Emerging",
     "url_type": "direct_requisition"
@@ -156,8 +156,8 @@
     "date_discovered": "2026-11-27",
     "last_updated": "2026-11-27",
     "next_action": "Inspect Kula JD for requirements/V&V overlap with aerospace systems engineering",
-    "link_status": "active",
-    "link_http_code": 200,
+    "link_status": "restricted",
+    "link_http_code": 403,
     "link_last_checked": "2026-11-28",
     "company_category": "Startup / Emerging",
     "url_type": "direct_requisition"
@@ -183,8 +183,8 @@
     "date_discovered": "2026-11-27",
     "last_updated": "2026-11-27",
     "next_action": "Run /apply DIGANTARA-19952 to review satellite electronics systems scope",
-    "link_status": "active",
-    "link_http_code": 200,
+    "link_status": "restricted",
+    "link_http_code": 403,
     "link_last_checked": "2026-11-28",
     "company_category": "Startup / Emerging",
     "url_type": "direct_requisition"
@@ -211,8 +211,8 @@
     "date_discovered": "2026-11-27",
     "last_updated": "2026-11-27",
     "next_action": "Evaluate electrical/avionics overlap with Boeing 777-8F electrical/electronic subsystems experience",
-    "link_status": "active",
-    "link_http_code": 200,
+    "link_status": "restricted",
+    "link_http_code": 403,
     "link_last_checked": "2026-11-28",
     "company_category": "Enterprise / OEM",
     "url_type": "direct_requisition",
@@ -239,8 +239,8 @@
     "date_discovered": "2026-11-27",
     "last_updated": "2026-11-27",
     "next_action": "Review full Lever JD and tailor resume around certified avionics systems architecture",
-    "link_status": "active",
-    "link_http_code": 200,
+    "link_status": "restricted",
+    "link_http_code": 403,
     "link_last_checked": "2026-11-28",
     "company_category": "Enterprise / OEM",
     "url_type": "direct_requisition",
@@ -271,8 +271,8 @@
     "date_discovered": "2026-11-27",
     "last_updated": "2026-11-27",
     "next_action": "Run /apply ACRON-1d14f824 highlighting Boeing 777-8F technical coordination, DOORS, and ARP4754A leadership",
-    "link_status": "active",
-    "link_http_code": 200,
+    "link_status": "restricted",
+    "link_http_code": 403,
     "link_last_checked": "2026-11-28",
     "company_category": "Enterprise / OEM",
     "url_type": "direct_requisition",
@@ -300,11 +300,11 @@
     "date_discovered": "2026-11-24",
     "last_updated": "2026-11-24",
     "next_action": "Draft tailored cover note highlighting executable SysML models from ConOps",
-    "link_status": "active",
+    "link_status": "restricted",
     "link_last_checked": "2026-11-28",
     "company_category": "Enterprise / OEM",
     "url_type": "direct_requisition",
-    "link_http_code": 200,
+    "link_http_code": 403,
     "date_posted": "2026-09-23"
   },
   {
@@ -331,11 +331,11 @@
     "date_discovered": "2026-11-24",
     "last_updated": "2026-11-24",
     "next_action": "Draft tailored resume emphasizing Boeing 777-8F digital thread & requirements leadership - top priority",
-    "link_status": "active",
+    "link_status": "restricted",
     "link_last_checked": "2026-11-28",
     "company_category": "Enterprise / OEM",
     "url_type": "direct_requisition",
-    "link_http_code": 200,
+    "link_http_code": 403,
     "date_posted": "2026-11-19"
   },
   {
@@ -391,11 +391,11 @@
     "date_discovered": "2026-11-24",
     "last_updated": "2026-11-24",
     "next_action": "High priority UAV/HAPS lead role - submit direct application",
-    "link_status": "active",
+    "link_status": "restricted",
     "link_last_checked": "2026-11-28",
     "company_category": "Startup / Emerging",
     "url_type": "direct_requisition",
-    "link_http_code": 200
+    "link_http_code": 403
   },
   {
     "id": "SARLA-4406539395",
@@ -421,11 +421,11 @@
     "date_discovered": "2026-11-24",
     "last_updated": "2026-11-24",
     "next_action": "High priority eVTOL lead role - prepare tailored application",
-    "link_status": "active",
+    "link_status": "restricted",
     "link_last_checked": "2026-11-28",
     "company_category": "Startup / Emerging",
     "url_type": "direct_requisition",
-    "link_http_code": 200
+    "link_http_code": 403
   },
   {
     "id": "AIRBUS-JR10436295",
@@ -449,11 +449,11 @@
     "date_discovered": "2026-11-24",
     "last_updated": "2026-11-24",
     "next_action": "Submit application via Airbus Workday portal",
-    "link_status": "active",
+    "link_status": "restricted",
     "link_last_checked": "2026-11-28",
     "company_category": "Enterprise / OEM",
     "url_type": "direct_requisition",
-    "link_http_code": 200,
+    "link_http_code": 403,
     "date_posted": "2026-09-30"
   },
   {
@@ -478,11 +478,11 @@
     "date_discovered": "2026-11-24",
     "last_updated": "2026-11-24",
     "next_action": "Submit application via Airbus Workday portal",
-    "link_status": "active",
+    "link_status": "restricted",
     "link_last_checked": "2026-11-28",
     "company_category": "Enterprise / OEM",
     "url_type": "direct_requisition",
-    "link_http_code": 200,
+    "link_http_code": 403,
     "date_posted": "2026-09-01"
   },
   {
@@ -508,11 +508,11 @@
     "date_discovered": "2026-11-24",
     "last_updated": "2026-11-24",
     "next_action": "Review job description for avionics interface match",
-    "link_status": "active",
+    "link_status": "restricted",
     "link_last_checked": "2026-11-28",
     "company_category": "Enterprise / OEM",
     "url_type": "direct_requisition",
-    "link_http_code": 200,
+    "link_http_code": 403,
     "date_posted": "2026-05-25"
   },
   {
@@ -539,11 +539,11 @@
     "date_discovered": "2026-11-24",
     "last_updated": "2026-11-24",
     "next_action": "Apply via BuiltIn portal or cross-reference on Collins Workday",
-    "link_status": "active",
+    "link_status": "restricted",
     "link_last_checked": "2026-11-28",
     "company_category": "Enterprise / OEM",
     "url_type": "direct_requisition",
-    "link_http_code": 200
+    "link_http_code": 403
   },
   {
     "id": "DIGANTARA-53970",
@@ -567,11 +567,11 @@
     "date_discovered": "2026-11-24",
     "last_updated": "2026-11-24",
     "next_action": "Submit application via Digantara Kula ATS portal",
-    "link_status": "active",
+    "link_status": "restricted",
     "link_last_checked": "2026-11-28",
     "company_category": "Startup / Emerging",
     "url_type": "direct_requisition",
-    "link_http_code": 200
+    "link_http_code": 403
   },
   {
     "id": "ACRON-f0c5f86c",
@@ -596,11 +596,11 @@
     "date_discovered": "2026-11-24",
     "last_updated": "2026-11-24",
     "next_action": "Check for senior/lead V&V opening at Acron Bengaluru",
-    "link_status": "active",
+    "link_status": "restricted",
     "link_last_checked": "2026-11-28",
     "company_category": "Enterprise / OEM",
     "url_type": "direct_requisition",
-    "link_http_code": 200,
+    "link_http_code": 403,
     "date_posted": "2026-06-21"
   },
   {
@@ -624,11 +624,11 @@
     "date_discovered": "2026-11-24",
     "last_updated": "2026-11-24",
     "next_action": "Secondary priority: technical tooling rather than core systems architecture",
-    "link_status": "active",
+    "link_status": "restricted",
     "link_last_checked": "2026-11-28",
     "company_category": "Enterprise / OEM",
     "url_type": "direct_requisition",
-    "link_http_code": 200,
+    "link_http_code": 403,
     "date_posted": "2026-03-27"
   },
   {
@@ -1346,8 +1346,8 @@
     "date_discovered": "2026-11-28",
     "last_updated": "2026-11-28",
     "next_action": "Draft tailored resume",
-    "link_status": "active",
-    "link_http_code": 200,
+    "link_status": "restricted",
+    "link_http_code": 403,
     "link_last_checked": "2026-11-28",
     "date_posted": "2026-11-25"
   },
@@ -1372,8 +1372,8 @@
     "date_discovered": "2026-11-28",
     "last_updated": "2026-11-28",
     "next_action": "Review job description",
-    "link_status": "active",
-    "link_http_code": 200,
+    "link_status": "restricted",
+    "link_http_code": 403,
     "link_last_checked": "2026-11-28",
     "date_posted": "2026-11-26"
   },
@@ -1398,8 +1398,8 @@
     "date_discovered": "2026-11-28",
     "last_updated": "2026-11-28",
     "next_action": "Draft tailored resume",
-    "link_status": "active",
-    "link_http_code": 200,
+    "link_status": "restricted",
+    "link_http_code": 403,
     "link_last_checked": "2026-11-28",
     "date_posted": "2026-11-25"
   },
@@ -1424,8 +1424,8 @@
     "date_discovered": "2026-11-28",
     "last_updated": "2026-11-28",
     "next_action": "Draft tailored resume",
-    "link_status": "active",
-    "link_http_code": 200,
+    "link_status": "restricted",
+    "link_http_code": 403,
     "link_last_checked": "2026-11-28",
     "date_posted": "2026-11-25"
   },
@@ -1450,8 +1450,8 @@
     "date_discovered": "2026-11-28",
     "last_updated": "2026-11-28",
     "next_action": "Review job description",
-    "link_status": "active",
-    "link_http_code": 200,
+    "link_status": "restricted",
+    "link_http_code": 403,
     "link_last_checked": "2026-11-28",
     "date_posted": "2026-11-23"
   },
@@ -1476,8 +1476,8 @@
     "date_discovered": "2026-11-28",
     "last_updated": "2026-11-28",
     "next_action": "Review job description",
-    "link_status": "active",
-    "link_http_code": 200,
+    "link_status": "restricted",
+    "link_http_code": 403,
     "link_last_checked": "2026-11-28",
     "date_posted": "2026-11-18"
   },
@@ -1502,8 +1502,8 @@
     "date_discovered": "2026-11-28",
     "last_updated": "2026-11-28",
     "next_action": "Review job description",
-    "link_status": "active",
-    "link_http_code": 200,
+    "link_status": "restricted",
+    "link_http_code": 403,
     "link_last_checked": "2026-11-28",
     "date_posted": "2026-11-18"
   },
@@ -1529,8 +1529,8 @@
     "date_discovered": "2026-11-28",
     "last_updated": "2026-11-28",
     "next_action": "Draft tailored resume",
-    "link_status": "active",
-    "link_http_code": 200,
+    "link_status": "restricted",
+    "link_http_code": 403,
     "link_last_checked": "2026-11-28",
     "date_posted": "2026-11-26"
   },
@@ -1560,8 +1560,8 @@
     "date_discovered": "2026-11-28",
     "last_updated": "2026-11-28",
     "next_action": "Draft tailored resume",
-    "link_status": "active",
-    "link_http_code": 200,
+    "link_status": "restricted",
+    "link_http_code": 403,
     "link_last_checked": "2026-11-28",
     "date_posted": "2026-11-11"
   },
@@ -1596,8 +1596,8 @@
     "date_discovered": "2026-11-28",
     "last_updated": "2026-11-28",
     "next_action": "Draft tailored resume",
-    "link_status": "active",
-    "link_http_code": 200,
+    "link_status": "restricted",
+    "link_http_code": 403,
     "link_last_checked": "2026-11-28",
     "date_posted": "2026-11-11"
   },
@@ -1632,8 +1632,8 @@
     "date_discovered": "2026-11-28",
     "last_updated": "2026-11-28",
     "next_action": "Draft tailored resume",
-    "link_status": "active",
-    "link_http_code": 200,
+    "link_status": "restricted",
+    "link_http_code": 403,
     "link_last_checked": "2026-11-28",
     "date_posted": "2026-11-11"
   },
@@ -1660,8 +1660,8 @@
     "date_discovered": "2026-11-28",
     "last_updated": "2026-11-28",
     "next_action": "Draft tailored resume",
-    "link_status": "active",
-    "link_http_code": 200,
+    "link_status": "restricted",
+    "link_http_code": 403,
     "link_last_checked": "2026-11-28",
     "date_posted": "2026-11-27"
   },
@@ -1689,8 +1689,8 @@
     "date_discovered": "2026-11-28",
     "last_updated": "2026-11-28",
     "next_action": "Draft tailored resume",
-    "link_status": "active",
-    "link_http_code": 200,
+    "link_status": "restricted",
+    "link_http_code": 403,
     "link_last_checked": "2026-11-28",
     "date_posted": "2026-11-27"
   },
@@ -1718,8 +1718,8 @@
     "date_discovered": "2026-11-28",
     "last_updated": "2026-11-28",
     "next_action": "Draft tailored resume",
-    "link_status": "active",
-    "link_http_code": 200,
+    "link_status": "restricted",
+    "link_http_code": 403,
     "link_last_checked": "2026-11-28",
     "date_posted": "2026-11-27"
   },
@@ -1744,8 +1744,8 @@
     "date_discovered": "2026-11-28",
     "last_updated": "2026-11-28",
     "next_action": "Review job description",
-    "link_status": "active",
-    "link_http_code": 200,
+    "link_status": "restricted",
+    "link_http_code": 403,
     "link_last_checked": "2026-11-28",
     "date_posted": "2026-11-27"
   },
@@ -1773,8 +1773,8 @@
     "date_discovered": "2026-11-28",
     "last_updated": "2026-11-28",
     "next_action": "Draft tailored resume",
-    "link_status": "active",
-    "link_http_code": 200,
+    "link_status": "restricted",
+    "link_http_code": 403,
     "link_last_checked": "2026-11-28",
     "date_posted": "2026-11-26"
   },
@@ -1799,8 +1799,8 @@
     "date_discovered": "2026-11-28",
     "last_updated": "2026-11-28",
     "next_action": "Review job description",
-    "link_status": "active",
-    "link_http_code": 200,
+    "link_status": "restricted",
+    "link_http_code": 403,
     "link_last_checked": "2026-11-28",
     "date_posted": "2026-11-26"
   },
@@ -1828,8 +1828,8 @@
     "date_discovered": "2026-11-28",
     "last_updated": "2026-11-28",
     "next_action": "Draft tailored resume",
-    "link_status": "active",
-    "link_http_code": 200,
+    "link_status": "restricted",
+    "link_http_code": 403,
     "link_last_checked": "2026-11-28",
     "date_posted": "2026-11-26"
   },
@@ -1856,8 +1856,8 @@
     "date_discovered": "2026-11-28",
     "last_updated": "2026-11-28",
     "next_action": "Draft tailored resume",
-    "link_status": "active",
-    "link_http_code": 200,
+    "link_status": "restricted",
+    "link_http_code": 403,
     "link_last_checked": "2026-11-28",
     "date_posted": "2026-11-26"
   },
@@ -1884,8 +1884,8 @@
     "date_discovered": "2026-11-28",
     "last_updated": "2026-11-28",
     "next_action": "Draft tailored resume",
-    "link_status": "active",
-    "link_http_code": 200,
+    "link_status": "restricted",
+    "link_http_code": 403,
     "link_last_checked": "2026-11-28",
     "date_posted": "2026-11-26"
   },
@@ -1910,8 +1910,8 @@
     "date_discovered": "2026-11-28",
     "last_updated": "2026-11-28",
     "next_action": "Review job description",
-    "link_status": "active",
-    "link_http_code": 200,
+    "link_status": "restricted",
+    "link_http_code": 403,
     "link_last_checked": "2026-11-28",
     "date_posted": "2026-11-26"
   },
@@ -1936,8 +1936,8 @@
     "date_discovered": "2026-11-28",
     "last_updated": "2026-11-28",
     "next_action": "Review job description",
-    "link_status": "active",
-    "link_http_code": 200,
+    "link_status": "restricted",
+    "link_http_code": 403,
     "link_last_checked": "2026-11-28",
     "date_posted": "2026-11-26"
   },
@@ -1960,8 +1960,8 @@
     "date_discovered": "2026-11-28",
     "last_updated": "2026-11-28",
     "next_action": "Draft tailored resume",
-    "link_status": "active",
-    "link_http_code": 200,
+    "link_status": "restricted",
+    "link_http_code": 403,
     "link_last_checked": "2026-11-28"
   },
   {
@@ -1983,8 +1983,8 @@
     "date_discovered": "2026-11-28",
     "last_updated": "2026-11-28",
     "next_action": "Draft tailored resume",
-    "link_status": "active",
-    "link_http_code": 200,
+    "link_status": "restricted",
+    "link_http_code": 403,
     "link_last_checked": "2026-11-28"
   },
   {
@@ -2006,8 +2006,8 @@
     "date_discovered": "2026-11-28",
     "last_updated": "2026-11-28",
     "next_action": "Draft tailored resume",
-    "link_status": "active",
-    "link_http_code": 200,
+    "link_status": "restricted",
+    "link_http_code": 403,
     "link_last_checked": "2026-11-28"
   },
   {
@@ -2029,8 +2029,8 @@
     "date_discovered": "2026-11-28",
     "last_updated": "2026-11-28",
     "next_action": "Draft tailored resume",
-    "link_status": "active",
-    "link_http_code": 200,
+    "link_status": "restricted",
+    "link_http_code": 403,
     "link_last_checked": "2026-11-28"
   },
   {
@@ -2054,8 +2054,8 @@
     "date_discovered": "2026-11-28",
     "last_updated": "2026-11-28",
     "next_action": "Review job description",
-    "link_status": "active",
-    "link_http_code": 200,
+    "link_status": "restricted",
+    "link_http_code": 403,
     "link_last_checked": "2026-11-28",
     "date_posted": "2026-08-10"
   }
