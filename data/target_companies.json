@@ -50,7 +50,7 @@
   {
     "name": "GE Aerospace (JFWTC)",
     "relevance": 4,
-    "careers_url": "https://gecareers.com",
+    "careers_url": "https://careers.geaerospace.com/global/en/bengaluru",
     "ats_type": "custom",
     "tier": "Enterprise / OEM",
     "segment": "Engines, avionics, digital thread",
@@ -148,7 +148,7 @@
   {
     "name": "BrahMos Aerospace",
     "relevance": 3,
-    "careers_url": "https://brahmos.com",
+    "careers_url": "https://brahmos.com/career-opening",
     "ats_type": "custom",
     "tier": "Enterprise / OEM",
     "segment": "Missile systems",
@@ -176,7 +176,7 @@
   {
     "name": "Maini Precision Products",
     "relevance": 3,
-    "careers_url": "https://mainiprecision.com",
+    "careers_url": "https://www.jkmaini.com/",
     "ats_type": "custom",
     "tier": "Enterprise / OEM",
     "segment": "Aerospace precision manufacturing",
@@ -232,7 +232,7 @@
   {
     "name": "Cyient",
     "relevance": 4,
-    "careers_url": "https://cyient.com/careers",
+    "careers_url": "https://careers.cyient.com/cyient/",
     "ats_type": "custom",
     "tier": "Enterprise / OEM",
     "segment": "Aerospace engineering, digital systems",
@@ -347,7 +347,7 @@
   {
     "name": "AXISCADES Technologies",
     "relevance": 3,
-    "careers_url": "https://axiscades.com/careers/",
+    "careers_url": "https://www.axiscades.com/jobs/",
     "ats_type": "custom",
     "tier": "Enterprise / OEM",
     "segment": "Aerospace engineering solutions, aerostructures, avionics & systems integration",
@@ -390,7 +390,7 @@
     "notes": "India Innovation Center"
   },
   {
-    "name": "Dassault Syst\u00e8mes",
+    "name": "Dassault Systèmes",
     "relevance": 5,
     "careers_url": "https://3ds.com/careers",
     "ats_type": "custom",
@@ -421,7 +421,7 @@
   {
     "name": "Sarla Aviation",
     "relevance": 5,
-    "careers_url": "https://jobs.accel.com/companies/sarla-aviation/jobs/",
+    "careers_url": "https://www.sarla-aviation.com/careers/",
     "ats_type": "custom",
     "tier": "Startup / Emerging",
     "segment": "eVTOL / urban air mobility",
@@ -451,7 +451,7 @@
   {
     "name": "Bellatrix Aerospace",
     "relevance": 4,
-    "careers_url": "https://bellatrix.aero/careers",
+    "careers_url": "https://bellatrix.aero/",
     "ats_type": "custom",
     "tier": "Startup / Emerging",
     "segment": "Space propulsion/orbital vehicles",
@@ -511,7 +511,7 @@
   {
     "name": "The ePlane Company",
     "relevance": 3,
-    "careers_url": "https://eplane.ai/careers",
+    "careers_url": "https://www.eplane.ai/",
     "ats_type": "custom",
     "tier": "Startup / Emerging",
     "segment": "eVTOL air taxis, cargo drones",
@@ -526,7 +526,7 @@
   {
     "name": "Garuda Aerospace",
     "relevance": 3,
-    "careers_url": "https://garudaaerospace.com/careers",
+    "careers_url": "https://www.garudaaerospace.com/company/careers",
     "ats_type": "custom",
     "tier": "Startup / Emerging",
     "segment": "Drones/autonomous platforms",
@@ -541,7 +541,7 @@
   {
     "name": "GalaxEye",
     "relevance": 3,
-    "careers_url": "https://galaxeye.space/careers",
+    "careers_url": "https://careers.galaxeye.space/jobs/Careers",
     "ats_type": "custom",
     "tier": "Startup / Emerging",
     "segment": "SAR/EO satellites",
@@ -571,7 +571,7 @@
   {
     "name": "Astrome Technologies",
     "relevance": 3,
-    "careers_url": "https://astrome.co/careers",
+    "careers_url": "https://astrome.co/career/",
     "ats_type": "custom",
     "tier": "Startup / Emerging",
     "segment": "Satellite communications",
@@ -601,7 +601,7 @@
   {
     "name": "ideaForge",
     "relevance": 3,
-    "careers_url": "https://ideaforge.co.in/careers",
+    "careers_url": "https://ideaforgetech.com/career",
     "ats_type": "custom",
     "tier": "Startup / Emerging",
     "segment": "UAVs/unmanned systems",
@@ -1153,7 +1153,7 @@
   {
     "name": "ADA (Aeronautical Development Agency)",
     "relevance": 5,
-    "careers_url": "https://ada.gov.in/recruitment",
+    "careers_url": "https://www.ada.gov.in/",
     "ats_type": "custom",
     "tier": "Enterprise / OEM",
     "segment": "Combat aircraft design, LCA Tejas, avionics & flight systems",
@@ -1167,7 +1167,7 @@
   {
     "name": "CSIR-NAL",
     "relevance": 5,
-    "careers_url": "https://www.nal.res.in/en/careers",
+    "careers_url": "https://www.nal.res.in/en/career",
     "ats_type": "custom",
     "tier": "Enterprise / OEM",
     "segment": "Aerospace R&D, civil aircraft, UAVs, flight systems",
@@ -1181,7 +1181,7 @@
   {
     "name": "DRDO (ADE / GTRE Bengaluru)",
     "relevance": 5,
-    "careers_url": "https://drdo.gov.in/drdo/careers",
+    "careers_url": "https://rac.gov.in/",
     "ats_type": "custom",
     "tier": "Enterprise / OEM",
     "segment": "Defense aerospace, UAVs, gas turbine & avionics systems",
