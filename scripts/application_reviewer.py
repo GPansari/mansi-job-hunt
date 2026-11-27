@@ -129,10 +129,24 @@ def _check_contact_fidelity(
     return mismatches
 
 
+def _redact_quoted_role_metadata(
+    cover_letter_text: str,
+    target_title: str,
+    target_company: str,
+) -> str:
+    """Strip exact case-insensitive occurrences of quoted target title/company from cover letter."""
+    sanitized = cover_letter_text
+    terms = sorted((t.strip() for t in (target_title, target_company) if t and t.strip()), key=len, reverse=True)
+    for term in terms:
+        sanitized = re.sub(re.escape(term), " ", sanitized, flags=re.IGNORECASE)
+    return sanitized
+
+
 def _check_unverified_claims(
     resume_data: dict[str, Any],
     cover_letter_text: str,
     verified_facts: dict[str, list[str]],
+    analysis: dict[str, Any] | None = None,
 ) -> list[str]:
     """Check aerospace standards, core_skills, and experience[].company against verified_facts."""
     claims: list[str] = []
@@ -144,8 +158,13 @@ def _check_unverified_claims(
     verified_pool_cf = {item.casefold() for item in verified_pool}
     verified_companies_cf = {item.casefold() for item in verified_companies}
 
+    analysis_data = analysis or {}
+    target_title = str(resume_data.get("target_title") or analysis_data.get("title") or "").strip()
+    target_company = str(resume_data.get("target_company") or analysis_data.get("company") or "").strip()
+    sanitized_cover_letter = _redact_quoted_role_metadata(cover_letter_text, target_title, target_company)
+
     resume_claim_text = _extract_resume_claim_text(resume_data)
-    combined_claim_text = f"{resume_claim_text}\n{cover_letter_text}".strip()
+    combined_claim_text = f"{resume_claim_text}\n{sanitized_cover_letter}".strip()
 
     flagged_standards_cf: set[str] = set()
     for std_name, variants in KNOWN_AEROSPACE_STANDARDS.items():
@@ -292,25 +311,44 @@ def audit_application(
     analysis = json.loads(analysis_path.read_text(encoding="utf-8")) if analysis_path.exists() else {}
 
     contact_mismatch = _check_contact_fidelity(resume_data, candidate)
-    unverified_claims = _check_unverified_claims(resume_data, cover_letter_text, verified_facts)
+    unverified_claims = _check_unverified_claims(
+        resume_data,
+        cover_letter_text,
+        verified_facts,
+        analysis=analysis,
+    )
     placeholder_hits = _check_placeholders(resume_data, cover_letter_text)
 
     combined_ats_text = f"{_extract_resume_claim_text(resume_data)}\n{cover_letter_text}".strip()
     ats_coverage_pct, ats_matched, ats_missing = _compute_ats_coverage(analysis, combined_ats_text)
 
     pdf_path = app_dir / "tailored_resume.pdf"
-    page_count = _get_pdf_page_count(pdf_path) if pdf_path.exists() else None
+    pdf_checked = pdf_path.exists()
+    page_count = _get_pdf_page_count(pdf_path) if pdf_checked else None
+
+    issues: list[str] = []
+    if contact_mismatch:
+        issues.extend(f"Contact mismatch ({item})" for item in contact_mismatch)
+    if unverified_claims:
+        issues.extend(unverified_claims)
+    if placeholder_hits:
+        issues.extend(f"Unresolved placeholder: {hit}" for hit in placeholder_hits)
+    if pdf_checked and page_count is None:
+        issues.append("Could not read page count from tailored_resume.pdf")
+    elif page_count is not None and page_count > MAX_RESUME_PAGES:
+        issues.append(f"Resume PDF exceeds {MAX_RESUME_PAGES}-page budget ({page_count} pages)")
 
     passed = (
         len(unverified_claims) == 0
         and len(placeholder_hits) == 0
         and len(contact_mismatch) == 0
-        and (page_count is None or page_count <= MAX_RESUME_PAGES)
+        and (not pdf_checked or (page_count is not None and page_count <= MAX_RESUME_PAGES))
     )
 
     return {
         "opening_id": safe_id,
         "passed": passed,
+        "issues": issues,
         "contact_mismatch": contact_mismatch,
         "unverified_claims": unverified_claims,
         "placeholder_hits": placeholder_hits,
@@ -319,7 +357,7 @@ def audit_application(
         "ats_keywords_missing": ats_missing,
         "page_count": page_count,
         "max_pages_allowed": MAX_RESUME_PAGES,
-        "pdf_checked": pdf_path.exists(),
+        "pdf_checked": pdf_checked,
         "reviewed_at": date.today().isoformat(),
     }
 
@@ -335,11 +373,12 @@ def format_review_markdown(report: dict[str, Any]) -> str:
     """Render an audit report dict as a readable Markdown review summary."""
     status_label = "PASSED" if report.get("passed") else "FAILED"
     page_count = report.get("page_count")
-    page_display = (
-        f"{page_count} / {report.get('max_pages_allowed', MAX_RESUME_PAGES)} pages"
-        if page_count is not None
-        else "Not checked (PDF absent)"
-    )
+    if page_count is not None:
+        page_display = f"{page_count} / {report.get('max_pages_allowed', MAX_RESUME_PAGES)} pages"
+    elif report.get("pdf_checked"):
+        page_display = "Unreadable (Could not read page count from tailored_resume.pdf)"
+    else:
+        page_display = "Not checked (PDF absent)"
 
     lines = [
         f"# Application Audit Review — `{report.get('opening_id', '')}`",
@@ -348,6 +387,9 @@ def format_review_markdown(report: dict[str, Any]) -> str:
         f"- **Reviewed At:** {report.get('reviewed_at', '')}",
         f"- **ATS Keyword Coverage:** {report.get('ats_coverage_pct', 0.0)}%",
         f"- **Resume PDF Page Budget:** {page_display}",
+        "",
+        "## Issues",
+        _format_bullet_list(report.get("issues", []), empty_label="None"),
         "",
         "## Contact Mismatches",
         _format_bullet_list(report.get("contact_mismatch", []), empty_label="None (contact details match candidate.json)"),

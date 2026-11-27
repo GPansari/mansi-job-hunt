@@ -295,10 +295,14 @@ def _build_deep_dive_topics(
 
     if combined_cf & {"uav", "evtol", "avionics", "electrical systems", "flight control", "defense aerospace"}:
         uav_prog = next((p for p in verified_programs if "MALE UAV" in p), "MALE UAV design, sizing and synthesis")
+        eco_prog = next(
+            (p for p in verified_programs if "Eco-Modular Aircraft" in p),
+            "MBSE and TOPSIS for an Eco-Modular Aircraft",
+        )
         topics.append(
             f"**Aircraft Subsystems, UAV Sizing & Trade Studies:** Contrast Boeing 777-8F electrical "
-            f"subsystem integration with `{uav_prog}` (material/engine/propeller/landing-gear "
-            "trade studies, CFD, FEM, aeroelasticity, and TOPSIS)."
+            f"subsystem integration with `{uav_prog}` — covering material, engine, propeller, and "
+            f"landing-gear trade studies, CFD, FEM, and aeroelasticity — alongside `{eco_prog}`."
         )
 
     if not topics:

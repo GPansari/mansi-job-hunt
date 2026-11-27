@@ -55,6 +55,25 @@ def test_generate_interview_prep_synthesizes_when_analysis_missing(tmp_path):
     assert "777-8F" in content
 
 
+def test_build_deep_dive_topics_attributes_topsis_to_eco_modular_without_double_parens():
+    from scripts.interview_prep import _build_deep_dive_topics
+    from scripts.profile_loader import load_master_profile
+
+    profile = load_master_profile()
+    topics = _build_deep_dive_topics(
+        matched_skills=["UAV", "MBSE"],
+        matched_standards=["ARP4754A"],
+        priority_keywords=["UAV"],
+        verified_facts=profile["verified_facts"],
+    )
+    uav_topic = next(t for t in topics if "UAV Sizing & Trade Studies" in t)
+    assert "Eco-Modular Aircraft" in uav_topic
+    assert "TOPSIS" in uav_topic
+    assert ") (" not in uav_topic
+    assert "((" not in uav_topic
+    assert "))" not in uav_topic
+
+
 def test_generate_interview_prep_rejects_invalid_and_unknown_ids(tmp_path):
     with pytest.raises(ValueError, match="Invalid opening_id"):
         generate_interview_prep("../escape", applications_dir=tmp_path)

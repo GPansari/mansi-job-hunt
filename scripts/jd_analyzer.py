@@ -257,19 +257,24 @@ def load_opening_by_id(
     raise KeyError(f"Opening ID not found: {opening_id}")
 
 
+def _is_linkedin_hostname(hostname: str | None) -> bool:
+    """Return True if hostname is linkedin.com or a subdomain."""
+    host = (hostname or "").strip().lower()
+    return host == "linkedin.com" or host.endswith(".linkedin.com")
+
+
 def fetch_jd_text(url: str, timeout: int = 15) -> str:
     """Fetch and clean job description text from a non-LinkedIn public ATS URL.
 
     Raises:
-        ValueError: If the URL is invalid or points to a `linkedin.com` host.
+        ValueError: If the URL is invalid or points (or redirects) to a `linkedin.com` host.
     """
     cleaned_url = (url or "").strip()
     parsed = urlparse(cleaned_url)
     if parsed.scheme not in ("http", "https") or not parsed.netloc:
         raise ValueError(f"Invalid job posting URL: {url!r}")
 
-    hostname = (parsed.hostname or "").lower()
-    if hostname == "linkedin.com" or hostname.endswith(".linkedin.com"):
+    if _is_linkedin_hostname(parsed.hostname):
         raise ValueError(
             "LinkedIn URLs must not be auto-scraped; pass --jd-file or --jd-text instead."
         )
@@ -280,6 +285,10 @@ def fetch_jd_text(url: str, timeout: int = 15) -> str:
         "Accept-Language": "en-US,en;q=0.9",
     }
     response = requests.get(cleaned_url, headers=headers, timeout=timeout)
+    if _is_linkedin_hostname(urlparse(getattr(response, "url", "") or "").hostname):
+        raise ValueError(
+            "LinkedIn URLs must not be auto-scraped; pass --jd-file or --jd-text instead."
+        )
     response.raise_for_status()
 
     content_type = response.headers.get("Content-Type", "").lower()
@@ -405,7 +414,7 @@ def _build_recommended_angles(
         )
 
     if skill_gaps or missing_standards:
-        gaps_combined = ", ".join(skill_gaps + missing_standards)
+        gaps_combined = ", ".join(_dedupe_preserve_case(skill_gaps + missing_standards))
         angles.append(
             f"Address gaps transparently ({gaps_combined}) by framing transferable mastery in "
             "Cameo/MagicDraw, 3DEXPERIENCE, and IBM DOORS rather than claiming unverified tool fluency."

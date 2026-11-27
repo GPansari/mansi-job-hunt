@@ -189,3 +189,39 @@ def test_audit_passes_package_built_by_application_builder(tmp_path: Path):
     assert report["placeholder_hits"] == []
     assert report["ats_coverage_pct"] >= 80.0
 
+
+def test_audit_ignores_quoted_target_title_and_company_in_cover_letter(tmp_path: Path):
+    target_title = "Lead Software Developer (DESYRE Co-Simulation / SysMLv2)"
+    target_company = "Airbus India"
+    app_dir = _seed_app_dir(
+        tmp_path,
+        letter_text=(
+            f"Dear Hiring Team at {target_company},\n"
+            f"I am excited to apply for the {target_title} opportunity.\n"
+            "I bring 10 years of MBSE, SysML, and Cameo experience.\n"
+            "Regards,\nMansi Agrawal"
+        ),
+    )
+    resume_path = app_dir / "tailored_resume.json"
+    resume_data = json.loads(resume_path.read_text(encoding="utf-8"))
+    resume_data["target_title"] = target_title
+    resume_data["target_company"] = target_company
+    resume_path.write_text(json.dumps(resume_data), encoding="utf-8")
+
+    report = audit_application("TEST-REV", applications_dir=tmp_path)
+    assert report["passed"] is True
+    assert report["unverified_claims"] == []
+
+
+def test_audit_fails_when_pdf_exists_but_page_count_unreadable(tmp_path: Path):
+    app_dir = _seed_app_dir(tmp_path)
+    (app_dir / "tailored_resume.pdf").write_bytes(b"%PDF-1.4 corrupted")
+
+    with patch("scripts.application_reviewer._get_pdf_page_count", return_value=None):
+        report = audit_application("TEST-REV", applications_dir=tmp_path)
+
+    assert report["pdf_checked"] is True
+    assert report["page_count"] is None
+    assert report["passed"] is False
+    assert "Could not read page count from tailored_resume.pdf" in report["issues"]
+

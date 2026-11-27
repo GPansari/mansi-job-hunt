@@ -24,6 +24,21 @@ def test_fetch_jd_text_blocks_regional_linkedin_subdomains():
         fetch_jd_text("https://in.linkedin.com/jobs/view/987654321")
 
 
+def test_fetch_jd_text_blocks_redirects_to_linkedin(monkeypatch):
+    class RedirectResponse:
+        status_code = 200
+        url = "https://www.linkedin.com/jobs/view/987654321"
+        headers = {"Content-Type": "text/html"}
+        text = "<html><body>Redirected</body></html>"
+
+        def raise_for_status(self):
+            return None
+
+    monkeypatch.setattr("scripts.jd_analyzer.requests.get", lambda *a, **kw: RedirectResponse())
+    with pytest.raises(ValueError, match="LinkedIn"):
+        fetch_jd_text("https://boards.greenhouse.io/acme/jobs/redirect")
+
+
 def test_fetch_jd_text_strips_html_scripts_and_styles(monkeypatch):
     html_body = """
     <html>
@@ -153,6 +168,10 @@ def test_analyze_jd_detects_missing_standards_and_avoids_false_gap_for_verified_
     assert result["seniority_alignment"].startswith("Strong")
     assert "Bangalore" in result["location_alignment"] or "Bengaluru" in result["location_alignment"]
     assert len(result["recommended_angles"]) >= 2
+    gap_angles = [a for a in result["recommended_angles"] if "Address gaps transparently" in a]
+    assert len(gap_angles) == 1
+    assert "SysML v2, SysML v2" not in gap_angles[0]
+    assert gap_angles[0].count("SysML v2") == 1
 
 
 def test_save_analysis_writes_json_and_markdown(tmp_path):
