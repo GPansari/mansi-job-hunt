@@ -2,8 +2,8 @@ name: Twice-Weekly Job Hunt Pipeline
 
 on:
   schedule:
-    # Monday & Thursday at 09:00 AM IST (03:30 UTC)
-    - cron: '30 3 * * 1,4'
+    # Wednesday & Saturday at 08:00 AM IST (02:30 UTC)
+    - cron: '30 2 * * 3,6'
   workflow_dispatch:
 
 permissions:
