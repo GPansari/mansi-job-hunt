@@ -65,9 +65,9 @@ Every autonomous agent working in this repository must strictly adhere to these 
    - The engine discovers, scores, verifies, tracks, and compiles digests.
    - The agent **must never** submit applications or contact recruiters on Mansi's behalf without explicit human instruction.
 
-7. **Requisition-Specific Links Only (No Generic Career Portals)**:
-   - Every `apply_url` in `data/openings.json` must resolve directly to the specific job requisition (e.g. Workday job detail page, direct Lever/Greenhouse/Freshteam/Kula post, or direct LinkedIn job view).
-   - Generic company careers homepages (e.g., `company.com/careers`) are strictly prohibited in the tracker.
+7. **Requisition-Specific Links (Broad Roles-Page Fallback Only When Necessary)**:
+   - Every `apply_url` in `data/openings.json` should resolve directly to the specific job requisition when the portal provides per-role URLs (e.g. Workday job detail page, direct Lever/Greenhouse/Freshteam/Kula/Ashby post, or direct LinkedIn job view).
+   - If a target company's careers site lists specific named openings in an inline list/modal without individual per-requisition URLs (e.g., Green Aero Propulsion), use the direct roles-section URL (`https://www.greenaero.in/careers/#roles`). Generic root homepages without listed openings remain prohibited.
 
 8. **Inactive Posting Lifecycle & Status Preservation**:
    - Roles confirmed closed or expired must be tagged with `status: "Inactive Posting"` and annotated with explanation in `next_action`. They are never left as active or silently deleted.

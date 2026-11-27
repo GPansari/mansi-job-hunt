@@ -48,7 +48,7 @@ def build_site(
     for r in openings:
         if "company_category" not in r:
             comp = (r.get("company") or "").lower()
-            if any(s in comp for s in ["sarla", "ideaforge", "digantara", "galaxeye", "reorbit", "acron", "newspace"]):
+            if any(s in comp for s in ["sarla", "ideaforge", "digantara", "galaxeye", "reorbit", "acron", "newspace", "green aero", "airbound"]):
                 r["company_category"] = "Startup / Emerging"
             else:
                 r["company_category"] = "Enterprise / OEM"

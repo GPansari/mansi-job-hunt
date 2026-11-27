@@ -6,6 +6,9 @@ Tracking aerospace & MBSE job openings for Mansi Agrawal's job search.
 
 | Company | Team | Role | Location | Req ID | Seniority | Fit | Status | Link | Next Action |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Green Aero Propulsion | Aircraft & Avionics | Aircraft Design Engineer | Bengaluru (Devanahalli) | GA-Aircraft-Design | Experienced / Senior Engineer | 4 | Not Applied | [Apply](https://www.greenaero.in/careers/#roles) | Apply via Green Aero #roles modal highlighting MS Aerospace (Georgia Tech), Eco-Modular Aircraft & MALE UAV design |
+| Green Aero Propulsion | Aircraft & Avionics | Drone Engineer | Bengaluru (Devanahalli) | GA-Drone-Eng | Experienced / Systems Engineer | 4 | Not Applied | [Apply](https://www.greenaero.in/careers/#roles) | Apply via Green Aero #roles modal emphasizing UAV systems architecture & integration |
+| Green Aero Propulsion | Supply chain & Quality | QMS Development Lead | Bengaluru (Devanahalli) | GA-QMS-Lead | Lead | 4 | Not Applied | [Apply](https://www.greenaero.in/careers/#roles) | Evaluate aerospace QMS / certification leadership overlap with Boeing & Collins experience |
 | Airbound | Flight Systems | Avionics Hardware Engineer | Bangalore | e11026cb | Experienced Engineer | 4 | Not Applied | [Apply](https://jobs.ashbyhq.com/airbound/e11026cb-e2db-4b0c-8792-8c40fd545fb7) | Review Airbound Flight Systems JD for systems vs board-design balance |
 | Digantara | Satellite OBC / Avionics | Director Satellite OBC | Bengaluru | 25361 | Director / Senior Leadership | 4 | Not Applied | [Apply](https://careers.kula.ai/digantara/25361-director-satellite-obc) | Assess OBC hardware-software systems leadership fit |
 | Digantara | Optical / Space Systems | Systems Engineer Telescope | Bengaluru | 32764 | Systems Engineer | 4 | Not Applied | [Apply](https://careers.kula.ai/digantara/32764-systems-engineer-telescope) | Inspect Kula JD for requirements/V&V overlap with aerospace systems engineering |
