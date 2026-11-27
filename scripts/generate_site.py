@@ -1335,9 +1335,10 @@ def build_site(
         const relVal = c.relevance || 3;
         const relClass = relVal >= 5 ? 'badge-5' : (relVal >= 4 ? 'badge-4' : 'badge-3');
         const siteUrl = getCompanyWebsite(c);
+        const liQuery = String(c.name || '').replace(/\\s*\\([^)]*\\)/g, '').trim();
         const liUrl = c.linkedin_id
           ? `https://www.linkedin.com/jobs/search/?f_C=${{encodeURIComponent(c.linkedin_id)}}&geoId=90009633&location=Bengaluru%2C%20Karnataka%2C%20India&distance=25`
-          : `https://www.linkedin.com/jobs/search/?keywords=${{encodeURIComponent(' + (c.name || ).replace(/\\s*\\([^)]*\\)/g, ).trim() + ')}}&geoId=90009633&location=Bengaluru%2C%20Karnataka%2C%20India&distance=25`;
+          : `https://www.linkedin.com/jobs/search/?keywords=${{encodeURIComponent(liQuery)}}&geoId=90009633&location=Bengaluru%2C%20Karnataka%2C%20India&distance=25`;
         const openBadge = c.open_count > 0
           ? `<button class="badge badge-5" style="cursor:pointer;" onclick="filterByCompanyFromTab('${{escapeHtml(c.name)}}')">${{c.open_count}} open</button>`
           : `<span style="font-size:12px; color:var(--text-muted);">0</span>`;
