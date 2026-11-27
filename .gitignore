@@ -8,4 +8,5 @@ htmlcov/
 *.swo
 .DS_Store
 reports/*.png
+applications/
 

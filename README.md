@@ -16,6 +16,7 @@ It solves the friction of manual job board browsing by combining:
 2. **Deterministic fit scoring (1–5)**: Evaluates roles against Mansi's specific proficiencies (Cameo, SysML, DOORS, 3DEXPERIENCE, ARP4754A, V&V, Avionics) while filtering negative keywords (interns, freshers, web devs).
 3. **Dual-tracker synchronization**: Canonical JSON (`data/openings.json`) kept strictly in sync with a human-readable GitHub-flavored Markdown tracker (`data/Openings_Tracker.md`).
 4. **Weekly curated digests**: Mobile-responsive HTML and plain-text executive summaries dispatched directly via the native Gmail CLI integration with strict deduplication and delivery gates.
+5. **Phase 2 Application Tailoring & Interview Coaching**: Dossier-grounded JD alignment analysis, tailored resume/cover letter HTML & PDF generation, automated fact-checking audit gates, role-specific interview prep packs, and cross-role upskill summaries.
 
 ### System Data Flow
 
@@ -71,9 +72,18 @@ It solves the friction of manual job board browsing by combining:
 ├── GEMINI.md                           # AI Agent operating manual, constitution & SOP
 ├── README.md                           # Operator manual, runbook, & architecture guide
 ├── pyproject.toml                      # Python package & pytest configuration
+├── .agents/
+│   └── skills/
+│       └── job-application-coach/
+│           └── SKILL.md                # Antigravity Phase 2 coaching skill (/apply, /review-app, /interview, /upskill)
 ├── profile/
 │   ├── candidate.json                  # Candidate profile (skills, target titles, locations)
+│   ├── master_dossier.md               # Verified master dossier (roles, metrics, tools, standards)
 │   └── Mansi_Agrawal_Resume.pdf        # Mansi's aerospace resume
+├── templates/
+│   ├── resume.html                     # Print-ready HTML/CSS template for tailored resumes
+│   └── cover_letter.html               # Print-ready HTML/CSS template for tailored cover letters
+├── applications/                       # Gitignored local per-role packages (analysis, PDFs, review, interview prep)
 ├── data/
 │   ├── target_companies.json           # 60+ aerospace companies, portals, ATS types & tiers
 │   ├── openings.json                   # Canonical opportunities tracker (JSON)
@@ -83,9 +93,16 @@ It solves the friction of manual job board browsing by combining:
 │   ├── search_engine.py                # Multi-tier job search & ATS ingestion engine
 │   ├── scorer.py                       # Candidate fit & relevance scoring engine
 │   ├── notifier.py                     # Weekly digest compiler & Gmail dispatcher
-│   └── sync_tracker.py                 # Bi-directional JSON <-> Markdown synchronizer
+│   ├── sync_tracker.py                 # Bi-directional JSON <-> Markdown synchronizer
+│   ├── profile_loader.py               # Verified master dossier & candidate profile loader
+│   ├── jd_analyzer.py                  # Deep JD alignment analyzer & gap detector
+│   ├── application_builder.py          # Tailored resume, cover letter, & Chrome PDF builder
+│   ├── application_reviewer.py         # Fact-checking reviewer & ATS/page-budget audit gate
+│   ├── interview_prep.py               # Grounded per-role interview preparation pack builder
+│   └── upskill_analyzer.py             # Cross-role skill gap & upskill report generator
 ├── reports/
 │   ├── sent_history.json               # Deduplication ledger tracking notified role IDs
+│   ├── upskill_summary.md              # Cross-role recurring skill gap & upskill summary
 │   └── *.html / *.txt                  # Timestamped archive copies of weekly digests
 ├── tests/                              # Comprehensive test suite (unit + integration)
 │   ├── test_data_integrity.py          # Validates schema structure & data migrations
@@ -93,7 +110,12 @@ It solves the friction of manual job board browsing by combining:
 │   ├── test_scorer.py                  # Tests scoring rubric & negative keyword filters
 │   ├── test_notifier.py                # Tests digest formatting & email dispatching
 │   ├── test_search_engine.py           # Tests ATS APIs, dorking, & deduplication
-│   └── test_runbook.py                 # Tests CLI workflows & runbook end-to-end
+│   ├── test_runbook.py                 # Tests CLI workflows & runbook end-to-end
+│   ├── test_profile_loader.py          # Tests master dossier & PDF extraction loader
+│   ├── test_jd_analyzer.py             # Tests JD fetching, LinkedIn block, & gap analysis
+│   ├── test_application_builder.py     # Tests tailored resume/cover letter & PDF generation
+│   ├── test_application_reviewer.py    # Tests fact-check audit, placeholders, & page budget
+│   └── test_interview_and_upskill.py   # Tests interview prep & cross-role upskill analyzer
 └── archive/
     ├── legacy_excel/                   # Preserved original Excel spreadsheets
     └── legacy_docs/                    # Preserved original Word documents
@@ -201,6 +223,48 @@ python scripts/notifier.py --dry-run --min-fit 4.0
 
 ---
 
+### 5. Phase 2: JD Analysis & Application Tailoring (`scripts/jd_analyzer.py`, `scripts/application_builder.py`)
+
+Analyze a shortlisted opening against `profile/master_dossier.md` (writes `applications/<id>/analysis.{json,md}`):
+```bash
+# Fetch from a non-LinkedIn public ATS URL:
+python scripts/jd_analyzer.py --id AIRBUS-JR10437140 --fetch
+
+# Or pass a local JD file / pasted text (required for LinkedIn postings):
+python scripts/jd_analyzer.py --id AIRBUS-JR10437140 --jd-file path/to/jd.txt
+```
+
+Build a tailored resume, cover letter, and print-ready PDFs under `applications/<id>/` (add `--no-pdf` to skip headless Google Chrome PDF compilation):
+```bash
+python scripts/application_builder.py --id AIRBUS-JR10437140
+python scripts/application_builder.py --id AIRBUS-JR10437140 --no-pdf
+```
+
+---
+
+### 6. Phase 2: Fact-Checking Audit Gate (`scripts/application_reviewer.py`)
+
+Verify contact fidelity, dossier-only claims, absence of placeholders, ATS keyword coverage, and `<= 2` page resume PDF budget (`applications/<id>/review.{json,md}`):
+```bash
+python scripts/application_reviewer.py --id AIRBUS-JR10437140
+```
+
+---
+
+### 7. Phase 2: Interview Prep & Cross-Role Upskill Summary (`scripts/interview_prep.py`, `scripts/upskill_analyzer.py`)
+
+Generate a role-specific interview prep pack (`applications/<id>/interview_prep.md`):
+```bash
+python scripts/interview_prep.py --id AIRBUS-JR10437140
+```
+
+Aggregate recurring `skill_gaps` and `missing_standards` across all evaluated roles into `reports/upskill_summary.md`:
+```bash
+python scripts/upskill_analyzer.py --output reports/upskill_summary.md
+```
+
+---
+
 ## 5. Human Operator & Maintenance Workflows
 
 ### Updating Application Status
@@ -228,7 +292,7 @@ When Mansi applies for a role or receives an update:
 3. Run `python scripts/search_engine.py --scan-ats --company Supernal` to verify.
 
 ### Updating Candidate Skills & Criteria
-Edit [`profile/candidate.json`](file:///Users/gp/Desktop/GP%20Github%20Local/Mansi%20Job%20Hunt/profile/candidate.json) to add newly acquired certifications, tools, or target domains. Re-run scoring with `python scripts/scorer.py --score-all` followed by `python scripts/sync_tracker.py --to-md`.
+Edit [`profile/candidate.json`](file:///Users/gp/Desktop/GP%20Github%20Local/Mansi%20Job%20Hunt/profile/candidate.json) to add newly acquired certifications, tools, or target domains, and keep [`profile/master_dossier.md`](file:///Users/gp/Desktop/GP%20Github%20Local/Mansi%20Job%20Hunt/profile/master_dossier.md) updated with verified achievements so Phase 2 tailored resumes and interview prep packs stay current. Re-run scoring with `python scripts/scorer.py --score-all` followed by `python scripts/sync_tracker.py --to-md`.
 
 ---
 

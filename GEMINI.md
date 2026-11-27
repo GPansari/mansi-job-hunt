@@ -174,6 +174,66 @@ python scripts/notifier.py --send
 
 ---
 
+### `/apply <id>` - Phase 2 JD Analysis & Tailored Application Builder
+Analyzes a shortlisted opening from `data/openings.json` against `profile/master_dossier.md` and builds a tailored resume, cover letter, and PDFs under `applications/<id>/` (see `.agents/skills/job-application-coach/SKILL.md`).
+
+```bash
+# 1. Analyze JD (use --fetch for non-LinkedIn public ATS URLs, or --jd-file / --jd-text)
+python scripts/jd_analyzer.py --id <id> --fetch
+
+# 2. Build tailored resume + cover letter + PDFs (add --no-pdf to skip Chrome PDF rendering)
+python scripts/application_builder.py --id <id>
+```
+
+**Agent Execution Steps**:
+1. Never call `--fetch` on LinkedIn URLs; use `--jd-file` or `--jd-text` with human-provided JD text instead.
+2. Run `scripts/jd_analyzer.py` to generate `applications/<id>/analysis.json` and `analysis.md`.
+3. Run `scripts/application_builder.py` to generate `tailored_resume.{json,html,pdf}` and `cover_letter.{md,html,pdf}`.
+4. Always proceed to `/review-app <id>` before presenting materials for manual submission.
+
+---
+
+### `/review-app <id>` - Fact-Check Audit & Reviewer Subagent Gate
+Runs deterministic fact-checking and ATS auditing, followed by an independent qualitative subagent review.
+
+```bash
+python scripts/application_reviewer.py --id <id>
+```
+
+**Agent Execution Steps**:
+1. Run `scripts/application_reviewer.py --id <id>` to audit contact fidelity, verified dossier claims, placeholders, ATS keyword coverage, and the 2-page PDF budget (`applications/<id>/review.{json,md}`).
+2. If the audit fails (non-zero exit), fix the discrepancies and rebuild before continuing.
+3. Spawn a fresh `research` or `self` reviewer subagent to critique tone, seniority calibration, narrative alignment, and grounding against `profile/master_dossier.md`.
+4. Only present audited PDFs for Mansi to review and submit manually; once submitted, update status and run `python scripts/sync_tracker.py --to-md`.
+
+---
+
+### `/interview <id>` - Grounded Interview Preparation Pack
+Generates a role-specific interview prep guide strictly grounded in `profile/master_dossier.md` and `profile/candidate.json`.
+
+```bash
+python scripts/interview_prep.py --id <id>
+```
+
+**Agent Execution Steps**:
+1. Reads `applications/<id>/analysis.json` (or synthesizes alignment from `data/openings.json`).
+2. Writes `applications/<id>/interview_prep.md` with STAR stories, MBSE/architecture talking points, gap-bridging scripts, and panel questions.
+
+---
+
+### `/upskill` - Cross-Role Skill Gap & Upskill Report
+Aggregates recurring `skill_gaps` and `missing_standards` across all analyzed openings under `applications/*/analysis.json`.
+
+```bash
+python scripts/upskill_analyzer.py --output reports/upskill_summary.md
+```
+
+**Agent Execution Steps**:
+1. Scans `applications/*/analysis.json` and ranks recurring tool/standard gaps.
+2. Maps each gap to Mansi's transferable baseline and writes `reports/upskill_summary.md`.
+
+---
+
 ## 5. Weekly Automation Schedule Configuration
 
 To run this pipeline autonomously each week using Antigravity's native scheduling system:
@@ -207,11 +267,20 @@ When triggered on schedule, the agent performs the following sequential runbook:
 .
 ├── GEMINI.md                           # This operating manual & agent constitution
 ├── README.md                           # Operator guide, runbook, & setup instructions
+├── .agents/
+│   └── skills/
+│       └── job-application-coach/
+│           └── SKILL.md                # Phase 2 coaching skill (/apply, /review-app, /interview, /upskill)
 ├── docs/
 │   └── index.html                      # Live single-page review portal (GitHub Pages)
 ├── profile/
 │   ├── candidate.json                  # Mansi's structured skills, criteria, & targets
+│   ├── master_dossier.md               # Verified master dossier of roles, metrics, & standards
 │   └── Mansi_Agrawal_Resume.pdf        # Candidate resume
+├── templates/
+│   ├── resume.html                     # Print-ready HTML/CSS template for tailored resumes
+│   └── cover_letter.html               # Print-ready HTML/CSS template for tailored cover letters
+├── applications/                       # Gitignored per-role artifacts (analysis, tailored docs, review, interview prep)
 ├── data/
 │   ├── target_companies.json           # 60+ aerospace OEMs & startups (URLs, ATS type, tiers)
 │   ├── openings.json                   # Live opportunities tracker (canonical JSON)
@@ -223,9 +292,16 @@ When triggered on schedule, the agent performs the following sequential runbook:
 │   ├── search_engine.py                # Multi-tier discovery runner (Dorking + ATS)
 │   ├── scorer.py                       # Relevance & fit scoring engine (1-5)
 │   ├── notifier.py                     # HTML digest generator & Gmail dispatch
-│   └── sync_tracker.py                 # Bi-directional tracker synchronizer
-├── reports/                            # Generated weekly reports archive & sent history
-│   └── sent_history.json               # Deduplication ledger of already-notified role IDs
+│   ├── sync_tracker.py                 # Bi-directional tracker synchronizer
+│   ├── profile_loader.py               # Verified master dossier & candidate profile loader
+│   ├── jd_analyzer.py                  # JD alignment analyzer & gap detector
+│   ├── application_builder.py          # Tailored resume, cover letter, & Chrome PDF builder
+│   ├── application_reviewer.py         # Fact-checking reviewer & ATS/page-budget audit gate
+│   ├── interview_prep.py               # Grounded per-role interview preparation pack builder
+│   └── upskill_analyzer.py             # Cross-role skill gap & upskill report generator
+├── reports/                            # Generated weekly reports archive, upskill summary, & sent history
+│   ├── sent_history.json               # Deduplication ledger of already-notified role IDs
+│   └── upskill_summary.md              # Cross-role recurring skill gap & upskill summary
 ├── tests/                              # Pytest test suite
 │   ├── test_data_integrity.py
 │   ├── test_generate_site.py
@@ -233,7 +309,12 @@ When triggered on schedule, the agent performs the following sequential runbook:
 │   ├── test_scorer.py
 │   ├── test_notifier.py
 │   ├── test_search_engine.py
-│   └── test_runbook.py
+│   ├── test_runbook.py
+│   ├── test_profile_loader.py
+│   ├── test_jd_analyzer.py
+│   ├── test_application_builder.py
+│   ├── test_application_reviewer.py
+│   └── test_interview_and_upskill.py
 └── archive/
     ├── legacy_excel/                   # Preserved original .xlsx workbooks
     └── legacy_docs/                    # Preserved original .docx files
