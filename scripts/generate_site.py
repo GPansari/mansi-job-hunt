@@ -326,14 +326,14 @@ def build_site(
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 10px;
+      gap: 8px;
       flex-wrap: wrap;
     }}
     .search-box {{
       position: relative;
-      flex: 1;
-      min-width: 220px;
-      max-width: 360px;
+      flex: 1 1 180px;
+      min-width: 170px;
+      max-width: 260px;
     }}
     .search-box svg {{
       position: absolute;
@@ -346,10 +346,10 @@ def build_site(
     }}
     .search-input {{
       width: 100%;
-      padding: 7px 12px 7px 32px;
+      padding: 6px 10px 6px 30px;
       border-radius: 6px;
       border: 1px solid var(--border-medium);
-      font-size: 13px;
+      font-size: 12px;
       background: #f8fafc;
       color: var(--text-primary);
     }}
@@ -363,8 +363,9 @@ def build_site(
       display: flex;
       align-items: center;
       flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 8px;
+      gap: 6px;
+      margin-top: 0;
+      flex: 1 1 auto;
     }}
     .mobile-filter-toggle {{
       display: none;
@@ -717,51 +718,51 @@ def build_site(
 
   <main>
     <section id="jobsSection">
-      <div class="toolbar-container" style="padding: 8px 14px; margin-bottom: 10px; gap: 8px;">
+      <div class="toolbar-container" style="padding: 8px 12px; margin-bottom: 10px;">
         <div class="toolbar-top-row">
           <div class="search-box">
             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-            <input type="text" id="searchInput" class="search-input" placeholder="Search title, company, req ID, skill..." oninput="applyFilters()">
+            <input type="text" id="searchInput" class="search-input" placeholder="Search title, company, req, skill..." oninput="applyFilters()">
           </div>
 
-          <div style="display:flex; align-items:center; gap:8px;">
+          <div id="filtersDrawer" class="filters-drawer">
+            <select id="sortSelect" class="select-filter" onchange="applyFilters()" aria-label="Sort openings">
+              <option value="fit_recency">Sort: Fit + Posted</option>
+              <option value="newest">Sort: Recently Posted</option>
+              <option value="fit_score">Sort: Fit Score</option>
+              <option value="company">Sort: Company</option>
+            </select>
+
+            <select id="fitFilter" class="select-filter" onchange="applyFilters()">
+              <option value="all">Fit: All</option>
+              <option value="5">5★</option>
+              <option value="4">4★</option>
+              <option value="3">3★</option>
+            </select>
+
+            <select id="categoryFilter" class="select-filter" onchange="applyFilters()">
+              <option value="all">Category: All</option>
+              <option value="Enterprise / OEM">Enterprise / OEM</option>
+              <option value="Startup / Emerging">Startup / Emerging</option>
+            </select>
+
+            <select id="companyFilter" class="select-filter" onchange="applyFilters()">
+              <option value="all">Company: All</option>
+            </select>
+
+            <label class="active-toggle" title="Hide inactive, closed, or expired postings">
+              <input type="checkbox" id="activeOnlyToggle" checked onchange="onActiveToggleChange()">
+              <span>Active Only</span>
+            </label>
+          </div>
+
+          <div style="display:flex; align-items:center; gap:6px; margin-left:auto;">
             <button id="mobileFilterBtn" class="btn btn-default mobile-filter-toggle" onclick="toggleMobileFilters()">Filters</button>
             <div class="view-switcher">
               <button id="viewBtnTable" class="view-btn active" onclick="setView('table')">Table</button>
               <button id="viewBtnCards" class="view-btn" onclick="setView('cards')">Cards</button>
             </div>
           </div>
-        </div>
-
-        <div id="filtersDrawer" class="filters-drawer">
-          <select id="sortSelect" class="select-filter" onchange="applyFilters()" aria-label="Sort openings">
-            <option value="fit_recency">Sort: Fit + Posted</option>
-            <option value="newest">Sort: Recently Posted</option>
-            <option value="fit_score">Sort: Fit Score</option>
-            <option value="company">Sort: Company</option>
-          </select>
-
-          <select id="fitFilter" class="select-filter" onchange="applyFilters()">
-            <option value="all">Fit: All</option>
-            <option value="5">5★</option>
-            <option value="4">4★</option>
-            <option value="3">3★</option>
-          </select>
-
-          <select id="categoryFilter" class="select-filter" onchange="applyFilters()">
-            <option value="all">Category: All</option>
-            <option value="Enterprise / OEM">Enterprise / OEM</option>
-            <option value="Startup / Emerging">Startup / Emerging</option>
-          </select>
-
-          <select id="companyFilter" class="select-filter" onchange="applyFilters()">
-            <option value="all">Company: All</option>
-          </select>
-
-          <label class="active-toggle" title="Hide inactive, closed, or expired postings">
-            <input type="checkbox" id="activeOnlyToggle" checked onchange="onActiveToggleChange()">
-            <span>Active Only</span>
-          </label>
         </div>
       </div>
 
@@ -815,7 +816,7 @@ def build_site(
             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
             <input type="text" id="companySearchInput" class="search-input" placeholder="Search target companies, segment, city..." oninput="renderCompanies()">
           </div>
-          <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
             <select id="companySortSelect" class="select-filter" onchange="renderCompanies()">
               <option value="openings" selected>Sort: Open Positions</option>
               <option value="relevance">Sort: Relevance</option>
@@ -826,6 +827,10 @@ def build_site(
               <option value="Enterprise / OEM">Enterprise / OEM</option>
               <option value="Startup / Emerging">Startup / Emerging</option>
             </select>
+            <label class="active-toggle" title="Hide deprioritized Relevance 1-2 companies">
+              <input type="checkbox" id="companyHighRelToggle" checked onchange="renderCompanies()">
+              <span>Relevant (3★+) Only</span>
+            </label>
           </div>
         </div>
       </div>
@@ -838,11 +843,11 @@ def build_site(
         <table class="jobs-table">
           <thead>
             <tr>
-              <th style="width: 220px;">Company</th>
-              <th>Profile &amp; Focus</th>
+              <th style="width: 245px;">Company</th>
+              <th>Summary</th>
               <th style="width: 150px;">Location</th>
-              <th style="width: 115px;">Openings</th>
-              <th style="width: 210px; text-align: right;">Job Portals</th>
+              <th style="width: 100px;">Openings</th>
+              <th style="width: 195px; text-align: right;">Job Portals</th>
             </tr>
           </thead>
           <tbody id="companiesBody"></tbody>
@@ -1256,19 +1261,51 @@ def build_site(
       return total;
     }}
 
+    function getCompanyWebsite(c) {{
+      if (c.website) return c.website;
+      const raw = String(c.careers_url || '').trim();
+      if (!raw) return '#';
+      try {{
+        const u = new URL(raw);
+        const h = u.hostname.toLowerCase();
+        if (h.includes('myworkdayjobs.com') || h.includes('lever.co') || h.includes('ashbyhq.com') || h.includes('greenhouse.io') || h.includes('kula.ai') || h.includes('freshteam.com') || h.includes('jobs.accel.com')) {{
+          return raw;
+        }}
+        return u.origin;
+      }} catch (e) {{
+        return raw;
+      }}
+    }}
+
+    function buildCompanySummary(c) {{
+      const parts = [];
+      if (c.segment) parts.push(c.segment);
+      const meta = [];
+      if (c.founded && !/not/i.test(c.founded) && c.founded !== 'N/A') meta.push('Founded ' + c.founded);
+      if (c.total_funding && !/not|n\\/a/i.test(c.total_funding)) meta.push('Funding: ' + c.total_funding);
+      if (c.last_round && !/not|n\\/a/i.test(c.last_round)) meta.push(c.last_round);
+      if (c.origin && meta.length === 0) meta.push(c.origin);
+      if (meta.length > 0) parts.push(meta.join(' · '));
+      else if (c.notes) parts.push(c.notes);
+      return parts.join(' — ');
+    }}
+
     function renderCompanies() {{
       const tbody = document.getElementById('companiesBody');
       if (!tbody) return;
       const q = (document.getElementById('companySearchInput').value || '').toLowerCase().trim();
       const sortMode = document.getElementById('companySortSelect').value || 'openings';
       const tierFilter = document.getElementById('companyTierFilter').value || 'all';
+      const highRelOnly = document.getElementById('companyHighRelToggle') ? document.getElementById('companyHighRelToggle').checked : false;
       const activeCounts = getActiveCountsByCompany();
+      const autoAts = new Set(['workday', 'greenhouse', 'lever', 'ashby', 'kula', 'freshteam']);
 
       const enriched = COMPANIES.map(c => ({{ ...c, open_count: resolveCompanyActiveCount(c.name || '', activeCounts) }}))
         .filter(c => {{
+          if (highRelOnly && (c.relevance || 0) < 3 && c.open_count === 0) return false;
           if (tierFilter !== 'all' && c.tier !== tierFilter) return false;
           if (q) {{
-            const hay = [c.name, c.segment, c.location, c.notes, c.ats_type, c.tier].filter(Boolean).join(' ').toLowerCase();
+            const hay = [c.name, c.segment, c.location, c.notes, c.total_funding, c.ats_type, c.tier].filter(Boolean).join(' ').toLowerCase();
             if (!hay.includes(q)) return false;
           }}
           return true;
@@ -1289,18 +1326,31 @@ def build_site(
 
       tbody.innerHTML = enriched.map(c => {{
         const catClass = c.tier === 'Startup / Emerging' ? 'cat-startup' : 'cat-enterprise';
+        const atsLower = String(c.ats_type || 'custom').toLowerCase();
+        const scanBadge = autoAts.has(atsLower)
+          ? `<span class="link-pill link-pill-active" style="font-size:10px; padding:1px 6px;">Auto: ${{escapeHtml(atsLower.toUpperCase())}}</span>`
+          : `<span class="url-type-badge url-type-direct">Manual</span>`;
+        const blrConfirmed = /confirmed/i.test(String(c.bangalore_presence || ''));
+        const blrBadge = blrConfirmed ? '<span class="skill-chip" style="font-size:10px; margin:0;">BLR ✓</span>' : '';
+        const relVal = c.relevance || 3;
+        const relClass = relVal >= 5 ? 'badge-5' : (relVal >= 4 ? 'badge-4' : 'badge-3');
+        const siteUrl = getCompanyWebsite(c);
         const liUrl = `https://www.linkedin.com/jobs/search/?keywords=${{encodeURIComponent(c.name || '')}}&location=Bengaluru`;
         const openBadge = c.open_count > 0
           ? `<button class="badge badge-5" style="cursor:pointer;" onclick="filterByCompanyFromTab('${{escapeHtml(c.name)}}')">${{c.open_count}} open</button>`
           : `<span style="font-size:12px; color:var(--text-muted);">0</span>`;
-        const summary = c.segment || c.notes || '';
+        const summary = buildCompanySummary(c);
         return `
           <tr class="job-row">
             <td>
-              <div style="font-weight:700; color:var(--text-primary);">${{escapeHtml(c.name)}}</div>
-              <div style="display:flex; gap:5px; margin-top:3px; flex-wrap:wrap;">
+              <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
+                <a href="${{safeUrl(siteUrl)}}" target="_blank" rel="noopener noreferrer" style="font-weight:700; color:var(--brand-primary); text-decoration:none;">${{escapeHtml(c.name)}}</a>
+                <span class="badge ${{relClass}}" style="font-size:10px; padding:1px 6px;">${{relVal}}★</span>
+              </div>
+              <div style="display:flex; gap:5px; margin-top:4px; flex-wrap:wrap; align-items:center;">
                 <span class="category-chip ${{catClass}}">${{escapeHtml(c.tier || 'Enterprise / OEM')}}</span>
-                <span class="url-type-badge url-type-direct">${{escapeHtml(String(c.ats_type || 'custom').toUpperCase())}}</span>
+                ${{scanBadge}}
+                ${{blrBadge}}
               </div>
             </td>
             <td>
