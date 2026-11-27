@@ -90,10 +90,10 @@ def test_build_site_success(tmp_path: Path):
     assert "viewBtnTable" in content
 
     # Phase 3 UX & security features
-    assert "Discovered" in content
+    assert "Posted" in content
     assert "sortSelect" in content
-    assert "Newest First" in content
-    assert "Fit + Recency" in content
+    assert "Recently Posted" in content
+    assert "Fit + Posted" in content
     assert "Direct ATS" in content
     assert "Career Board Role" in content
     assert "populateCompanyFilter()" in content
@@ -103,7 +103,9 @@ def test_build_site_success(tmp_path: Path):
     assert "exportStatusesJson" not in content
     assert "importStatusesJson" not in content
     assert "localStorage" not in content
+    assert "statusFilter" not in content
+    assert "paginationBar" in content
     assert "toggleMobileFilters" in content
-    # Accurate active/actionable counts (2 active, 1 inactive excluded)
+    # Accurate active/companies counts (2 active, 1 inactive excluded)
     assert 'id="kpi-active">2<' in content
-    assert 'id="kpi-actionable">2<' in content
+    assert 'id="kpi-companies">2<' in content

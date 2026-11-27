@@ -16,7 +16,7 @@ Provides discovery tools for high-fit aerospace engineering opportunities:
 from __future__ import annotations
 
 import argparse
-from datetime import datetime
+from datetime import date, datetime, timedelta, timezone
 import hashlib
 import html as html_lib
 import json
@@ -107,6 +107,35 @@ def _strip_html(text: str) -> str:
     cleaned = re.sub(r"<[^>]+>", " ", cleaned)
     cleaned = html_lib.unescape(cleaned)
     return re.sub(r"\s+", " ", cleaned).strip()
+
+
+def parse_date_posted(raw_value: Any, reference_date: Optional[date] = None) -> str:
+    """Normalize ATS posting dates (ISO, epoch ms, or Workday relative strings) to YYYY-MM-DD."""
+    if raw_value is None:
+        return ""
+    ref = reference_date or datetime.now().date()
+    if isinstance(raw_value, (int, float)):
+        ts = float(raw_value)
+        if ts > 1e11:
+            ts /= 1000.0
+        if ts > 0:
+            return datetime.fromtimestamp(ts, tz=timezone.utc).strftime("%Y-%m-%d")
+        return ""
+    s = str(raw_value).strip()
+    if not s:
+        return ""
+    m_iso = re.match(r"^(\d{4}-\d{2}-\d{2})", s)
+    if m_iso:
+        return m_iso.group(1)
+    lower = s.lower()
+    if "today" in lower:
+        return ref.isoformat()
+    if "yesterday" in lower:
+        return (ref - timedelta(days=1)).isoformat()
+    m_days = re.search(r"\b(\d+)\s+days?\s+ago\b", lower)
+    if m_days and "+" not in s:
+        return (ref - timedelta(days=int(m_days.group(1)))).isoformat()
+    return ""
 
 
 def _is_bangalore_or_india_location(location: str) -> bool:
@@ -243,6 +272,36 @@ def _parse_workday_url(careers_url: str, company: dict) -> Tuple[str, str, str]:
     return host, tenant, site
 
 
+def _fetch_workday_detail(
+    session: requests.Session,
+    host: str,
+    tenant: str,
+    site: str,
+    ext_path: str,
+    timeout: int,
+) -> Tuple[str, str]:
+    """Fetch full Workday job description text and startDate from CXS detail endpoint."""
+    if not ext_path or not ext_path.startswith("/"):
+        return "", ""
+    detail_url = f"https://{host}/wday/cxs/{tenant}/{site}{ext_path}"
+    try:
+        resp = session.get(
+            detail_url,
+            headers={"Accept": "application/json", "User-Agent": DEFAULT_USER_AGENT},
+            timeout=timeout,
+        )
+        if resp.status_code != 200:
+            return "", ""
+        payload = resp.json()
+        info = payload.get("jobPostingInfo", {}) if isinstance(payload, dict) else {}
+        desc_html = info.get("jobDescription") or info.get("additionalLocations") or ""
+        desc_text = _strip_html(desc_html) if isinstance(desc_html, str) else ""
+        start_date = parse_date_posted(info.get("startDate"))
+        return desc_text, start_date
+    except Exception:
+        return "", ""
+
+
 def _fetch_workday_jd(
     session: requests.Session,
     host: str,
@@ -252,25 +311,8 @@ def _fetch_workday_jd(
     timeout: int,
 ) -> str:
     """Fetch full Workday job description text from CXS detail endpoint."""
-    if not ext_path or not ext_path.startswith("/"):
-        return ""
-    detail_url = f"https://{host}/wday/cxs/{tenant}/{site}{ext_path}"
-    try:
-        resp = session.get(
-            detail_url,
-            headers={"Accept": "application/json", "User-Agent": DEFAULT_USER_AGENT},
-            timeout=timeout,
-        )
-        if resp.status_code != 200:
-            return ""
-        payload = resp.json()
-        info = payload.get("jobPostingInfo", {}) if isinstance(payload, dict) else {}
-        desc_html = info.get("jobDescription") or info.get("additionalLocations") or ""
-        if isinstance(desc_html, str):
-            return _strip_html(desc_html)
-    except Exception:
-        return ""
-    return ""
+    desc_text, _ = _fetch_workday_detail(session, host, tenant, site, ext_path, timeout)
+    return desc_text
 
 
 def _query_workday(
@@ -368,8 +410,10 @@ def _query_workday(
                 job_family = p.get("jobFamilyGroup", {})
                 team = job_family.get("name") if isinstance(job_family, dict) else "Systems Engineering"
 
-                full_jd = _fetch_workday_jd(http, host, tenant, site, ext_path, timeout=timeout)
-                description = full_jd or f"{title}. Posted: {p.get('postedOn', '')}. {location}."
+                full_jd, start_date = _fetch_workday_detail(http, host, tenant, site, ext_path, timeout=timeout)
+                posted_on = p.get("postedOn", "")
+                date_posted = start_date or parse_date_posted(posted_on)
+                description = full_jd or f"{title}. Posted: {posted_on}. {location}."
 
                 jobs.append({
                     "title": title,
@@ -378,6 +422,7 @@ def _query_workday(
                     "team": team or "Systems Engineering",
                     "apply_url": apply_url,
                     "description": description,
+                    "date_posted": date_posted,
                     "source_type": "Workday",
                 })
 
@@ -443,6 +488,7 @@ def _query_greenhouse(
         departments = j.get("departments", [])
         team = departments[0].get("name") if departments and isinstance(departments[0], dict) else "Engineering"
         description = _strip_html(j.get("content", "")) or title
+        date_posted = parse_date_posted(j.get("first_published") or j.get("updated_at"))
 
         jobs.append({
             "title": title,
@@ -451,6 +497,7 @@ def _query_greenhouse(
             "team": team or "Engineering",
             "apply_url": apply_url,
             "description": description,
+            "date_posted": date_posted,
             "source_type": "Greenhouse",
         })
 
@@ -505,6 +552,7 @@ def _query_lever(
         location = categories.get("location") or company.get("location", "Bangalore")
         team = categories.get("team") or "Engineering"
         desc = item.get("descriptionPlain") or _strip_html(item.get("description", "")) or title
+        date_posted = parse_date_posted(item.get("createdAt"))
 
         jobs.append({
             "title": title,
@@ -513,6 +561,7 @@ def _query_lever(
             "team": team or "Engineering",
             "apply_url": apply_url,
             "description": desc,
+            "date_posted": date_posted,
             "source_type": "Lever",
         })
 
@@ -570,6 +619,7 @@ def _query_ashby(
         location = loc.get("name") if isinstance(loc, dict) else str(loc or company.get("location", "Bangalore"))
         team = item.get("department") or "Engineering"
         desc = item.get("descriptionPlain") or _strip_html(item.get("descriptionHtml", "")) or title
+        date_posted = parse_date_posted(item.get("publishedAt") or item.get("updatedAt"))
 
         jobs.append({
             "title": title,
@@ -578,6 +628,7 @@ def _query_ashby(
             "team": team or "Engineering",
             "apply_url": apply_url,
             "description": desc,
+            "date_posted": date_posted,
             "source_type": "Ashby",
         })
 
@@ -840,6 +891,7 @@ def query_public_ats_feed(
             "url_type": url_type,
             "source": source_label,
             "status": "Not Applied",
+            "date_posted": raw.get("date_posted") or "",
             "date_discovered": today_str,
             "last_updated": today_str,
             "next_action": next_action,
@@ -932,7 +984,7 @@ def ingest_openings(
     canonical_keys = [
         "id", "company", "company_category", "team", "title", "location", "req_id",
         "seniority", "fit_score", "fit_rationale", "skills_matched",
-        "apply_url", "url_type", "source", "status", "date_discovered",
+        "apply_url", "url_type", "source", "status", "date_posted", "date_discovered",
         "last_updated", "next_action"
     ]
 

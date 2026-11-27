@@ -78,10 +78,8 @@ def build_site(
     fit_5_count = sum(1 for r in openings if float(r.get("fit_score", 0) or 0) >= 5)
     fit_4_count = sum(1 for r in openings if 4 <= float(r.get("fit_score", 0) or 0) < 5)
     active_count = sum(1 for r in openings if _is_role_active(r))
-    actionable_count = sum(
-        1
-        for r in openings
-        if _is_role_active(r) and str(r.get("status") or "Not Applied") in ("Not Applied", "Needs Review")
+    active_companies_count = len(
+        {str(r.get("company") or "").strip() for r in openings if _is_role_active(r) and r.get("company")}
     )
 
     openings_json_str = _safe_json_for_script(openings)
@@ -680,8 +678,8 @@ def build_site(
       </div>
       <span class="kpi-sep">|</span>
       <div class="kpi-item">
-        <span class="kpi-val" style="color: #6366f1;" id="kpi-actionable">{actionable_count}</span>
-        <span class="kpi-label">Actionable (Not Applied)</span>
+        <span class="kpi-val" style="color: #6366f1;" id="kpi-companies">{active_companies_count}</span>
+        <span class="kpi-label">Active Companies</span>
       </div>
       <div style="margin-left: auto; font-size: 12px; color: var(--text-muted);">
         Synced: <strong>{generated_at}</strong>
@@ -708,8 +706,8 @@ def build_site(
 
       <div id="filtersDrawer" class="filters-drawer">
         <select id="sortSelect" class="select-filter" onchange="applyFilters()" aria-label="Sort openings">
-          <option value="fit_recency">Sort: Fit + Recency</option>
-          <option value="newest">Sort: Newest First</option>
+          <option value="fit_recency">Sort: Fit + Posted</option>
+          <option value="newest">Sort: Recently Posted</option>
           <option value="fit_score">Sort: Fit Score</option>
           <option value="company">Sort: Company</option>
         </select>
@@ -731,15 +729,6 @@ def build_site(
           <option value="all">Company: All</option>
         </select>
 
-        <select id="statusFilter" class="select-filter" onchange="applyFilters()">
-          <option value="all">Status: All</option>
-          <option value="Not Applied">Not Applied</option>
-          <option value="Applied">Applied</option>
-          <option value="Interviewing">Interviewing</option>
-          <option value="Needs Review">Needs Review</option>
-          <option value="Watching">Watching</option>
-        </select>
-
         <label class="active-toggle" title="Hide inactive, closed, or expired postings">
           <input type="checkbox" id="activeOnlyToggle" checked onchange="applyFilters()">
           <span>Active Jobs Only</span>
@@ -750,6 +739,7 @@ def build_site(
     <div class="active-filters-bar">
       <span>Showing <strong id="matching-count">0</strong> matching roles</span>
       <span id="active-tag-container" style="display: inline-flex; gap: 6px; flex-wrap: wrap;"></span>
+      <button id="clearFiltersBtn" class="btn btn-default" style="display:none; padding:3px 10px; font-size:11px;" onclick="clearFilters()">Clear Filters</button>
     </div>
 
     <div id="tableView" class="table-container">
@@ -759,10 +749,9 @@ def build_site(
             <th onclick="setSort('fit_score')" style="width: 110px;">Fit Score</th>
             <th onclick="setSort('company')">Role &amp; Company</th>
             <th>Location &amp; Team</th>
-            <th onclick="setSort('newest')">Discovered</th>
+            <th onclick="setSort('newest')">Posted</th>
             <th>Matched Skills</th>
             <th>Link &amp; Source</th>
-            <th>Status</th>
             <th style="text-align: right;">Action</th>
           </tr>
         </thead>
@@ -771,6 +760,22 @@ def build_site(
     </div>
 
     <div id="cardsView" class="cards-grid"></div>
+
+    <div id="paginationBar" class="kpi-row" style="margin-top: 14px; justify-content: space-between; padding: 10px 16px;">
+      <div style="display:flex; align-items:center; gap:8px; font-size:12px; color:var(--text-secondary);">
+        <span id="pageSummary">Showing 0 roles</span>
+        <select id="pageSizeSelect" class="select-filter" style="padding:4px 8px; font-size:12px;" onchange="changePageSize()" aria-label="Rows per page">
+          <option value="25" selected>25 / page</option>
+          <option value="50">50 / page</option>
+          <option value="all">Show All</option>
+        </select>
+      </div>
+      <div style="display:flex; align-items:center; gap:8px;">
+        <button id="prevPageBtn" class="btn btn-default" style="padding:5px 10px; font-size:12px;" onclick="changePage(-1)">&larr; Prev</button>
+        <span id="pageIndicator" style="font-size:12px; font-weight:600; color:var(--text-secondary);">Page 1 of 1</span>
+        <button id="nextPageBtn" class="btn btn-default" style="padding:5px 10px; font-size:12px;" onclick="changePage(1)">Next &rarr;</button>
+      </div>
+    </div>
   </main>
 
   <div id="drawerOverlay" class="drawer-overlay" onclick="toggleDrawer()"></div>
@@ -811,22 +816,34 @@ def build_site(
       return true;
     }}
 
+    let currentPage = 1;
+    let pageSize = 25;
+
+    function getEffectiveDate(r) {{
+      return String(r.date_posted || r.date_discovered || '');
+    }}
+
+    function formatPostedHtml(r) {{
+      if (r.date_posted) {{
+        const tip = r.date_discovered ? `Discovered: ${{escapeHtml(r.date_discovered)}}` : 'Role posting date';
+        return `<span class="date-mono" title="${{tip}}">${{escapeHtml(r.date_posted)}}</span>`;
+      }}
+      return `<span class="date-mono" style="color:var(--text-muted);" title="Posting date unavailable; showing discovery date">Disc. ${{escapeHtml(r.date_discovered || '—')}}</span>`;
+    }}
+
     function updateKpis() {{
       let active = 0;
-      let actionable = 0;
+      const companies = new Set();
       OPENINGS.forEach(r => {{
         if (isRoleActive(r)) {{
           active++;
-          const s = r.status || 'Not Applied';
-          if (s === 'Not Applied' || s === 'Needs Review') {{
-            actionable++;
-          }}
+          if (r.company) companies.add(String(r.company).trim());
         }}
       }});
       const activeEl = document.getElementById('kpi-active');
-      const actionEl = document.getElementById('kpi-actionable');
+      const compEl = document.getElementById('kpi-companies');
       if (activeEl) activeEl.textContent = active;
-      if (actionEl) actionEl.textContent = actionable;
+      if (compEl) compEl.textContent = companies.size;
     }}
 
     function populateCompanyFilter() {{
@@ -908,7 +925,6 @@ def build_site(
       const fitFilter = document.getElementById('fitFilter').value;
       const categoryFilter = document.getElementById('categoryFilter').value;
       const companyFilter = document.getElementById('companyFilter').value;
-      const statusFilter = document.getElementById('statusFilter').value;
       const activeOnly = document.getElementById('activeOnlyToggle').checked;
 
       return OPENINGS.filter(r => {{
@@ -919,11 +935,10 @@ def build_site(
         if (fitFilter === '3' && (score < 3 || score >= 4)) return false;
         if (categoryFilter !== 'all' && r.company_category !== categoryFilter) return false;
         if (companyFilter !== 'all' && (r.company || '').trim() !== companyFilter) return false;
-        if (statusFilter !== 'all' && (r.status || 'Not Applied') !== statusFilter) return false;
         if (query) {{
           const haystack = [
             r.title, r.company, r.team, r.location, r.req_id, r.fit_rationale,
-            r.company_category, r.date_discovered, ...(r.skills_matched || [])
+            r.company_category, r.date_posted, r.date_discovered, ...(r.skills_matched || [])
           ].filter(Boolean).join(' ').toLowerCase();
           if (!haystack.includes(query)) return false;
         }}
@@ -931,8 +946,8 @@ def build_site(
       }}).sort((a, b) => {{
         const scoreA = parseFloat(a.fit_score || 0);
         const scoreB = parseFloat(b.fit_score || 0);
-        const dateA = String(a.date_discovered || '');
-        const dateB = String(b.date_discovered || '');
+        const dateA = getEffectiveDate(a);
+        const dateB = getEffectiveDate(b);
         const compA = String(a.company || '').toLowerCase();
         const compB = String(b.company || '').toLowerCase();
 
@@ -948,7 +963,7 @@ def build_site(
           if (compA !== compB) return compA.localeCompare(compB);
           return scoreB - scoreA;
         }}
-        // Default: fit_recency
+        // Default: fit_recency (Fit + Posted)
         if (scoreB !== scoreA) return scoreB - scoreA;
         return dateB.localeCompare(dateA);
       }});
@@ -976,7 +991,7 @@ def build_site(
     function renderTable(items) {{
       const tbody = document.getElementById('tableBody');
       if (items.length === 0) {{
-        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding: 36px; color: var(--text-muted);">No matching openings found. Try adjusting your filters.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding: 36px; color: var(--text-muted);">No matching openings found. Try adjusting your filters.</td></tr>';
         return;
       }}
 
@@ -984,7 +999,6 @@ def build_site(
         const score = parseFloat(r.fit_score || 0);
         const badgeClass = score >= 5 ? 'badge-5' : (score >= 4 ? 'badge-4' : 'badge-3');
         const badgeText = score >= 5 ? '5★ Direct Fit' : (score >= 4 ? '4★ Strong Fit' : '3★ Match');
-        const status = r.status || 'Not Applied';
         const catClass = r.company_category === 'Startup / Emerging' ? 'cat-startup' : 'cat-enterprise';
         const skills = Array.isArray(r.skills_matched) ? r.skills_matched : [];
         const skillsHtml = skills.slice(0, 3).map(s => `<span class="skill-chip">${{escapeHtml(s)}}</span>`).join('') +
@@ -1008,7 +1022,7 @@ def build_site(
               <div style="font-weight: 500;">${{escapeHtml(r.location || 'Bangalore')}}</div>
               <div style="font-size: 11px; color: var(--text-muted);">${{escapeHtml(r.team || 'Systems Engineering')}} &bull; Req: ${{escapeHtml(r.req_id || 'N/A')}}</div>
             </td>
-            <td class="date-mono">${{escapeHtml(r.date_discovered || '—')}}</td>
+            <td>${{formatPostedHtml(r)}}</td>
             <td>${{skillsHtml || '<span style="color:var(--text-muted);font-size:11px;">None listed</span>'}}</td>
             <td>
               <div style="display:flex; flex-direction:column; gap:4px; align-items:flex-start;">
@@ -1016,19 +1030,18 @@ def build_site(
                 ${{urlTypeBadgeHtml(r.url_type)}}
               </div>
             </td>
-            <td><span class="skill-chip">${{escapeHtml(status)}}</span></td>
             <td style="text-align: right;">
               <a href="${{safeUrl(r.apply_url)}}" target="_blank" rel="noopener noreferrer" class="btn-apply-sm">Apply &rarr;</a>
             </td>
           </tr>
           <tr id="details-${{idx}}" class="details-row">
-            <td colspan="8">
+            <td colspan="7">
               <div class="details-content">
                 <strong>AI Match Rationale:</strong> ${{escapeHtml(r.fit_rationale || 'Direct fit based on aerospace systems engineering background.')}}<br/>
                 <span style="display:inline-block; margin-top:4px; font-size:12px; color:var(--text-muted);">
-                  <strong>Next Action:</strong> ${{escapeHtml(r.next_action || 'Draft tailored resume')}} &bull;
                   <strong>Seniority:</strong> ${{escapeHtml(r.seniority || 'Lead')}} &bull;
-                  <strong>Source:</strong> ${{escapeHtml(r.source || 'Official ATS')}}
+                  <strong>Source:</strong> ${{escapeHtml(r.source || 'Official ATS')}} &bull;
+                  <strong>Discovered:</strong> ${{escapeHtml(r.date_discovered || '—')}}
                 </span>
               </div>
             </td>
@@ -1048,7 +1061,6 @@ def build_site(
         const score = parseFloat(r.fit_score || 0);
         const badgeClass = score >= 5 ? 'badge-5' : (score >= 4 ? 'badge-4' : 'badge-3');
         const badgeText = score >= 5 ? '5★ Direct Fit' : (score >= 4 ? '4★ Strong Fit' : '3★ Match');
-        const status = r.status || 'Not Applied';
         const catClass = r.company_category === 'Startup / Emerging' ? 'cat-startup' : 'cat-enterprise';
         const skillsHtml = (r.skills_matched || []).map(s => `<span class="skill-chip">${{escapeHtml(s)}}</span>`).join('');
 
@@ -1063,7 +1075,7 @@ def build_site(
               <div style="font-size:12px; color:var(--text-muted); margin-bottom:8px; display:flex; gap:6px; align-items:center; flex-wrap:wrap;">
                 <span>${{escapeHtml(r.location || 'Bangalore')}}</span>
                 <span>&bull;</span>
-                <span class="date-mono">${{escapeHtml(r.date_discovered || '—')}}</span>
+                ${{formatPostedHtml(r)}}
                 <span class="category-chip ${{catClass}}">${{escapeHtml(r.company_category || 'Enterprise / OEM')}}</span>
               </div>
               <div style="display:flex; gap:6px; margin-bottom:8px; flex-wrap:wrap;">
@@ -1076,7 +1088,7 @@ def build_site(
               <div style="margin-bottom:10px;">${{skillsHtml}}</div>
             </div>
             <div class="card-footer">
-              <span class="skill-chip">${{escapeHtml(status)}}</span>
+              <span style="font-size:11px; color:var(--text-muted);">${{escapeHtml(r.seniority || 'Lead')}}</span>
               <a href="${{safeUrl(r.apply_url)}}" target="_blank" rel="noopener noreferrer" class="btn-apply-sm">Apply &rarr;</a>
             </div>
           </div>
@@ -1084,11 +1096,35 @@ def build_site(
       }}).join('');
     }}
 
+    function clearFilters() {{
+      document.getElementById('searchInput').value = '';
+      document.getElementById('fitFilter').value = 'all';
+      document.getElementById('categoryFilter').value = 'all';
+      document.getElementById('companyFilter').value = 'all';
+      document.getElementById('activeOnlyToggle').checked = true;
+      currentPage = 1;
+      render();
+    }}
+
+    function changePageSize() {{
+      const val = document.getElementById('pageSizeSelect').value;
+      pageSize = val === 'all' ? 999999 : parseInt(val, 10) || 25;
+      currentPage = 1;
+      render();
+    }}
+
+    function changePage(delta) {{
+      currentPage = Math.max(1, currentPage + delta);
+      render();
+      window.scrollTo({{ top: 0, behavior: 'smooth' }});
+    }}
+
     function render() {{
       const items = getFilteredOpenings();
       document.getElementById('matching-count').textContent = items.length;
 
       const tagContainer = document.getElementById('active-tag-container');
+      const query = (document.getElementById('searchInput').value || '').trim();
       const activeOnly = document.getElementById('activeOnlyToggle').checked;
       const fitFilter = document.getElementById('fitFilter').value;
       const categoryFilter = document.getElementById('categoryFilter').value;
@@ -1101,14 +1137,35 @@ def build_site(
       if (companyFilter !== 'all') tags.push(`<span class="active-tag">${{escapeHtml(companyFilter)}}</span>`);
       tagContainer.innerHTML = tags.join('');
 
+      const hasCustomFilters = Boolean(query) || !activeOnly || fitFilter !== 'all' || categoryFilter !== 'all' || companyFilter !== 'all';
+      const clearBtn = document.getElementById('clearFiltersBtn');
+      if (clearBtn) clearBtn.style.display = hasCustomFilters ? 'inline-flex' : 'none';
+
+      const totalPages = Math.max(1, Math.ceil(items.length / pageSize));
+      if (currentPage > totalPages) currentPage = totalPages;
+      const startIdx = (currentPage - 1) * pageSize;
+      const pageItems = items.slice(startIdx, startIdx + pageSize);
+
+      const summaryEl = document.getElementById('pageSummary');
+      const indicatorEl = document.getElementById('pageIndicator');
+      const prevBtn = document.getElementById('prevPageBtn');
+      const nextBtn = document.getElementById('nextPageBtn');
+      if (summaryEl) {{
+        summaryEl.textContent = items.length === 0 ? 'Showing 0 roles' : `Showing ${{startIdx + 1}}–${{Math.min(startIdx + pageItems.length, items.length)}} of ${{items.length}}`;
+      }}
+      if (indicatorEl) indicatorEl.textContent = `Page ${{currentPage}} of ${{totalPages}}`;
+      if (prevBtn) prevBtn.disabled = currentPage <= 1;
+      if (nextBtn) nextBtn.disabled = currentPage >= totalPages;
+
       if (currentView === 'table') {{
-        renderTable(items);
+        renderTable(pageItems);
       }} else {{
-        renderCards(items);
+        renderCards(pageItems);
       }}
     }}
 
     function applyFilters() {{
+      currentPage = 1;
       render();
     }}
 
