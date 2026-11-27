@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>$NAME - Resume</title>
+  <style>
+    @page {
+      size: A4;
+      margin: 14mm 16mm;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      font-size: 9.5pt;
+      line-height: 1.38;
+      color: #0f172a;
+      background: #ffffff;
+      margin: 0;
+      padding: 0;
+    }
+
+    .page {
+      max-width: 780px;
+      margin: 0 auto;
+    }
+
+    header.resume-header {
+      border-bottom: 1.5px solid #1e293b;
+      padding-bottom: 8px;
+      margin-bottom: 12px;
+    }
+
+    h1.name {
+      font-size: 18pt;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      color: #0f172a;
+      margin: 0 0 3px 0;
+    }
+
+    p.headline {
+      font-size: 10pt;
+      font-weight: 600;
+      color: #1e40af;
+      margin: 0 0 4px 0;
+    }
+
+    p.contact-line {
+      font-size: 8.8pt;
+      color: #475569;
+      margin: 0;
+    }
+
+    section.resume-section {
+      margin-bottom: 11px;
+    }
+
+    h2.section-title {
+      font-size: 10pt;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #0f172a;
+      border-bottom: 1px solid #cbd5e1;
+      padding-bottom: 2px;
+      margin: 0 0 6px 0;
+      break-after: avoid;
+      page-break-after: avoid;
+    }
+
+    p.summary-text {
+      margin: 0;
+      color: #1e293b;
+    }
+
+    ul.skills-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px 6px;
+    }
+
+    li.skill-item {
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      border-radius: 3px;
+      padding: 2px 7px;
+      font-size: 8.5pt;
+      font-weight: 500;
+      color: #0f172a;
+    }
+
+    article.role-entry {
+      margin-bottom: 9px;
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+
+    div.role-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 10px;
+      margin-bottom: 3px;
+    }
+
+    h3.role-title {
+      font-size: 9.8pt;
+      font-weight: 700;
+      color: #0f172a;
+      margin: 0;
+    }
+
+    span.role-company {
+      font-weight: 500;
+      color: #334155;
+    }
+
+    span.role-period {
+      font-size: 8.6pt;
+      color: #475569;
+      white-space: nowrap;
+    }
+
+    ul.role-bullets,
+    ul.education-list {
+      margin: 0;
+      padding-left: 16px;
+    }
+
+    ul.role-bullets li,
+    ul.education-list li {
+      margin-bottom: 2.5px;
+      color: #1e293b;
+    }
+
+    @media print {
+      body {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+
+      .page {
+        max-width: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="resume-header">
+      <h1 class="name">$NAME</h1>
+      <p class="headline">$HEADLINE</p>
+      <p class="contact-line">$CONTACT_LINE</p>
+    </header>
+
+    <section class="resume-section">
+      <h2 class="section-title">Executive Summary</h2>
+      <p class="summary-text">$SUMMARY</p>
+    </section>
+
+    <section class="resume-section">
+      <h2 class="section-title">Core Competencies &amp; Standards</h2>
+      $SKILLS_HTML
+    </section>
+
+    <section class="resume-section">
+      <h2 class="section-title">Professional Experience</h2>
+      $EXPERIENCE_HTML
+    </section>
+
+    <section class="resume-section">
+      <h2 class="section-title">Education &amp; Coursework</h2>
+      $EDUCATION_HTML
+    </section>
+  </main>
+</body>
+</html>

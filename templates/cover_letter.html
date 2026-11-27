@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>$NAME - Cover Letter ($COMPANY)</title>
+  <style>
+    @page {
+      size: A4;
+      margin: 14mm 16mm;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      font-size: 10pt;
+      line-height: 1.5;
+      color: #0f172a;
+      background: #ffffff;
+      margin: 0;
+      padding: 0;
+    }
+
+    .page {
+      max-width: 740px;
+      margin: 0 auto;
+    }
+
+    header.letter-header {
+      border-bottom: 1.5px solid #1e293b;
+      padding-bottom: 10px;
+      margin-bottom: 18px;
+    }
+
+    h1.name {
+      font-size: 18pt;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      color: #0f172a;
+      margin: 0 0 4px 0;
+    }
+
+    p.contact-line {
+      font-size: 9pt;
+      color: #475569;
+      margin: 0;
+    }
+
+    div.letter-meta {
+      margin-bottom: 16px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #e2e8f0;
+      font-size: 9.5pt;
+      color: #334155;
+    }
+
+    div.letter-meta p {
+      margin: 0 0 3px 0;
+    }
+
+    div.letter-meta strong {
+      color: #0f172a;
+    }
+
+    section.letter-body p {
+      margin: 0 0 11px 0;
+      color: #1e293b;
+    }
+
+    @media print {
+      body {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+
+      .page {
+        max-width: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="letter-header">
+      <h1 class="name">$NAME</h1>
+      <p class="contact-line">$CONTACT_LINE</p>
+    </header>
+
+    <div class="letter-meta">
+      <p><strong>Date:</strong> $DATE</p>
+      <p><strong>Company:</strong> $COMPANY</p>
+      <p><strong>Position:</strong> $ROLE</p>
+    </div>
+
+    <section class="letter-body">
+      $BODY_HTML
+    </section>
+  </main>
+</body>
+</html>
