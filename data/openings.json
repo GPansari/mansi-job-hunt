@@ -421,11 +421,11 @@
     "date_discovered": "2026-11-24",
     "last_updated": "2026-11-24",
     "next_action": "High priority eVTOL lead role - prepare tailored application",
-    "link_status": "active",
+    "link_status": "rate_limited",
     "link_last_checked": "2026-11-28",
     "company_category": "Startup / Emerging",
     "url_type": "direct_requisition",
-    "link_http_code": 200
+    "link_http_code": 429
   },
   {
     "id": "AIRBUS-JR10436295",
@@ -1424,8 +1424,8 @@
     "date_discovered": "2026-11-28",
     "last_updated": "2026-11-28",
     "next_action": "Draft tailored resume",
-    "link_status": "active",
-    "link_http_code": 200,
+    "link_status": "rate_limited",
+    "link_http_code": 429,
     "link_last_checked": "2026-11-28",
     "date_posted": "2026-11-25"
   },
@@ -1450,8 +1450,8 @@
     "date_discovered": "2026-11-28",
     "last_updated": "2026-11-28",
     "next_action": "Review job description",
-    "link_status": "active",
-    "link_http_code": 200,
+    "link_status": "rate_limited",
+    "link_http_code": 429,
     "link_last_checked": "2026-11-28",
     "date_posted": "2026-11-23"
   },
@@ -1560,8 +1560,8 @@
     "date_discovered": "2026-11-28",
     "last_updated": "2026-11-28",
     "next_action": "Draft tailored resume",
-    "link_status": "rate_limited",
-    "link_http_code": 429,
+    "link_status": "active",
+    "link_http_code": 200,
     "link_last_checked": "2026-11-28",
     "date_posted": "2026-11-11"
   },
@@ -1596,8 +1596,8 @@
     "date_discovered": "2026-11-28",
     "last_updated": "2026-11-28",
     "next_action": "Draft tailored resume",
-    "link_status": "rate_limited",
-    "link_http_code": 429,
+    "link_status": "active",
+    "link_http_code": 200,
     "link_last_checked": "2026-11-28",
     "date_posted": "2026-11-11"
   },
@@ -1632,8 +1632,8 @@
     "date_discovered": "2026-11-28",
     "last_updated": "2026-11-28",
     "next_action": "Draft tailored resume",
-    "link_status": "rate_limited",
-    "link_http_code": 429,
+    "link_status": "active",
+    "link_http_code": 200,
     "link_last_checked": "2026-11-28",
     "date_posted": "2026-11-11"
   },
@@ -1660,8 +1660,8 @@
     "date_discovered": "2026-11-28",
     "last_updated": "2026-11-28",
     "next_action": "Draft tailored resume",
-    "link_status": "rate_limited",
-    "link_http_code": 429,
+    "link_status": "active",
+    "link_http_code": 200,
     "link_last_checked": "2026-11-28",
     "date_posted": "2026-11-27"
   },
@@ -1689,8 +1689,8 @@
     "date_discovered": "2026-11-28",
     "last_updated": "2026-11-28",
     "next_action": "Draft tailored resume",
-    "link_status": "rate_limited",
-    "link_http_code": 429,
+    "link_status": "active",
+    "link_http_code": 200,
     "link_last_checked": "2026-11-28",
     "date_posted": "2026-11-27"
   },
@@ -1884,8 +1884,8 @@
     "date_discovered": "2026-11-28",
     "last_updated": "2026-11-28",
     "next_action": "Draft tailored resume",
-    "link_status": "active",
-    "link_http_code": 200,
+    "link_status": "rate_limited",
+    "link_http_code": 429,
     "link_last_checked": "2026-11-28",
     "date_posted": "2026-11-26"
   },
@@ -1910,8 +1910,8 @@
     "date_discovered": "2026-11-28",
     "last_updated": "2026-11-28",
     "next_action": "Review job description",
-    "link_status": "active",
-    "link_http_code": 200,
+    "link_status": "rate_limited",
+    "link_http_code": 429,
     "link_last_checked": "2026-11-28",
     "date_posted": "2026-11-26"
   },
@@ -1936,8 +1936,8 @@
     "date_discovered": "2026-11-28",
     "last_updated": "2026-11-28",
     "next_action": "Review job description",
-    "link_status": "active",
-    "link_http_code": 200,
+    "link_status": "rate_limited",
+    "link_http_code": 429,
     "link_last_checked": "2026-11-28",
     "date_posted": "2026-11-26"
   },
